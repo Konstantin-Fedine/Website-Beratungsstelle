@@ -154,24 +154,6 @@
     color: var(--color-text-light);
 }
 
-.about-cta .btn {
-    display: inline-block;
-    padding: 14px 28px;
-    border-radius: var(--radius);
-    text-decoration: none;
-    font-weight: 600;
-    transition: var(--transition);
-}
-
-.about-cta .btn-primary {
-    background: var(--color-primary);
-    color: var(--color-dark);
-}
-
-.about-cta .btn-primary:hover {
-    transform: translateY(-2px);
-    filter: brightness(.95);
-}
 
 @media (min-width:1024px) {
     .about-hero h1 {

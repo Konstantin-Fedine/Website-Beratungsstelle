@@ -143,22 +143,6 @@
     line-height:1.7;
 }
 
-.faq-cta .btn {
-    display:inline-block;
-    padding:14px 28px;
-    background:var(--color-primary);
-    color:var(--color-dark);
-    border-radius:var(--radius);
-    text-decoration:none;
-    font-weight:600;
-    transition:var(--transition);
-}
-
-.faq-cta .btn:hover {
-    transform:translateY(-2px);
-    filter:brightness(.95);
-}
-
 @media(min-width:1024px) {
     .faq-hero h1 {
         font-size:3.5rem;

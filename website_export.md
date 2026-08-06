@@ -1,283 +1,302 @@
 
 ============================================================
-DATEI: css\contact.css
+DATEI: components\footer.html
 ============================================================
 
-.contact-hero {
-    padding:90px 20px;
-    background:linear-gradient(135deg,var(--color-background),#F4E7DB);
-    text-align:center;
-}
+<footer class="footer">
 
-.contact-hero-content {
-    max-width:800px;
-    margin:0 auto;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp .8s ease forwards;
-}
+    <div class="footer-container">
 
-.contact-hero h1 {
-    margin-bottom:20px;
-    color:var(--color-dark);
-    font-size:2.2rem;
-}
+        <div class="footer-brand">
 
-.contact-hero p {
-    color:var(--color-text-muted);
-    line-height:1.7;
-}
+            <h2>Aufwind Beratung</h2>
 
-.contact-container {
-    max-width:1200px;
-    margin:0 auto;
-}
+            <p>
+                Psychologische und systemische Beratung in Wiesbaden.
+            </p>
 
-.contact-options,
-.contact-process,
-.contact-form-section {
-    padding:80px 20px;
-}
+        </div>
 
-.contact-options h2,
-.contact-process h2,
-.contact-form-section h2 {
-    margin-bottom:30px;
-    text-align:center;
-    color:var(--color-dark);
-}
 
-.contact-cards {
-    display:flex;
-    flex-direction:column;
-    gap:25px;
-}
+        <div class="footer-navigation">
 
-.contact-card {
-    padding:35px 25px;
-    background:var(--color-background);
-    text-align:center;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    transition:var(--transition);
-}
+            <h3>Navigation</h3>
 
-.contact-card:hover {
-    transform:translateY(-5px);
-}
+            <ul>
+                <li>
+                    <a href="index.html">Start</a>
+                </li>
 
-.contact-icon {
-    margin-bottom:15px;
-    font-size:2rem;
-}
+                <li>
+                    <a href="services.html">Angebote</a>
+                </li>
 
-.contact-card h3 {
-    margin-bottom:15px;
-    color:var(--color-dark);
-}
+                <li>
+                    <a href="about.html">Über mich</a>
+                </li>
 
-.contact-card p {
-    line-height:1.6;
-}
+                <li>
+                    <a href="faq.html">Häufige Fragen</a>
+                </li>
 
-.contact-card a:not(.btn) {
-    color:var(--color-dark);
-}
+                <li>
+                    <a href="contact.html">Kontakt</a>
+                </li>
+            </ul>
 
-.contact-small {
-    opacity:.8;
-    font-size:.9rem;
-}
+        </div>
 
-.contact-process {
-    background:var(--color-surface);
-}
 
-.contact-steps {
-    display:grid;
-    grid-template-columns:1fr;
-    gap:45px;
-}
+        <div class="footer-contact">
 
-.contact-step {
-    position:relative;
-    text-align:center;
-}
+            <h3>Kontakt</h3>
 
-.contact-step span {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    width:60px;
-    height:60px;
-    margin:0 auto 20px;
-    background:var(--color-primary);
-    color:var(--color-dark);
-    border-radius:50%;
-    font-size:1.3rem;
-    font-weight:700;
-    transition:var(--transition);
-}
+            <p>
+                <a href="mailto:kontakt@aufwind-beratung.de">
+                    kontakt@aufwind-beratung.de
+                </a>
+            </p>
 
-.contact-step:hover span {
-    transform:scale(1.15);
-}
+            <p>
+                Wiesbaden<br>
+                Beratung vor Ort oder online
+            </p>
 
-.contact-step:not(:last-child)::after {
-    content:"↓";
-    display:block;
-    margin-top:35px;
-    font-size:1.5rem;
-    color:var(--color-primary);
-}
+        </div>
 
-.contact-step p {
-    max-width:250px;
-    margin:0 auto;
-    line-height:1.6;
-    color:var(--color-text-muted);
-}
 
-.contact-form-section {
-    background:var(--color-background);
-}
+    </div>
 
-.contact-form-container {
-    max-width:600px;
-    margin:0 auto;
-}
 
-.contact-intro {
-    margin-bottom:35px;
-    color:var(--color-text-muted);
-    text-align:center;
-}
+    <div class="footer-bottom">
 
-.contact-form {
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
+        <p>
+            © 2026 Aufwind Beratung
+        </p>
 
-.contact-form label {
-    margin-top:10px;
-    color:var(--color-dark);
-    font-weight:600;
-}
 
-.contact-form input,
-.contact-form textarea,
-.contact-form select {
-    width:100%;
-    padding:14px 16px;
-    border:1px solid rgba(42,36,33,.15);
-    border-radius:var(--radius);
-    background:#fff;
-    color:var(--color-dark);
-    font-family:inherit;
-    font-size:1rem;
-    transition:var(--transition);
-}
+        <div class="footer-legal">
 
-.contact-form input:focus,
-.contact-form textarea:focus,
-.contact-form select:focus {
-    outline:none;
-    border-color:var(--color-primary);
-    box-shadow:0 0 0 3px rgba(212,178,149,.25);
-}
+            <a href="impressum.html">
+                Impressum
+            </a>
 
-.contact-form textarea {
-    min-height:140px;
-    resize:vertical;
-}
+            <a href="datenschutz.html">
+                Datenschutz
+            </a>
 
-.contact-submit {
-    align-self:center;
-    padding:14px 28px;
-    background:var(--color-primary);
-    color:var(--color-dark);
-    border-radius:var(--radius);
-    border:none;
-    font-family:inherit;
-    font-size:1rem;
-    font-weight:600;
-    cursor:pointer;
-    transition:var(--transition);
-}
+        </div>
 
-.contact-submit:hover {
-    transform:translateY(-2px);
-    filter:brightness(.95);
-}
+    </div>
 
-.privacy-note {
-    margin:25px 0;
-    padding:15px;
-    background:var(--color-primary-soft);
-    border-radius:var(--radius);
-    color:var(--color-dark);
-    text-align:center;
-    line-height:1.5;
-}
+</footer>
 
-.faq-link {
-    margin-top:50px;
-    text-align:center;
-}
 
-.faq-link p {
-    margin-bottom:10px;
-    color:var(--color-dark);
-}
+============================================================
+DATEI: components\header.html
+============================================================
 
-.faq-link a {
-    color:var(--color-dark);
-    font-weight:600;
-    text-decoration:none;
-    border-bottom:2px solid var(--color-primary);
-}
+<header class="main-header">
+	<div class="header-container">
+		<div class="logo">
+			<h1>Aufwind Beratung</h1>
+		</div>
+		
+		<button class="menu-toggle" aria-label="Menü öffnen">
+			<span></span>
+			<span></span>
+			<span></span>
+		</button>
 
-.faq-link a:hover {
-    color:var(--color-primary);
-}
+		<nav class="navigation">
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="services.html">Beratungsangebote</a></li>
+				<li><a href="about.html">Über mich</a></li>
+				<li><a href="faq.html">Häufige Fragen</a></li>
+				<li><a href="contact.html">Kosten & Terminbuchung</a></li>
+			</ul>
+		</nav>
+	</div>
+</header>
 
-@media(min-width:1024px) {
 
-    .contact-hero h1 {
-        font-size:3.5rem;
-    }
+============================================================
+DATEI: about.html
+============================================================
 
-    .contact-cards {
-        flex-direction:row;
-    }
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Über mich | Aufwind Beratung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/about-page.css">
+</head>
+<body data-page="about">
 
-    .contact-card {
-        flex:1;
-    }
+<main>
 
-    .contact-steps {
-        grid-template-columns:repeat(3,1fr);
-        gap:30px;
-    }
+<section class="about-hero">
+    <div class="about-hero-content">
+        <h1 data-text="about_Hero_title"></h1>
+        <p data-text="about_Hero_text"></p>
+    </div>
+</section>
 
-    .contact-step {
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-    }
+<section class="about-introduction">
+    <div class="about-container about-grid">
+        <div class="about-image">
+            <img src="images/portrait2.jpg" alt="Portrait">
+        </div>
 
-    .contact-step:not(:last-child)::after {
-        content:"→";
-        position:absolute;
-        top:30px;
-        right:-18px;
-        margin:0;
-        font-size:1.5rem;
-        color:var(--color-primary);
-    }
+        <div class="about-text">
+            <h2 data-text="about_Einleitung_title"></h2>
+            <p data-text="about_Einleitung_text1"></p>
+            <p data-text="about_Einleitung_text2"></p>
+            <p data-text="about_Einleitung_text3"></p>
+        </div>
+    </div>
+</section>
 
-}
+<section class="about-values">
+    <div class="about-container">
+        <h2 data-text="about_Beratungsansatz_title"></h2>
+
+        <div class="about-cards">
+
+            <div class="about-card">
+                <h3 data-text="about_Beratungsansatz_Karte_1_title"></h3>
+                <p data-text="about_Beratungsansatz_Karte_1_text"></p>
+            </div>
+
+            <div class="about-card">
+                <h3 data-text="about_Beratungsansatz_Karte_2_title"></h3>
+                <p data-text="about_Beratungsansatz_Karte_2_text"></p>
+            </div>
+
+            <div class="about-card">
+                <h3 data-text="about_Beratungsansatz_Karte_3_title"></h3>
+                <p data-text="about_Beratungsansatz_Karte_3_text"></p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="about-target">
+    <div class="about-container">
+
+        <h2 data-text="about_Zielgruppe_title"></h2>
+
+        <div class="about-cards">
+
+            <div class="about-card">
+                <h3 data-text="about_Zielgruppe_Karte_1_title"></h3>
+                <p data-text="about_Zielgruppe_Karte_1_text"></p>
+            </div>
+
+            <div class="about-card">
+                <h3 data-text="about_Zielgruppe_Karte_2_title"></h3>
+                <p data-text="about_Zielgruppe_Karte_2_text"></p>
+            </div>
+
+            <div class="about-card">
+                <h3 data-text="about_Zielgruppe_Karte_3_title"></h3>
+                <p data-text="about_Zielgruppe_Karte_3_text"></p>
+            </div>
+
+            <div class="about-card">
+                <h3 data-text="about_Zielgruppe_Karte_4_title"></h3>
+                <p data-text="about_Zielgruppe_Karte_4_text"></p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="about-school">
+    <div class="about-container about-grid">
+
+        <div class="about-school-image">
+            <img src="images/portrait.jpg" alt="Beratung">
+        </div>
+
+        <div>
+            <h2 data-text="about_Schule_title"></h2>
+            <p data-text="about_Schule_text1"></p>
+            <p data-text="about_Schule_text2"></p>
+        </div>
+
+    </div>
+</section>
+
+<section class="about-qualification">
+    <div class="about-container">
+
+        <h2 data-text="about_Qualifikationen_title"></h2>
+
+        <div class="qualification-grid">
+
+            <div>
+                <h3 data-text="about_Qualifikationen_Ausbildung_title"></h3>
+                <ul>
+                    <li data-text="about_Qualifikationen_Ausbildung_1"></li>
+                    <li data-text="about_Qualifikationen_Ausbildung_2"></li>
+                    <li data-text="about_Qualifikationen_Ausbildung_3"></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 data-text="about_Qualifikationen_Berufserfahrung_title"></h3>
+                <ul>
+                    <li data-text="about_Qualifikationen_Berufserfahrung_1"></li>
+                    <li data-text="about_Qualifikationen_Berufserfahrung_2"></li>
+                    <li data-text="about_Qualifikationen_Berufserfahrung_3"></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 data-text="about_Qualifikationen_Beratung_title"></h3>
+                <ul>
+                    <li data-text="about_Qualifikationen_Beratung_1"></li>
+                    <li data-text="about_Qualifikationen_Beratung_2"></li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="about-quote">
+    <div class="about-container">
+
+        <blockquote data-text="about_Zitat_text"></blockquote>
+
+        <p data-text="about_Zitat_untertitel"></p>
+
+    </div>
+</section>
+
+<section class="about-cta">
+
+    <h2 data-text="about_CTA_title"></h2>
+
+    <a href="contact.html" class="btn btn-primary" data-text="about_CTA_button"></a>
+
+</section>
+
+</main>
+
+<script src="js/header.js"></script>
+<script src="js/content-loader.js"></script>
+<script src="js/load-components.js"></script>
+
+</body>
+</html>
 
 
 ============================================================
@@ -303,6 +322,30 @@ DATEI: contact.html
     </div>
 </section>
 
+<section class="contact-cost">
+    <div class="contact-container">
+
+        <div class="contact-cost-card">
+
+            <h2 data-text="contact_Kosten_title"></h2>
+
+            <div class="contact-price-row">
+                <span data-text="contact_Kosten_erstgespraech"></span>
+                <strong data-text="contact_Kosten_erstgespraech_preis"></strong>
+            </div>
+
+            <div class="contact-price-row">
+                <span data-text="contact_Kosten_beratung"></span>
+                <strong data-text="contact_Kosten_beratung_preis"></strong>
+            </div>
+
+            <p data-text="contact_Kosten_info"></p>
+
+        </div>
+
+    </div>
+</section>
+
 <section class="contact-options">
     <div class="contact-container">
         <h2 data-text="contact_Kontaktmöglichkeiten_title"></h2>
@@ -312,7 +355,7 @@ DATEI: contact.html
                 <div class="contact-icon">✉</div>
                 <h3 data-text="contact_Kontakt_1_title"></h3>
                 <p data-text="contact_Kontakt_1_text"></p>
-                <a href="mailto:kontakt@aufwind-beratung.de" class="btn btn-primary" data-text="contact_Kontakt_1_button"></a>
+                <a href="mailto:beratung.aufwind@gmail.com" class="btn btn-primary" data-text="contact_Kontakt_1_button"></a>
             </article>
 
             <article class="contact-card">
@@ -363,7 +406,20 @@ DATEI: contact.html
         <h2 data-text="contact_Formular_title"></h2>
         <p class="contact-intro" data-text="contact_Formular_intro"></p>
 
-        <form class="contact-form">
+        <form
+            class="contact-form"
+            name="kontakt"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/success.html">
+
+            <p hidden>
+                <label>
+                    Nicht ausfüllen:
+                    <input name="bot-field">
+                </label>
+            </p>
 
             <label for="name" data-text="contact_Formular_label_name"></label>
             <input type="text" id="name" name="name" required>
@@ -406,6 +462,808 @@ DATEI: contact.html
 <script src="js/header.js"></script>
 <script src="js/load-components.js"></script>
 <script src="js/content-loader.js"></script>
+</body>
+</html>
+
+
+============================================================
+DATEI: faq.html
+============================================================
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Aufwind Beratung</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/faq-page.css">
+</head>
+
+<body data-page="faq">
+
+<main>
+
+    <section class="faq-hero">
+
+        <div class="faq-hero-content">
+
+            <h1 data-text="faq_Hero_title"></h1>
+
+            <p data-text="faq_Hero_text"></p>
+
+        </div>
+
+    </section>
+
+
+    <section class="faq-section">
+
+        <div class="faq-container">
+
+            <h2 data-text="faq_FAQ_title"></h2>
+
+            <div class="faq-list">
+
+                <div class="faq-item">
+
+                    <button class="faq-question" data-text="faq_FAQ_1_question"></button>
+
+                    <div class="faq-answer">
+
+                        <p data-text="faq_FAQ_1_answer"></p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="faq-item">
+
+                    <button class="faq-question" data-text="faq_FAQ_2_question"></button>
+
+                    <div class="faq-answer">
+
+                        <p data-text="faq_FAQ_2_answer"></p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="faq-item">
+
+                    <button class="faq-question" data-text="faq_FAQ_3_question"></button>
+
+                    <div class="faq-answer">
+
+                        <p data-text="faq_FAQ_3_answer"></p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="faq-item">
+
+                    <button class="faq-question" data-text="faq_FAQ_4_question"></button>
+
+                    <div class="faq-answer">
+
+                        <p data-text="faq_FAQ_4_answer"></p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="faq-item">
+
+                    <button class="faq-question" data-text="faq_FAQ_5_question"></button>
+
+                    <div class="faq-answer">
+
+                        <p data-text="faq_FAQ_5_answer"></p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="faq-item">
+
+                    <button class="faq-question" data-text="faq_FAQ_6_question"></button>
+
+                    <div class="faq-answer">
+
+                        <p data-text="faq_FAQ_6_answer"></p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="faq-cta">
+
+        <div class="faq-container">
+
+            <h2 data-text="faq_CTA_title"></h2>
+
+            <p data-text="faq_CTA_text"></p>
+
+            <a href="contact.html" class="btn btn-primary" data-text="faq_CTA_button"></a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="js/header.js"></script>
+<script src="js/faq.js"></script>
+<script src="js/load-components.js"></script>
+<script src="js/content-loader.js"></script>
+
+</body>
+</html>
+
+
+============================================================
+DATEI: index.html
+============================================================
+
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <title>Aufwind Beratung</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/hero.css">
+    <link rel="stylesheet" href="css/services.css">
+    <link rel="stylesheet" href="css/about.css">
+    <link rel="stylesheet" href="css/process.css">
+    <link rel="stylesheet" href="css/faq.css">
+</head>
+
+<body data-page="index">
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <h1 data-text="index_Hero_title"></h1>
+
+        <p data-text="index_Hero_text"></p>
+
+        <div class="hero-buttons">
+
+            <a href="contact.html" class="btn btn-primary" data-text="index_Hero_button1"></a>
+
+            <a href="services.html" class="btn btn-secondary" data-text="index_Hero_button2"></a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="services-section">
+
+    <div class="services-container">
+
+        <h2 data-text="index_Leistungen_title"></h2>
+
+        <p class="services-intro" data-text="index_Leistungen_intro"></p>
+
+        <div class="services-grid">
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="index_Leistung_1_title"></h3>
+
+                    <p data-text="index_Leistung_1_text"></p>
+
+                    <a href="services.html" class="btn btn-primary" data-text="index_Leistung_1_button"></a>
+
+                </div>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="index_Leistung_2_title"></h3>
+
+                    <p data-text="index_Leistung_2_text"></p>
+
+                    <a href="services.html" class="btn btn-primary" data-text="index_Leistung_2_button"></a>
+
+                </div>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="index_Leistung_3_title"></h3>
+
+                    <p data-text="index_Leistung_3_text"></p>
+
+                    <a href="services.html" class="btn btn-primary" data-text="index_Leistung_3_button"></a>
+
+                </div>
+
+            </article>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="about-section">
+
+    <div class="about-container">
+
+        <div class="about-content">
+
+            <h2 data-text="index_Ueber_mich_title"></h2>
+
+            <p data-text="index_Ueber_mich_text1"></p>
+
+            <p data-text="index_Ueber_mich_text2"></p>
+
+            <a href="about.html" class="btn btn-primary" data-text="index_Ueber_mich_button"></a>
+
+        </div>
+
+
+        <div class="about-image">
+
+            <img src="https://placehold.co/800x600?text=Aufwind+Beratung"
+                alt="Aufwind Beratung">
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="process-section">
+
+    <div class="process-container">
+
+        <h2 data-text="index_Ablauf_title"></h2>
+
+        <p class="process-intro" data-text="index_Ablauf_intro"></p>
+
+
+        <div class="process-grid">
+
+
+            <article class="process-step">
+
+                <div class="step-number">1</div>
+
+                <h3 data-text="index_Schritt_1_title"></h3>
+
+                <p data-text="index_Schritt_1_text"></p>
+
+            </article>
+
+
+            <article class="process-step">
+
+                <div class="step-number">2</div>
+
+                <h3 data-text="index_Schritt_2_title"></h3>
+
+                <p data-text="index_Schritt_2_text"></p>
+
+            </article>
+
+
+            <article class="process-step">
+
+                <div class="step-number">3</div>
+
+                <h3 data-text="index_Schritt_3_title"></h3>
+
+                <p data-text="index_Schritt_3_text"></p>
+
+            </article>
+
+
+            <article class="process-step">
+
+                <div class="step-number">4</div>
+
+                <h3 data-text="index_Schritt_4_title"></h3>
+
+                <p data-text="index_Schritt_4_text"></p>
+
+            </article>
+
+
+        </div>
+
+
+        <p class="process-ending" data-text="index_Ablauf_ending"></p>
+
+        <a href="contact.html" class="btn btn-primary" data-text="index_Ablauf_button"></a>
+
+
+    </div>
+
+</section>
+
+
+<section class="faq-section">
+
+    <div class="faq-container">
+
+        <h2 data-text="index_FAQ_title"></h2>
+
+        <p class="faq-intro" data-text="index_FAQ_intro"></p>
+
+
+        <div class="faq">
+
+
+            <div class="faq-item">
+
+                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_1_question"></button>
+
+                <div class="faq-answer">
+
+                    <p data-text="index_FAQ_1_answer"></p>
+
+                </div>
+
+            </div>
+
+
+            <div class="faq-item">
+
+                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_2_question"></button>
+
+                <div class="faq-answer">
+
+                    <p data-text="index_FAQ_2_answer"></p>
+
+                </div>
+
+            </div>
+
+
+            <div class="faq-item">
+
+                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_3_question"></button>
+
+                <div class="faq-answer">
+
+                    <p data-text="index_FAQ_3_answer"></p>
+
+                </div>
+
+            </div>
+
+
+            <div class="faq-item">
+
+                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_4_question"></button>
+
+                <div class="faq-answer">
+
+                    <p data-text="index_FAQ_4_answer"></p>
+
+                </div>
+
+            </div>
+
+
+            <div class="faq-item">
+
+                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_5_question"></button>
+
+                <div class="faq-answer">
+
+                    <p data-text="index_FAQ_5_answer"></p>
+
+                </div>
+
+            </div>
+
+
+            <div class="faq-item">
+
+                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_6_question"></button>
+
+                <div class="faq-answer">
+
+                    <p data-text="index_FAQ_6_answer"></p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="faq-cta">
+
+            <h3 data-text="index_FAQ_CTA_title"></h3>
+
+            <p data-text="index_FAQ_CTA_text"></p>
+
+            <a href="contact.html" class="btn btn-primary" data-text="index_FAQ_CTA_button"></a>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<script src="js/header.js"></script>
+<script src="js/faq.js"></script>
+<script src="js/load-components.js"></script>
+<script src="js/content-loader.js"></script>
+
+</body>
+</html>
+
+
+============================================================
+DATEI: services.html
+============================================================
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Beratungsangebote | Aufwind Beratung</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/services-page.css">
+</head>
+
+<body data-page="services">
+
+<main>
+
+<section class="services-hero">
+
+    <div class="services-hero-content">
+
+        <h1 data-text="services_Hero_title"></h1>
+
+        <p data-text="services_Hero_text"></p>
+
+    </div>
+
+</section>
+
+
+<section class="services-overview">
+
+    <div class="services-container">
+
+        <h2 data-text="services_Uebersicht_title"></h2>
+
+        <div class="services-cards">
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Angebot_1_title"></h3>
+
+                    <p data-text="services_Angebot_1_text"></p>
+
+                </div>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Angebot_2_title"></h3>
+
+                    <p data-text="services_Angebot_2_text"></p>
+
+                </div>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Angebot_3_title"></h3>
+
+                    <p data-text="services_Angebot_3_text"></p>
+
+                </div>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Angebot_4_title"></h3>
+
+                    <p data-text="services_Angebot_4_text"></p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="services-approach">
+
+    <div class="services-container">
+
+        <h2 data-text="services_Beratungsansatz_title"></h2>
+
+        <div class="services-cards">
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Ansatz_1_title"></h3>
+
+                    <p data-text="services_Ansatz_1_text"></p>
+
+                </div>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Ansatz_2_title"></h3>
+
+                    <p data-text="services_Ansatz_2_text"></p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="services-form">
+
+    <div class="services-container">
+
+        <h2 data-text="services_Beratungsformen_title"></h2>
+
+        <div class="services-cards">
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Form_1_title"></h3>
+
+                    <p data-text="services_Form_1_text"></p>
+
+                </div>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="service-content">
+
+                    <h3 data-text="services_Form_2_title"></h3>
+
+                    <p data-text="services_Form_2_text"></p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="services-cost">
+
+    <div class="services-container">
+
+        <h2 data-text="services_Kosten_title"></h2>
+
+        <p data-text="services_Kosten_text"></p>
+
+    </div>
+
+</section>
+
+
+<section class="services-process">
+
+    <div class="services-container">
+
+        <h2 data-text="services_Ablauf_title"></h2>
+
+        <div class="services-steps">
+
+            <div class="services-step">
+
+                <span>1</span>
+
+                <h3 data-text="services_Schritt_1_title"></h3>
+
+                <p data-text="services_Schritt_1_text"></p>
+
+            </div>
+
+
+            <div class="services-step">
+
+                <span>2</span>
+
+                <h3 data-text="services_Schritt_2_title"></h3>
+
+                <p data-text="services_Schritt_2_text"></p>
+
+            </div>
+
+
+            <div class="services-step">
+
+                <span>3</span>
+
+                <h3 data-text="services_Schritt_3_title"></h3>
+
+                <p data-text="services_Schritt_3_text"></p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="services-cta">
+
+    <div class="services-container">
+
+        <h2 data-text="services_CTA_title"></h2>
+
+        <a href="contact.html" class="btn btn-primary" data-text="services_CTA_button"></a>
+
+    </div>
+
+</section>
+
+</main>
+
+<script src="js/header.js"></script>
+<script src="js/load-components.js"></script>
+<script src="js/content-loader.js"></script>
+
+</body>
+</html>
+
+
+============================================================
+DATEI: success.html
+============================================================
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vielen Dank | Aufwind Beratung</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/success.css">
+</head>
+
+<body>
+
+<main>
+
+<section class="success">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✅
+        </div>
+
+        <h1>
+            Vielen Dank für Ihre Nachricht!
+        </h1>
+
+        <p>
+            Ihre Anfrage wurde erfolgreich übermittelt.
+        </p>
+
+        <p>
+            Ich werde mich so schnell wie möglich bei Ihnen melden. In der Regel erhalten Sie innerhalb von 1–2 Werktagen eine Rückmeldung.
+        </p>
+
+        <p>
+            Falls Sie innerhalb weniger Tage keine Antwort erhalten, schauen Sie bitte auch in Ihrem Spam-Ordner nach.
+        </p>
+
+        <a href="index.html" class="btn btn-primary">
+            Zur Startseite
+        </a>
+
+    </div>
+
+</section>
+
+</main>
+
+<script src="js/header.js"></script>
+<script src="js/load-components.js"></script>
+
 </body>
 </html>
 

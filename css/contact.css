@@ -28,6 +28,47 @@
     margin:0 auto;
 }
 
+.contact-cost {
+    padding:80px 20px;
+    background:var(--color-surface);
+}
+
+.contact-cost-card {
+    max-width:700px;
+    margin:0 auto;
+    padding:40px;
+    background:var(--color-background);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+}
+
+.contact-cost-card h2 {
+    margin-bottom:30px;
+    text-align:center;
+    color:var(--color-dark);
+}
+
+.contact-price-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 0;
+    border-bottom:1px solid rgba(42,36,33,.1);
+    font-size:1.05rem;
+}
+
+.contact-price-row strong {
+    color:var(--color-dark);
+    font-size:1.2rem;
+}
+
+.contact-cost-card p {
+    margin:30px 0;
+    text-align:center;
+    color:var(--color-text-muted);
+    line-height:1.6;
+}
+
 .contact-options,
 .contact-process,
 .contact-form-section {
@@ -189,21 +230,6 @@
 
 .contact-submit {
     align-self:center;
-    padding:14px 28px;
-    background:var(--color-primary);
-    color:var(--color-dark);
-    border-radius:var(--radius);
-    border:none;
-    font-family:inherit;
-    font-size:1rem;
-    font-weight:600;
-    cursor:pointer;
-    transition:var(--transition);
-}
-
-.contact-submit:hover {
-    transform:translateY(-2px);
-    filter:brightness(.95);
 }
 
 .privacy-note {

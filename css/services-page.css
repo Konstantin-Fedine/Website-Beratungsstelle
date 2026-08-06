@@ -223,29 +223,6 @@
     color:var(--color-text-light);
 }
 
-.services-cta .btn {
-    display:inline-block;
-
-    padding:14px 28px;
-
-    background:var(--color-primary);
-
-    color:var(--color-dark);
-
-    border-radius:var(--radius);
-
-    text-decoration:none;
-
-    font-weight:600;
-
-    transition:var(--transition);
-}
-
-.services-cta .btn:hover {
-    transform:translateY(-2px);
-}
-
-
 
 /* Animation */
 
