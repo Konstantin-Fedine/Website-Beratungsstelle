@@ -2,6 +2,10 @@ function initHeader() {
   const navigation = document.querySelector(".navigation");
   const menuToggle = document.querySelector(".menu-toggle");
 
+  if (!navigation) {
+    return;
+  }
+
   if (menuToggle) {
     menuToggle.addEventListener("click", () => {
       const isActive = navigation.classList.toggle("is-active");

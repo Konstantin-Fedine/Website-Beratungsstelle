@@ -77,7 +77,7 @@ img {
   display: block;
 }
 
-:focus {
+:focus-visible {
   outline: 3px solid var(--color-primary);
   outline-offset: 3px;
 }
@@ -95,4 +95,11 @@ img {
   .btn {
     min-height: 44px;
   }
+}
+
+/* Remove mouse-click outlines while keeping keyboard focus-visible */
+.menu-toggle:focus,
+.btn:focus,
+.navigation a:focus {
+  outline: none;
 }
