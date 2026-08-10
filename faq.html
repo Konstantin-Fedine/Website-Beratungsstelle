@@ -1,146 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
+  <head>
     <title>Aufwind Beratung</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/faq-page.css">
-</head>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="css/faq-page.css" />
+  </head>
 
-<body data-page="faq">
-
-<main>
-
-    <section class="faq-hero">
-
+  <body data-page="faq">
+    <main>
+      <section class="faq-hero">
         <div class="faq-hero-content">
+          <h1 data-text="faq_Hero_title"></h1>
 
-            <h1 data-text="faq_Hero_title"></h1>
-
-            <p data-text="faq_Hero_text"></p>
-
+          <p data-text="faq_Hero_text"></p>
         </div>
+      </section>
 
-    </section>
-
-
-    <section class="faq-section">
-
+      <section class="faq-section">
         <div class="faq-container">
+          <h2 data-text="faq_FAQ_title"></h2>
 
-            <h2 data-text="faq_FAQ_title"></h2>
+          <div class="faq-list">
+            <div class="faq-item">
+              <button
+                class="faq-question"
+                data-text="faq_FAQ_1_question"
+              ></button>
 
-            <div class="faq-list">
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_1_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_1_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_2_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_2_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_3_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_3_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_4_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_4_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_5_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_5_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_6_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_6_answer"></p>
-
-                    </div>
-
-                </div>
-
+              <div class="faq-answer">
+                <p data-text="faq_FAQ_1_answer"></p>
+              </div>
             </div>
 
+            <div class="faq-item">
+              <button
+                class="faq-question"
+                data-text="faq_FAQ_2_question"
+              ></button>
+
+              <div class="faq-answer">
+                <p data-text="faq_FAQ_2_answer"></p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button
+                class="faq-question"
+                data-text="faq_FAQ_3_question"
+              ></button>
+
+              <div class="faq-answer">
+                <p data-text="faq_FAQ_3_answer"></p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button
+                class="faq-question"
+                data-text="faq_FAQ_4_question"
+              ></button>
+
+              <div class="faq-answer">
+                <p data-text="faq_FAQ_4_answer"></p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button
+                class="faq-question"
+                data-text="faq_FAQ_5_question"
+              ></button>
+
+              <div class="faq-answer">
+                <p data-text="faq_FAQ_5_answer"></p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button
+                class="faq-question"
+                data-text="faq_FAQ_6_question"
+              ></button>
+
+              <div class="faq-answer">
+                <p data-text="faq_FAQ_6_answer"></p>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
 
-    </section>
-
-
-    <section class="faq-cta">
-
+      <section class="faq-cta">
         <div class="faq-container">
+          <h2 data-text="faq_CTA_title"></h2>
 
-            <h2 data-text="faq_CTA_title"></h2>
+          <p data-text="faq_CTA_text"></p>
 
-            <p data-text="faq_CTA_text"></p>
-
-            <a href="contact.html" class="btn btn-primary" data-text="faq_CTA_button"></a>
-
+          <a
+            href="contact.html"
+            class="btn btn-primary"
+            data-text="faq_CTA_button"
+          ></a>
         </div>
+      </section>
+    </main>
 
-    </section>
-
-</main>
-
-
-<script src="js/header.js"></script>
-<script src="js/faq.js"></script>
-<script src="js/load-components.js"></script>
-<script src="js/content-loader.js"></script>
-
-</body>
+    <script src="js/header.js"></script>
+    <script src="js/faq.js"></script>
+    <script src="js/load-components.js"></script>
+    <script src="js/content-loader.js"></script>
+  </body>
 </html>

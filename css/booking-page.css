@@ -1,0 +1,82 @@
+.booking-service-card {
+  background: white;
+
+  padding: 30px;
+
+  border-radius: 20px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  max-width: 600px;
+}
+
+.booking-service-card h3 {
+  margin-bottom: 15px;
+}
+
+.service-description {
+  line-height: 1.6;
+
+  margin-bottom: 25px;
+}
+
+.service-info {
+  display: flex;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+}
+
+.service-info span {
+  background: #f5eee8;
+
+  padding: 10px 15px;
+
+  border-radius: 10px;
+
+  font-weight: 600;
+}
+
+.calendar-weekdays,
+#calendar-days {
+  display: grid;
+
+  grid-template-columns: repeat(7, 1fr);
+
+  gap: 10px;
+}
+
+.calendar-weekdays div {
+  text-align: center;
+
+  font-weight: 700;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #f2ece7;
+
+  cursor: pointer;
+
+  font-size: 1rem;
+}
+
+.calendar-day:hover {
+  background: #d4b295;
+}
+
+.calendar-day.selected {
+  background: #2a2421;
+
+  color: white;
+}
+
+.calendar-day.empty {
+  background: transparent;
+}

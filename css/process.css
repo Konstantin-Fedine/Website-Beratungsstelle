@@ -1,117 +1,117 @@
 .process-section {
-    padding: 80px 20px;
-    background: var(--color-surface);
+  padding: 80px 20px;
+  background: var(--color-surface);
 }
 
 .process-container {
-    max-width: var(--container-width);
-    margin: 0 auto;
-    text-align: center;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  text-align: center;
 }
 
 .process-container h2 {
-    color: var(--color-dark);
-    font-size: 2rem;
-    margin-bottom: 20px;
+  color: var(--color-dark);
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
 .process-intro {
-    max-width: 650px;
-    margin: 0 auto 60px;
-    line-height: 1.7;
-    color: var(--color-dark);
+  max-width: 650px;
+  margin: 0 auto 60px;
+  line-height: 1.7;
+  color: var(--color-dark);
 }
 
 .process-grid {
-    display: grid;
-    gap: 45px;
+  display: grid;
+  gap: 45px;
 }
 
 .process-step {
-    position: relative;
+  position: relative;
 }
 
 .process-step:not(:last-child)::after {
-    content: "↓";
-    display: block;
-    margin-top: 35px;
-    font-size: 1.5rem;
-    color: var(--color-primary);
+  content: "↓";
+  display: block;
+  margin-top: 35px;
+  font-size: 1.5rem;
+  color: var(--color-primary);
 }
 
 .step-number {
-    width: 60px;
-    height: 60px;
+  width: 60px;
+  height: 60px;
 
-    margin: 0 auto 20px;
+  margin: 0 auto 20px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    border-radius: 50%;
+  border-radius: 50%;
 
-    background: var(--color-primary);
-    color: var(--color-dark);
+  background: var(--color-primary);
+  color: var(--color-dark);
 
-    font-size: 1.3rem;
-    font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 700;
 
-    transition: transform .3s;
+  transition: transform 0.3s;
 }
 
 .process-step:hover .step-number {
-    transform: scale(1.08);
+  transform: scale(1.08);
 }
 
 .process-step h3 {
-    margin-bottom: 15px;
-    color: var(--color-dark);
+  margin-bottom: 15px;
+  color: var(--color-dark);
 }
 
 .process-step p {
-    line-height: 1.6;
-    color: var(--color-text-muted);
+  line-height: 1.6;
+  color: var(--color-text-muted);
 }
 
 .process-ending {
-    margin: 70px auto 30px;
-    max-width: 600px;
-    line-height: 1.7;
-    color: var(--color-dark);
+  margin: 70px auto 30px;
+  max-width: 600px;
+  line-height: 1.7;
+  color: var(--color-dark);
 }
 
 .process-container .btn {
-    display: inline-block;
+  display: inline-block;
 }
 
-@media (min-width:1024px) {
-    .process-section {
-        padding: 100px 20px;
-    }
+@media (min-width: 1024px) {
+  .process-section {
+    padding: 100px 20px;
+  }
 
-    .process-container h2 {
-        font-size: 2.8rem;
-    }
+  .process-container h2 {
+    font-size: 2.8rem;
+  }
 
-    .process-grid {
-        grid-template-columns: repeat(4,1fr);
-        gap: 30px;
-    }
+  .process-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
 
-    .process-step {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+  .process-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .process-step:not(:last-child)::after {
-        content: "→";
-        position: absolute;
-        top: 30px;
-        right: -18px;
-        margin: 0;
-        font-size: 1.5rem;
-        color: var(--color-primary);
-    }
+  .process-step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    top: 30px;
+    right: -18px;
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+  }
 }

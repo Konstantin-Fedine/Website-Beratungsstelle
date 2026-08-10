@@ -1,1259 +1,780 @@
-
 ============================================================
-DATEI: components\footer.html
+DATEI: js\booking.js
 ============================================================
 
-<footer class="footer">
+import { supabase } from "./supabase.js";
 
-    <div class="footer-container">
+console.log("Booking System gestartet");
 
-        <div class="footer-brand">
+const servicesContainer = document.getElementById("services-list");
 
-            <h2>Aufwind Beratung</h2>
+const bookingState = {
 
-            <p>
-                Psychologische und systemische Beratung in Wiesbaden.
-            </p>
+    selectedService: null,
 
-        </div>
+    selectedDate: null,
 
+};
 
-        <div class="footer-navigation">
+const nextButtons = document.querySelectorAll(".next-step");
 
-            <h3>Navigation</h3>
+nextButtons.forEach(button => {
 
-            <ul>
-                <li>
-                    <a href="index.html">Start</a>
-                </li>
+    button.addEventListener("click", () => {
 
-                <li>
-                    <a href="services.html">Angebote</a>
-                </li>
+        if(!bookingState.selectedService){
 
-                <li>
-                    <a href="about.html">Über mich</a>
-                </li>
+            alert("Bitte wählen Sie zuerst eine Beratung aus.");
 
-                <li>
-                    <a href="faq.html">Häufige Fragen</a>
-                </li>
+            return;
 
-                <li>
-                    <a href="contact.html">Kontakt</a>
-                </li>
-            </ul>
-
-        </div>
+        }
 
 
-        <div class="footer-contact">
+        showStep("booking-step-date");
 
-            <h3>Kontakt</h3>
+    });
+
+});
+
+function showError(message) {
+
+    servicesContainer.innerHTML = `
+
+        <div class="booking-error">
 
             <p>
-                <a href="mailto:kontakt@aufwind-beratung.de">
-                    kontakt@aufwind-beratung.de
-                </a>
+                ${message}
             </p>
 
-            <p>
-                Wiesbaden<br>
-                Beratung vor Ort oder online
-            </p>
-
-        </div>
-
-
-    </div>
-
-
-    <div class="footer-bottom">
-
-        <p>
-            © 2026 Aufwind Beratung
-        </p>
-
-
-        <div class="footer-legal">
-
-            <a href="impressum.html">
-                Impressum
-            </a>
-
-            <a href="datenschutz.html">
-                Datenschutz
+            <a href="services.html" class="btn btn-primary">
+                Zu den Angeboten
             </a>
 
         </div>
 
-    </div>
-
-</footer>
-
-
-============================================================
-DATEI: components\header.html
-============================================================
-
-<header class="main-header">
-	<div class="header-container">
-		<div class="logo">
-			<h1>Aufwind Beratung</h1>
-		</div>
-		
-		<button class="menu-toggle" aria-label="Menü öffnen">
-			<span></span>
-			<span></span>
-			<span></span>
-		</button>
-
-		<nav class="navigation">
-			<ul>
-				<li><a href="index.html">Home</a></li>
-				<li><a href="services.html">Beratungsangebote</a></li>
-				<li><a href="about.html">Über mich</a></li>
-				<li><a href="faq.html">Häufige Fragen</a></li>
-				<li><a href="contact.html">Kosten & Terminbuchung</a></li>
-			</ul>
-		</nav>
-	</div>
-</header>
-
-
-============================================================
-DATEI: about.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <title>Über mich | Aufwind Beratung</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/about-page.css">
-</head>
-<body data-page="about">
-
-<main>
-
-<section class="about-hero">
-    <div class="about-hero-content">
-        <h1 data-text="about_Hero_title"></h1>
-        <p data-text="about_Hero_text"></p>
-    </div>
-</section>
-
-<section class="about-introduction">
-    <div class="about-container about-grid">
-        <div class="about-image">
-            <img src="images/portrait2.jpg" alt="Portrait">
-        </div>
-
-        <div class="about-text">
-            <h2 data-text="about_Einleitung_title"></h2>
-            <p data-text="about_Einleitung_text1"></p>
-            <p data-text="about_Einleitung_text2"></p>
-            <p data-text="about_Einleitung_text3"></p>
-        </div>
-    </div>
-</section>
-
-<section class="about-values">
-    <div class="about-container">
-        <h2 data-text="about_Beratungsansatz_title"></h2>
-
-        <div class="about-cards">
-
-            <div class="about-card">
-                <h3 data-text="about_Beratungsansatz_Karte_1_title"></h3>
-                <p data-text="about_Beratungsansatz_Karte_1_text"></p>
-            </div>
-
-            <div class="about-card">
-                <h3 data-text="about_Beratungsansatz_Karte_2_title"></h3>
-                <p data-text="about_Beratungsansatz_Karte_2_text"></p>
-            </div>
-
-            <div class="about-card">
-                <h3 data-text="about_Beratungsansatz_Karte_3_title"></h3>
-                <p data-text="about_Beratungsansatz_Karte_3_text"></p>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<section class="about-target">
-    <div class="about-container">
+    `;
 
-        <h2 data-text="about_Zielgruppe_title"></h2>
+}
 
-        <div class="about-cards">
+function showStep(stepId) {
 
-            <div class="about-card">
-                <h3 data-text="about_Zielgruppe_Karte_1_title"></h3>
-                <p data-text="about_Zielgruppe_Karte_1_text"></p>
-            </div>
+    const steps = document.querySelectorAll(".booking-step");
 
-            <div class="about-card">
-                <h3 data-text="about_Zielgruppe_Karte_2_title"></h3>
-                <p data-text="about_Zielgruppe_Karte_2_text"></p>
-            </div>
+    steps.forEach(step => {
+        step.style.display = "none";
+        step.classList.remove("active");
+    });
 
-            <div class="about-card">
-                <h3 data-text="about_Zielgruppe_Karte_3_title"></h3>
-                <p data-text="about_Zielgruppe_Karte_3_text"></p>
-            </div>
 
-            <div class="about-card">
-                <h3 data-text="about_Zielgruppe_Karte_4_title"></h3>
-                <p data-text="about_Zielgruppe_Karte_4_text"></p>
-            </div>
+    const activeStep = document.getElementById(stepId);
 
-        </div>
-    </div>
-</section>
+    if(activeStep){
+        activeStep.style.display = "block";
+        activeStep.classList.add("active");
+    }
 
-<section class="about-school">
-    <div class="about-container about-grid">
+    updateProgress(stepId);
 
-        <div class="about-school-image">
-            <img src="images/portrait.jpg" alt="Beratung">
-        </div>
+}
 
-        <div>
-            <h2 data-text="about_Schule_title"></h2>
-            <p data-text="about_Schule_text1"></p>
-            <p data-text="about_Schule_text2"></p>
-        </div>
+function updateProgress(stepId) {
 
-    </div>
-</section>
+    const progressSteps = document.querySelectorAll(".progress-step");
 
-<section class="about-qualification">
-    <div class="about-container">
 
-        <h2 data-text="about_Qualifikationen_title"></h2>
+    progressSteps.forEach(step => {
 
-        <div class="qualification-grid">
+        step.classList.remove("active");
 
-            <div>
-                <h3 data-text="about_Qualifikationen_Ausbildung_title"></h3>
-                <ul>
-                    <li data-text="about_Qualifikationen_Ausbildung_1"></li>
-                    <li data-text="about_Qualifikationen_Ausbildung_2"></li>
-                    <li data-text="about_Qualifikationen_Ausbildung_3"></li>
-                </ul>
-            </div>
+    });
 
-            <div>
-                <h3 data-text="about_Qualifikationen_Berufserfahrung_title"></h3>
-                <ul>
-                    <li data-text="about_Qualifikationen_Berufserfahrung_1"></li>
-                    <li data-text="about_Qualifikationen_Berufserfahrung_2"></li>
-                    <li data-text="about_Qualifikationen_Berufserfahrung_3"></li>
-                </ul>
-            </div>
 
-            <div>
-                <h3 data-text="about_Qualifikationen_Beratung_title"></h3>
-                <ul>
-                    <li data-text="about_Qualifikationen_Beratung_1"></li>
-                    <li data-text="about_Qualifikationen_Beratung_2"></li>
-                </ul>
-            </div>
 
-        </div>
+    let activeIndex = 0;
 
-    </div>
-</section>
-
-<section class="about-quote">
-    <div class="about-container">
-
-        <blockquote data-text="about_Zitat_text"></blockquote>
-
-        <p data-text="about_Zitat_untertitel"></p>
-
-    </div>
-</section>
-
-<section class="about-cta">
-
-    <h2 data-text="about_CTA_title"></h2>
-
-    <a href="contact.html" class="btn btn-primary" data-text="about_CTA_button"></a>
-
-</section>
-
-</main>
-
-<script src="js/header.js"></script>
-<script src="js/content-loader.js"></script>
-<script src="js/load-components.js"></script>
-
-</body>
-</html>
-
-
-============================================================
-DATEI: contact.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <title>Aufwind Beratung</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/contact.css">
-</head>
-<body data-page="contact">
-<main>
-<section class="contact-hero">
-    <div class="contact-hero-content">
-        <h1 data-text="contact_Hero_title"></h1>
-        <p data-text="contact_Hero_text"></p>
-    </div>
-</section>
-
-<section class="contact-cost">
-    <div class="contact-container">
-
-        <div class="contact-cost-card">
-
-            <h2 data-text="contact_Kosten_title"></h2>
-
-            <div class="contact-price-row">
-                <span data-text="contact_Kosten_erstgespraech"></span>
-                <strong data-text="contact_Kosten_erstgespraech_preis"></strong>
-            </div>
-
-            <div class="contact-price-row">
-                <span data-text="contact_Kosten_beratung"></span>
-                <strong data-text="contact_Kosten_beratung_preis"></strong>
-            </div>
-
-            <p data-text="contact_Kosten_info"></p>
-
-        </div>
-
-    </div>
-</section>
-
-<section class="contact-options">
-    <div class="contact-container">
-        <h2 data-text="contact_Kontaktmöglichkeiten_title"></h2>
-        <div class="contact-cards">
-
-            <article class="contact-card">
-                <div class="contact-icon">✉</div>
-                <h3 data-text="contact_Kontakt_1_title"></h3>
-                <p data-text="contact_Kontakt_1_text"></p>
-                <a href="mailto:beratung.aufwind@gmail.com" class="btn btn-primary" data-text="contact_Kontakt_1_button"></a>
-            </article>
-
-            <article class="contact-card">
-                <div class="contact-icon">☎</div>
-                <h3 data-text="contact_Kontakt_2_title"></h3>
-                <p data-text="contact_Kontakt_2_text"></p>
-                <p class="contact-small" data-text="contact_Kontakt_2_zeit"></p>
-            </article>
-
-            <article class="contact-card">
-                <div class="contact-icon">📍</div>
-                <h3 data-text="contact_Kontakt_3_title"></h3>
-                <p data-text="contact_Kontakt_3_text"></p>
-                <p class="contact-small" data-text="contact_Kontakt_3_untertitel"></p>
-            </article>
-
-        </div>
-    </div>
-</section>
-
-<section class="contact-process">
-    <div class="contact-container">
-        <h2 data-text="contact_Ablauf_title"></h2>
-        <div class="contact-steps">
-
-            <div class="contact-step">
-                <span>1</span>
-                <p data-text="contact_Schritt_1_title"></p>
-            </div>
-
-            <div class="contact-step">
-                <span>2</span>
-                <p data-text="contact_Schritt_2_title"></p>
-            </div>
-
-            <div class="contact-step">
-                <span>3</span>
-                <p data-text="contact_Schritt_3_title"></p>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<section class="contact-form-section">
-    <div class="contact-form-container">
-
-        <h2 data-text="contact_Formular_title"></h2>
-        <p class="contact-intro" data-text="contact_Formular_intro"></p>
-
-        <form
-            class="contact-form"
-            name="kontakt"
-            method="POST"
-            data-netlify="true"
-            netlify-honeypot="bot-field"
-            action="/success.html">
-
-            <p hidden>
-                <label>
-                    Nicht ausfüllen:
-                    <input name="bot-field">
-                </label>
+
+    if(stepId === "booking-step-date") {
+
+        activeIndex = 1;
+
+    }
+
+
+    if(stepId === "booking-step-data") {
+
+        activeIndex = 2;
+
+    }
+
+
+    if(stepId === "booking-step-summary") {
+
+        activeIndex = 3;
+
+    }
+
+
+
+    if(progressSteps[activeIndex]) {
+
+        progressSteps[activeIndex].classList.add("active");
+
+    }
+
+}
+
+async function loadServices() {
+
+    console.log("Lade Beratungsangebote...");
+
+
+
+    const { data, error } = await supabase
+
+        .from("services")
+
+        .select("*")
+
+        .eq("active", true)
+
+        .order("sort_order");
+
+
+
+
+    if(error) {
+
+
+        console.error(
+            "Fehler beim Laden der Services:",
+            error
+        );
+
+
+        showError(
+            "Die Beratungsangebote konnten gerade nicht geladen werden."
+        );
+
+
+        return;
+
+    }
+
+
+
+
+    if(!data || data.length === 0) {
+
+
+        showError(
+            "Aktuell sind keine Beratungsangebote verfügbar."
+        );
+
+
+        return;
+
+    }
+
+
+
+
+    console.log(
+        "Services geladen:",
+        data
+    );
+
+
+
+    servicesContainer.innerHTML = "";
+
+
+
+
+    data.forEach(service => {
+
+
+        const card = document.createElement("div");
+
+
+        card.className = "booking-service-card";
+
+
+
+        card.innerHTML = `
+
+
+            <h3>
+                ${service.title}
+            </h3>
+
+
+            <p>
+                ${service.description}
             </p>
 
-            <label for="name" data-text="contact_Formular_label_name"></label>
-            <input type="text" id="name" name="name" required>
 
-            <label for="email" data-text="contact_Formular_label_email"></label>
-            <input type="email" id="email" name="email" required>
+            <div class="service-info">
 
-            <label for="topic" data-text="contact_Formular_label_topic"></label>
-            <select id="topic" name="topic">
-                <option data-text="contact_Formular_option_1"></option>
-                <option data-text="contact_Formular_option_2"></option>
-                <option data-text="contact_Formular_option_3"></option>
-                <option data-text="contact_Formular_option_4"></option>
-            </select>
+                <span>
+                    ⏱ ${service.duration} Minuten
+                </span>
 
-            <label for="contact-type" data-text="contact_Formular_label_contact_type"></label>
-            <select id="contact-type" name="contact-type">
-                <option data-text="contact_Formular_option_email"></option>
-                <option data-text="contact_Formular_option_phone"></option>
-            </select>
 
-            <label for="message" data-text="contact_Formular_label_message"></label>
-            <textarea id="message" name="message" rows="5" required></textarea>
+                <span>
+                    💶 ${service.price} €
+                </span>
 
-            <p class="privacy-note" data-text="contact_Formular_privacy"></p>
 
-            <button type="submit" class="btn btn-primary contact-submit" data-text="contact_Formular_button"></button>
+            </div>
 
-        </form>
 
-        <div class="faq-link">
-            <p data-text="contact_FAQ_Link_text"></p>
-            <a href="faq.html" data-text="contact_FAQ_Link_link"></a>
-        </div>
+            <button
+                class="btn btn-primary select-service-button"
+            >
+                Auswählen
+            </button>
 
-    </div>
-</section>
-</main>
 
-<script src="js/header.js"></script>
-<script src="js/load-components.js"></script>
-<script src="js/content-loader.js"></script>
-</body>
-</html>
+        `;
 
+
+
+        servicesContainer.appendChild(card);
+
+
+        const button = card.querySelector(".select-service-button");
+
+
+        button.addEventListener("click", () => {
+
+
+            document
+                .querySelectorAll(".booking-service-card")
+                .forEach(card => {
+                    card.classList.remove("selected");
+                });
+
+
+            card.classList.add("selected");
+
+
+            bookingState.selectedService = {
+
+                id: service.id,
+                title: service.title,
+                duration: service.duration,
+                price: service.price
+
+            };
+
+
+            console.log(
+                "Ausgewählte Beratung:",
+                bookingState.selectedService
+            );
+
+
+            showStep("booking-step-date");
+
+
+        });
+
+    });
+
+}
+
+let currentDate = new Date();
+
+function renderCalendar(){
+
+    const monthTitle = document.getElementById("current-month");
+    const daysContainer = document.getElementById("calendar-days");
+
+
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+
+    const monthName = currentDate.toLocaleDateString(
+        "de-DE",
+        {
+            month: "long",
+            year: "numeric"
+        }
+    );
+
+
+    monthTitle.textContent = monthName;
+
+
+
+    daysContainer.innerHTML = "";
+
+
+
+    const firstDay = new Date(
+        year,
+        month,
+        1
+    );
+
+
+    let startDay = firstDay.getDay();
+
+
+    // Sonntag = 0 → auf Montag verschieben
+    if(startDay === 0){
+        startDay = 7;
+    }
+
+
+
+    const daysInMonth = new Date(
+        year,
+        month + 1,
+        0
+    ).getDate();
+
+
+
+    // Leere Felder vor dem ersten Tag
+
+    for(let i = 1; i < startDay; i++){
+
+        const empty = document.createElement("div");
+
+        empty.className = "calendar-day empty";
+
+        daysContainer.appendChild(empty);
+
+    }
+
+
+
+    // Tage erstellen
+
+    for(let day = 1; day <= daysInMonth; day++){
+
+
+        const dayElement = document.createElement("button");
+
+
+        dayElement.className = "calendar-day";
+
+
+        dayElement.textContent = day;
+
+
+
+        dayElement.addEventListener(
+            "click",
+            ()=>{
+
+
+                document
+                .querySelectorAll(".calendar-day")
+                .forEach(day => {
+
+                    day.classList.remove("selected");
+
+                });
+
+
+
+                dayElement.classList.add("selected");
+
+
+
+                bookingState.selectedDate =
+                    new Date(
+                        year,
+                        month,
+                        day
+                    );
+
+
+                console.log(
+                    "Ausgewähltes Datum:",
+                    bookingState.selectedDate
+                );
+
+
+            }
+        );
+
+
+        daysContainer.appendChild(dayElement);
+
+
+    }
+
+}
+
+let currentDate = new Date();
+
+function renderCalendar(){
+
+    const monthTitle = document.getElementById("current-month");
+    const daysContainer = document.getElementById("calendar-days");
+
+
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+
+    const monthName = currentDate.toLocaleDateString(
+        "de-DE",
+        {
+            month: "long",
+            year: "numeric"
+        }
+    );
+
+
+    monthTitle.textContent = monthName;
+
+
+
+    daysContainer.innerHTML = "";
+
+
+
+    const firstDay = new Date(
+        year,
+        month,
+        1
+    );
+
+
+    let startDay = firstDay.getDay();
+
+
+    // Sonntag = 0 → auf Montag verschieben
+    if(startDay === 0){
+        startDay = 7;
+    }
+
+
+
+    const daysInMonth = new Date(
+        year,
+        month + 1,
+        0
+    ).getDate();
+
+
+
+    // Leere Felder vor dem ersten Tag
+
+    for(let i = 1; i < startDay; i++){
+
+        const empty = document.createElement("div");
+
+        empty.className = "calendar-day empty";
+
+        daysContainer.appendChild(empty);
+
+    }
+
+
+
+    // Tage erstellen
+
+    for(let day = 1; day <= daysInMonth; day++){
+
+
+        const dayElement = document.createElement("button");
+
+
+        dayElement.className = "calendar-day";
+
+
+        dayElement.textContent = day;
+
+
+
+        dayElement.addEventListener(
+            "click",
+            ()=>{
+
+
+                document
+                .querySelectorAll(".calendar-day")
+                .forEach(day => {
+
+                    day.classList.remove("selected");
+
+                });
+
+
+
+                dayElement.classList.add("selected");
+
+
+
+                bookingState.selectedDate =
+                    new Date(
+                        year,
+                        month,
+                        day
+                    );
+
+
+                console.log(
+                    "Ausgewähltes Datum:",
+                    bookingState.selectedDate
+                );
+
+
+            }
+        );
+
+
+        daysContainer.appendChild(dayElement);
+
+
+    }
+
+}
+
+loadServices();
+
+renderCalendar();
 
 ============================================================
-DATEI: faq.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <title>Aufwind Beratung</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/faq-page.css">
-</head>
-
-<body data-page="faq">
-
-<main>
-
-    <section class="faq-hero">
-
-        <div class="faq-hero-content">
-
-            <h1 data-text="faq_Hero_title"></h1>
-
-            <p data-text="faq_Hero_text"></p>
-
-        </div>
-
-    </section>
-
-
-    <section class="faq-section">
-
-        <div class="faq-container">
-
-            <h2 data-text="faq_FAQ_title"></h2>
-
-            <div class="faq-list">
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_1_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_1_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_2_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_2_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_3_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_3_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_4_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_4_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_5_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_5_answer"></p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="faq-item">
-
-                    <button class="faq-question" data-text="faq_FAQ_6_question"></button>
-
-                    <div class="faq-answer">
-
-                        <p data-text="faq_FAQ_6_answer"></p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="faq-cta">
-
-        <div class="faq-container">
-
-            <h2 data-text="faq_CTA_title"></h2>
-
-            <p data-text="faq_CTA_text"></p>
-
-            <a href="contact.html" class="btn btn-primary" data-text="faq_CTA_button"></a>
-
-        </div>
-
-    </section>
-
-</main>
-
-
-<script src="js/header.js"></script>
-<script src="js/faq.js"></script>
-<script src="js/load-components.js"></script>
-<script src="js/content-loader.js"></script>
-
-</body>
-</html>
-
-
-============================================================
-DATEI: index.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-
-<head>
-    <title>Aufwind Beratung</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/hero.css">
-    <link rel="stylesheet" href="css/services.css">
-    <link rel="stylesheet" href="css/about.css">
-    <link rel="stylesheet" href="css/process.css">
-    <link rel="stylesheet" href="css/faq.css">
-</head>
-
-<body data-page="index">
-
-<section class="hero">
-
-    <div class="hero-content">
-
-        <h1 data-text="index_Hero_title"></h1>
-
-        <p data-text="index_Hero_text"></p>
-
-        <div class="hero-buttons">
-
-            <a href="contact.html" class="btn btn-primary" data-text="index_Hero_button1"></a>
-
-            <a href="services.html" class="btn btn-secondary" data-text="index_Hero_button2"></a>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="services-section">
-
-    <div class="services-container">
-
-        <h2 data-text="index_Leistungen_title"></h2>
-
-        <p class="services-intro" data-text="index_Leistungen_intro"></p>
-
-        <div class="services-grid">
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="index_Leistung_1_title"></h3>
-
-                    <p data-text="index_Leistung_1_text"></p>
-
-                    <a href="services.html" class="btn btn-primary" data-text="index_Leistung_1_button"></a>
-
-                </div>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="index_Leistung_2_title"></h3>
-
-                    <p data-text="index_Leistung_2_text"></p>
-
-                    <a href="services.html" class="btn btn-primary" data-text="index_Leistung_2_button"></a>
-
-                </div>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="index_Leistung_3_title"></h3>
-
-                    <p data-text="index_Leistung_3_text"></p>
-
-                    <a href="services.html" class="btn btn-primary" data-text="index_Leistung_3_button"></a>
-
-                </div>
-
-            </article>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="about-section">
-
-    <div class="about-container">
-
-        <div class="about-content">
-
-            <h2 data-text="index_Ueber_mich_title"></h2>
-
-            <p data-text="index_Ueber_mich_text1"></p>
-
-            <p data-text="index_Ueber_mich_text2"></p>
-
-            <a href="about.html" class="btn btn-primary" data-text="index_Ueber_mich_button"></a>
-
-        </div>
-
-
-        <div class="about-image">
-
-            <img src="https://placehold.co/800x600?text=Aufwind+Beratung"
-                alt="Aufwind Beratung">
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="process-section">
-
-    <div class="process-container">
-
-        <h2 data-text="index_Ablauf_title"></h2>
-
-        <p class="process-intro" data-text="index_Ablauf_intro"></p>
-
-
-        <div class="process-grid">
-
-
-            <article class="process-step">
-
-                <div class="step-number">1</div>
-
-                <h3 data-text="index_Schritt_1_title"></h3>
-
-                <p data-text="index_Schritt_1_text"></p>
-
-            </article>
-
-
-            <article class="process-step">
-
-                <div class="step-number">2</div>
-
-                <h3 data-text="index_Schritt_2_title"></h3>
-
-                <p data-text="index_Schritt_2_text"></p>
-
-            </article>
-
-
-            <article class="process-step">
-
-                <div class="step-number">3</div>
-
-                <h3 data-text="index_Schritt_3_title"></h3>
-
-                <p data-text="index_Schritt_3_text"></p>
-
-            </article>
-
-
-            <article class="process-step">
-
-                <div class="step-number">4</div>
-
-                <h3 data-text="index_Schritt_4_title"></h3>
-
-                <p data-text="index_Schritt_4_text"></p>
-
-            </article>
-
-
-        </div>
-
-
-        <p class="process-ending" data-text="index_Ablauf_ending"></p>
-
-        <a href="contact.html" class="btn btn-primary" data-text="index_Ablauf_button"></a>
-
-
-    </div>
-
-</section>
-
-
-<section class="faq-section">
-
-    <div class="faq-container">
-
-        <h2 data-text="index_FAQ_title"></h2>
-
-        <p class="faq-intro" data-text="index_FAQ_intro"></p>
-
-
-        <div class="faq">
-
-
-            <div class="faq-item">
-
-                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_1_question"></button>
-
-                <div class="faq-answer">
-
-                    <p data-text="index_FAQ_1_answer"></p>
-
-                </div>
-
-            </div>
-
-
-            <div class="faq-item">
-
-                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_2_question"></button>
-
-                <div class="faq-answer">
-
-                    <p data-text="index_FAQ_2_answer"></p>
-
-                </div>
-
-            </div>
-
-
-            <div class="faq-item">
-
-                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_3_question"></button>
-
-                <div class="faq-answer">
-
-                    <p data-text="index_FAQ_3_answer"></p>
-
-                </div>
-
-            </div>
-
-
-            <div class="faq-item">
-
-                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_4_question"></button>
-
-                <div class="faq-answer">
-
-                    <p data-text="index_FAQ_4_answer"></p>
-
-                </div>
-
-            </div>
-
-
-            <div class="faq-item">
-
-                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_5_question"></button>
-
-                <div class="faq-answer">
-
-                    <p data-text="index_FAQ_5_answer"></p>
-
-                </div>
-
-            </div>
-
-
-            <div class="faq-item">
-
-                <button class="faq-question" aria-expanded="false" data-text="index_FAQ_6_question"></button>
-
-                <div class="faq-answer">
-
-                    <p data-text="index_FAQ_6_answer"></p>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        <div class="faq-cta">
-
-            <h3 data-text="index_FAQ_CTA_title"></h3>
-
-            <p data-text="index_FAQ_CTA_text"></p>
-
-            <a href="contact.html" class="btn btn-primary" data-text="index_FAQ_CTA_button"></a>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-<script src="js/header.js"></script>
-<script src="js/faq.js"></script>
-<script src="js/load-components.js"></script>
-<script src="js/content-loader.js"></script>
-
-</body>
-</html>
-
-
-============================================================
-DATEI: services.html
+DATEI: booking.html
 ============================================================
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
-    <title>Beratungsangebote | Aufwind Beratung</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/services-page.css">
-</head>
-
-<body data-page="services">
-
-<main>
-
-<section class="services-hero">
-
-    <div class="services-hero-content">
-
-        <h1 data-text="services_Hero_title"></h1>
-
-        <p data-text="services_Hero_text"></p>
-
-    </div>
-
-</section>
-
-
-<section class="services-overview">
-
-    <div class="services-container">
-
-        <h2 data-text="services_Uebersicht_title"></h2>
-
-        <div class="services-cards">
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Angebot_1_title"></h3>
-
-                    <p data-text="services_Angebot_1_text"></p>
-
-                </div>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Angebot_2_title"></h3>
-
-                    <p data-text="services_Angebot_2_text"></p>
-
-                </div>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Angebot_3_title"></h3>
-
-                    <p data-text="services_Angebot_3_text"></p>
-
-                </div>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Angebot_4_title"></h3>
-
-                    <p data-text="services_Angebot_4_text"></p>
-
-                </div>
-
-            </article>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="services-approach">
-
-    <div class="services-container">
-
-        <h2 data-text="services_Beratungsansatz_title"></h2>
-
-        <div class="services-cards">
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Ansatz_1_title"></h3>
-
-                    <p data-text="services_Ansatz_1_text"></p>
-
-                </div>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Ansatz_2_title"></h3>
-
-                    <p data-text="services_Ansatz_2_text"></p>
-
-                </div>
-
-            </article>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="services-form">
-
-    <div class="services-container">
-
-        <h2 data-text="services_Beratungsformen_title"></h2>
-
-        <div class="services-cards">
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Form_1_title"></h3>
-
-                    <p data-text="services_Form_1_text"></p>
-
-                </div>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="service-content">
-
-                    <h3 data-text="services_Form_2_title"></h3>
-
-                    <p data-text="services_Form_2_text"></p>
-
-                </div>
-
-            </article>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="services-cost">
-
-    <div class="services-container">
-
-        <h2 data-text="services_Kosten_title"></h2>
-
-        <p data-text="services_Kosten_text"></p>
-
-    </div>
-
-</section>
-
-
-<section class="services-process">
-
-    <div class="services-container">
-
-        <h2 data-text="services_Ablauf_title"></h2>
-
-        <div class="services-steps">
-
-            <div class="services-step">
-
-                <span>1</span>
-
-                <h3 data-text="services_Schritt_1_title"></h3>
-
-                <p data-text="services_Schritt_1_text"></p>
-
-            </div>
-
-
-            <div class="services-step">
-
-                <span>2</span>
-
-                <h3 data-text="services_Schritt_2_title"></h3>
-
-                <p data-text="services_Schritt_2_text"></p>
-
-            </div>
-
-
-            <div class="services-step">
-
-                <span>3</span>
-
-                <h3 data-text="services_Schritt_3_title"></h3>
-
-                <p data-text="services_Schritt_3_text"></p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="services-cta">
-
-    <div class="services-container">
-
-        <h2 data-text="services_CTA_title"></h2>
-
-        <a href="contact.html" class="btn btn-primary" data-text="services_CTA_button"></a>
-
-    </div>
-
-</section>
-
-</main>
-
-<script src="js/header.js"></script>
-<script src="js/load-components.js"></script>
-<script src="js/content-loader.js"></script>
-
-</body>
-</html>
-
-
-============================================================
-DATEI: success.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vielen Dank | Aufwind Beratung</title>
+
+    <title>Termin buchen | Aufwind Beratung</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/success.css">
+    <link rel="stylesheet" href="css/booking-page.css">
+
 </head>
 
-<body>
+<body data-page="booking">
 
 <main>
 
-<section class="success">
+<section class="booking-hero">
 
-    <div class="success-card">
-
-        <div class="success-icon">
-            ✅
-        </div>
+    <div class="booking-container">
 
         <h1>
-            Vielen Dank für Ihre Nachricht!
+            Termin buchen
         </h1>
 
         <p>
-            Ihre Anfrage wurde erfolgreich übermittelt.
+            Wählen Sie Schritt für Schritt Ihren passenden Termin.
         </p>
 
-        <p>
-            Ich werde mich so schnell wie möglich bei Ihnen melden. In der Regel erhalten Sie innerhalb von 1–2 Werktagen eine Rückmeldung.
-        </p>
+    </div>
 
-        <p>
-            Falls Sie innerhalb weniger Tage keine Antwort erhalten, schauen Sie bitte auch in Ihrem Spam-Ordner nach.
-        </p>
+</section>
 
-        <a href="index.html" class="btn btn-primary">
-            Zur Startseite
-        </a>
+<section class="booking-process">
+
+    <div class="booking-container">
+
+
+        <!-- Fortschritt -->
+
+        <div class="booking-progress">
+
+            <div class="progress-step active">
+                1. Beratung
+            </div>
+
+            <div class="progress-step">
+                2. Termin
+            </div>
+
+            <div class="progress-step">
+                3. Daten
+            </div>
+
+            <div class="progress-step">
+                4. Bestätigung
+            </div>
+
+        </div>
+
+
+
+        <!-- Schritt 1 -->
+
+        <div class="booking-step active" id="booking-step-service">
+
+
+            <h2>
+                Ihre Beratung
+            </h2>
+
+
+            <div id="services-list">
+
+                <p>
+                    Beratungsangebote werden geladen...
+                </p>
+
+            </div>
+
+
+            <button class="btn btn-primary next-step">
+                Weiter
+            </button>
+
+
+        </div>
+
+
+
+
+        <!-- Schritt 2 -->
+
+        <div class="booking-step" id="booking-step-date">
+
+
+            <h2>
+                Datum & Uhrzeit auswählen
+            </h2>
+
+
+            <div id="calendar-container">
+
+                <div class="calendar-header">
+
+                    <button id="previous-month">
+                        ←
+                    </button>
+
+                    <h3 id="current-month">
+                        Monat Jahr
+                    </h3>
+
+                    <button id="next-month">
+                        →
+                    </button>
+
+                </div>
+
+
+                <div class="calendar-weekdays">
+
+                    <div>Mo</div>
+                    <div>Di</div>
+                    <div>Mi</div>
+                    <div>Do</div>
+                    <div>Fr</div>
+                    <div>Sa</div>
+                    <div>So</div>
+
+                </div>
+
+
+                <div id="calendar-days">
+
+                </div>
+
+
+            </div>
+
+
+            <button class="btn btn-secondary previous-step">
+                Zurück
+            </button>
+
+
+            <button class="btn btn-primary next-step">
+                Weiter
+            </button>
+
+
+        </div>
+
+
+
+
+
+        <!-- Schritt 3 -->
+
+        <div class="booking-step" id="booking-step-data">
+
+
+            <h2>
+                Ihre Daten
+            </h2>
+
+
+            <div id="booking-form-container">
+
+                <p>
+                    Formular wird später hinzugefügt.
+                </p>
+
+            </div>
+
+
+            <button class="btn btn-secondary previous-step">
+                Zurück
+            </button>
+
+
+            <button class="btn btn-primary next-step">
+                Weiter
+            </button>
+
+
+        </div>
+
+
+
+
+
+        <!-- Schritt 4 -->
+
+        <div class="booking-step" id="booking-step-summary">
+
+
+            <h2>
+                Zusammenfassung
+            </h2>
+
+
+            <div id="booking-summary">
+
+                <p>
+                    Zusammenfassung wird später angezeigt.
+                </p>
+
+            </div>
+
+
+            <button class="btn btn-secondary previous-step">
+                Zurück
+            </button>
+
+
+            <button class="btn btn-primary">
+                Termin bestätigen
+            </button>
+
+
+        </div>
+
 
     </div>
 
@@ -1263,7 +784,8 @@ DATEI: success.html
 
 <script src="js/header.js"></script>
 <script src="js/load-components.js"></script>
+<script type="module" src="js/booking.js"></script>
 
 </body>
-</html>
 
+</html>

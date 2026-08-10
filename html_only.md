@@ -1,4 +1,3 @@
-
 ============================================================
 DATEI: about.html
 ============================================================
@@ -15,6 +14,7 @@ DATEI: about.html
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/about-page.css">
+
 </head>
 
 <body>
@@ -427,7 +427,6 @@ DATEI: about.html
 
 </html>
 
-
 ============================================================
 DATEI: contact.html
 ============================================================
@@ -443,6 +442,7 @@ DATEI: contact.html
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/contact.css">
+
 </head>
 
 <body>
@@ -612,7 +612,7 @@ DATEI: contact.html
                         Name
                     </label>
 
-                    <input 
+                    <input
                         type="text"
                         id="name"
                         name="name"
@@ -624,7 +624,7 @@ DATEI: contact.html
                         E-Mail
                     </label>
 
-                    <input 
+                    <input
                         type="email"
                         id="email"
                         name="email"
@@ -680,7 +680,7 @@ DATEI: contact.html
                         Nachricht
                     </label>
 
-                    <textarea 
+                    <textarea
                         id="message"
                         name="message"
                         rows="5"
@@ -723,9 +723,9 @@ DATEI: contact.html
 
     <script src="js/header.js"></script>
     <script src="js/load-components.js"></script>
+
 </body>
 </html>
-
 
 ============================================================
 DATEI: faq.html
@@ -742,6 +742,7 @@ DATEI: faq.html
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/faq-page.css">
+
 </head>
 
 <body>
@@ -901,9 +902,7 @@ DATEI: faq.html
 
     </section>
 
-
 </main>
-
 
 <script src="js/header.js"></script>
 <script src="js/faq.js"></script>
@@ -911,7 +910,6 @@ DATEI: faq.html
 
 </body>
 </html>
-
 
 ============================================================
 DATEI: index.html
@@ -933,6 +931,7 @@ DATEI: index.html
     <link rel="stylesheet" href="css/about.css">
     <link rel="stylesheet" href="css/process.css">
     <link rel="stylesheet" href="css/faq.css">
+
 </head>
 
 <body>
@@ -956,7 +955,6 @@ DATEI: index.html
     </div>
 
 </section>
-
 
 <section class="services-section">
 
@@ -1029,7 +1027,6 @@ DATEI: index.html
 
 </section>
 
-
 <section class="about-section">
 
     <div class="about-container">
@@ -1057,7 +1054,6 @@ DATEI: index.html
     </div>
 
 </section>
-
 
 <section class="process-section">
 
@@ -1126,7 +1122,6 @@ DATEI: index.html
     </div>
 
 </section>
-
 
 <section class="faq-section">
 
@@ -1236,7 +1231,6 @@ DATEI: index.html
 
 </section>
 
-
 <script src="js/header.js"></script>
 <script src="js/faq.js"></script>
 <script src="js/load-components.js"></script>
@@ -1244,7 +1238,6 @@ DATEI: index.html
 
 </body>
 </html>
-
 
 ============================================================
 DATEI: services.html
@@ -1262,6 +1255,7 @@ DATEI: services.html
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/services-page.css">
+
 </head>
 
 <body>
@@ -1652,13 +1646,10 @@ DATEI: services.html
 
     </section>
 
-
 </main>
-
 
 <script src="js/header.js"></script>
 <script src="js/load-components.js"></script>
 
 </body>
 </html>
-

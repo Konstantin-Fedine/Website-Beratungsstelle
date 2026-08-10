@@ -1,45 +1,43 @@
 /* Hero */
 
 .services-hero {
-    padding:90px 20px;
-    background:linear-gradient(
-        135deg,
-        var(--color-background),
-        var(--color-primary-soft)
-    );
-    text-align:center;
+  padding: 90px 20px;
+  background: linear-gradient(
+    135deg,
+    var(--color-background),
+    var(--color-primary-soft)
+  );
+  text-align: center;
 }
 
 .services-hero-content {
-    max-width:800px;
-    margin:0 auto;
+  max-width: 800px;
+  margin: 0 auto;
 
-    opacity:0;
-    transform:translateY(20px);
+  opacity: 0;
+  transform: translateY(20px);
 
-    animation:fadeUp .8s ease forwards;
+  animation: fadeUp 0.8s ease forwards;
 }
 
 .services-hero h1 {
-    margin-bottom:20px;
+  margin-bottom: 20px;
 
-    color:var(--color-dark);
+  color: var(--color-dark);
 
-    font-size:2.3rem;
+  font-size: 2.3rem;
 }
 
 .services-hero p {
-    color:var(--color-text-muted);
-    line-height:1.7;
+  color: var(--color-text-muted);
+  line-height: 1.7;
 }
-
-
 
 /* Allgemein */
 
 .services-container {
-    max-width:var(--container-width);
-    margin:0 auto;
+  max-width: var(--container-width);
+  margin: 0 auto;
 }
 
 .services-overview,
@@ -48,236 +46,212 @@
 .services-cost,
 .services-process,
 .services-cta {
-    padding:80px 20px;
+  padding: 80px 20px;
 }
 
 .services-container h2 {
-    margin-bottom:40px;
+  margin-bottom: 40px;
 
-    color:var(--color-dark);
+  color: var(--color-dark);
 
-    text-align:center;
+  text-align: center;
 }
-
-
 
 /* Karten */
 
 .services-cards {
-    display:grid;
-    grid-template-columns:1fr;
+  display: grid;
+  grid-template-columns: 1fr;
 
-    gap:25px;
+  gap: 25px;
 }
 
 .service-card {
-    overflow:hidden;
+  overflow: hidden;
 
-    background:var(--color-surface);
+  background: var(--color-surface);
 
-    border-radius:var(--radius);
+  border-radius: var(--radius);
 
-    box-shadow:var(--shadow);
+  box-shadow: var(--shadow);
 
-    transition:var(--transition);
+  transition: var(--transition);
 }
 
 .service-card:hover {
-    transform:translateY(-5px);
+  transform: translateY(-5px);
 }
 
 .service-card img {
-    width:100%;
-    height:220px;
+  width: 100%;
+  height: 220px;
 
-    object-fit:cover;
+  object-fit: cover;
 }
 
 .service-content {
-    padding:30px 25px;
+  padding: 30px 25px;
 
-    text-align:center;
+  text-align: center;
 }
 
 .service-card h3 {
-    margin-bottom:15px;
+  margin-bottom: 15px;
 
-    color:var(--color-dark);
+  color: var(--color-dark);
 }
 
 .service-card p {
-    color:var(--color-text-muted);
+  color: var(--color-text-muted);
 
-    line-height:1.6;
+  line-height: 1.6;
 }
-
-
 
 /* Beratungsansatz */
 
 .services-approach {
-    background:var(--color-background);
+  background: var(--color-background);
 }
 
 .services-approach .services-cards {
-    justify-content:center;
+  justify-content: center;
 }
-
-
 
 /* Beratungsformen */
 
 .services-form {
-    background:var(--color-surface);
+  background: var(--color-surface);
 }
-
-
 
 /* Kosten */
 
 .services-cost {
-    background:var(--color-background);
+  background: var(--color-background);
 
-    text-align:center;
+  text-align: center;
 }
 
 .services-cost p {
-    max-width:800px;
-    margin:0 auto;
+  max-width: 800px;
+  margin: 0 auto;
 
-    color:var(--color-text-muted);
+  color: var(--color-text-muted);
 
-    line-height:1.7;
+  line-height: 1.7;
 }
-
-
 
 /* Ablauf */
 
 .services-process {
-    background:var(--color-surface);
+  background: var(--color-surface);
 }
 
 .services-steps {
-    display:grid;
-    grid-template-columns:1fr;
+  display: grid;
+  grid-template-columns: 1fr;
 
-    gap:45px;
+  gap: 45px;
 }
 
 .services-step {
-    position:relative;
+  position: relative;
 
-    text-align:center;
+  text-align: center;
 }
 
 .services-step span {
-    display:flex;
-    justify-content:center;
-    align-items:center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    width:60px;
-    height:60px;
+  width: 60px;
+  height: 60px;
 
-    margin:0 auto 20px;
+  margin: 0 auto 20px;
 
-    background:var(--color-primary);
+  background: var(--color-primary);
 
-    color:var(--color-dark);
+  color: var(--color-dark);
 
-    border-radius:50%;
+  border-radius: 50%;
 
-    font-size:1.3rem;
-    font-weight:700;
+  font-size: 1.3rem;
+  font-weight: 700;
 
-    transition:var(--transition);
+  transition: var(--transition);
 }
 
 .services-step:hover span {
-    transform:scale(1.1);
+  transform: scale(1.1);
 }
 
 .services-step h3 {
-    margin-bottom:15px;
+  margin-bottom: 15px;
 
-    color:var(--color-dark);
+  color: var(--color-dark);
 }
 
 .services-step p {
-    color:var(--color-text-muted);
+  color: var(--color-text-muted);
 
-    line-height:1.6;
+  line-height: 1.6;
 }
-
-
 
 /* CTA */
 
 .services-cta {
-    background:var(--color-dark);
+  background: var(--color-dark);
 
-    text-align:center;
+  text-align: center;
 }
 
 .services-cta h2 {
-    color:var(--color-text-light);
+  color: var(--color-text-light);
 }
-
 
 /* Animation */
 
 @keyframes fadeUp {
-
-    to {
-        opacity:1;
-        transform:translateY(0);
-    }
-
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-
 
 /* Desktop */
 
-@media(min-width:1024px) {
+@media (min-width: 1024px) {
+  .services-hero h1 {
+    font-size: 3.5rem;
+  }
 
-    .services-hero h1 {
-        font-size:3.5rem;
-    }
+  .services-cards {
+    grid-template-columns: repeat(2, 1fr);
 
+    max-width: 1000px;
+    margin: 0 auto;
+  }
 
-    .services-cards {
-        grid-template-columns:repeat(2,1fr);
+  .services-overview .services-cards {
+    grid-template-columns: repeat(4, 1fr);
 
-        max-width:1000px;
-        margin:0 auto;
-    }
+    max-width: none;
+  }
 
+  .services-approach .services-cards,
+  .services-form .services-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-    .services-overview .services-cards {
-        grid-template-columns:repeat(4,1fr);
+  .services-steps {
+    grid-template-columns: repeat(3, 1fr);
 
-        max-width:none;
-    }
+    gap: 30px;
+  }
 
-
-    .services-approach .services-cards,
-    .services-form .services-cards {
-        grid-template-columns:repeat(2,1fr);
-    }
-
-
-    .services-steps {
-        grid-template-columns:repeat(3,1fr);
-
-        gap:30px;
-    }
-
-
-    .services-step {
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-    }
-
+  .services-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }

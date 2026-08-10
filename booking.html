@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Termin buchen | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="css/booking-page.css" />
+  </head>
+
+  <body data-page="booking">
+    <main>
+      <section class="booking-hero">
+        <div class="booking-container">
+          <h1>Termin buchen</h1>
+
+          <p>Wählen Sie Schritt für Schritt Ihren passenden Termin.</p>
+        </div>
+      </section>
+
+      <section class="booking-process">
+        <div class="booking-container">
+          <!-- Fortschritt -->
+
+          <div class="booking-progress">
+            <div class="progress-step active">1. Beratung</div>
+
+            <div class="progress-step">2. Termin</div>
+
+            <div class="progress-step">3. Daten</div>
+
+            <div class="progress-step">4. Bestätigung</div>
+          </div>
+
+          <!-- Schritt 1 -->
+
+          <div class="booking-step active" id="booking-step-service">
+            <h2>Ihre Beratung</h2>
+
+            <div id="services-list">
+              <p>Beratungsangebote werden geladen...</p>
+            </div>
+
+            <button class="btn btn-primary next-step">Weiter</button>
+          </div>
+
+          <!-- Schritt 2 -->
+
+          <div class="booking-step" id="booking-step-date">
+            <h2>Datum & Uhrzeit auswählen</h2>
+
+            <div id="calendar-container">
+              <div class="calendar-header">
+                <button id="previous-month">←</button>
+
+                <h3 id="current-month">Monat Jahr</h3>
+
+                <button id="next-month">→</button>
+              </div>
+
+              <div class="calendar-weekdays">
+                <div>Mo</div>
+                <div>Di</div>
+                <div>Mi</div>
+                <div>Do</div>
+                <div>Fr</div>
+                <div>Sa</div>
+                <div>So</div>
+              </div>
+
+              <div id="calendar-days"></div>
+            </div>
+
+            <button class="btn btn-secondary previous-step">Zurück</button>
+
+            <button class="btn btn-primary next-step">Weiter</button>
+          </div>
+
+          <!-- Schritt 3 -->
+
+          <div class="booking-step" id="booking-step-data">
+            <h2>Ihre Daten</h2>
+
+            <div id="booking-form-container">
+              <p>Formular wird später hinzugefügt.</p>
+            </div>
+
+            <button class="btn btn-secondary previous-step">Zurück</button>
+
+            <button class="btn btn-primary next-step">Weiter</button>
+          </div>
+
+          <!-- Schritt 4 -->
+
+          <div class="booking-step" id="booking-step-summary">
+            <h2>Zusammenfassung</h2>
+
+            <div id="booking-summary">
+              <p>Zusammenfassung wird später angezeigt.</p>
+            </div>
+
+            <button class="btn btn-secondary previous-step">Zurück</button>
+
+            <button class="btn btn-primary">Termin bestätigen</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/header.js"></script>
+    <script src="js/load-components.js"></script>
+    <script type="module" src="js/booking.js"></script>
+  </body>
+</html>

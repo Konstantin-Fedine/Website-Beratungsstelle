@@ -1,40 +1,29 @@
 function initFAQ() {
+  const faqItems = document.querySelectorAll(".faq-item");
 
-    const faqItems = document.querySelectorAll(".faq-item");
+  faqItems.forEach((item) => {
+    const button = item.querySelector(".faq-question");
 
-    faqItems.forEach(item => {
+    if (!button) return;
 
-        const button = item.querySelector(".faq-question");
+    button.addEventListener("click", () => {
+      const isOpen = item.classList.contains("is-open");
 
-        if (!button) return;
+      faqItems.forEach((faq) => {
+        faq.classList.remove("is-open");
 
-        button.addEventListener("click", () => {
+        const faqButton = faq.querySelector(".faq-question");
 
-            const isOpen = item.classList.contains("is-open");
+        if (faqButton) {
+          faqButton.setAttribute("aria-expanded", "false");
+        }
+      });
 
-            faqItems.forEach(faq => {
+      if (!isOpen) {
+        item.classList.add("is-open");
 
-                faq.classList.remove("is-open");
-
-                const faqButton = faq.querySelector(".faq-question");
-
-                if (faqButton) {
-                    faqButton.setAttribute("aria-expanded", "false");
-                }
-
-            });
-
-
-            if (!isOpen) {
-
-                item.classList.add("is-open");
-
-                button.setAttribute("aria-expanded", "true");
-
-            }
-
-        });
-
+        button.setAttribute("aria-expanded", "true");
+      }
     });
-
+  });
 }

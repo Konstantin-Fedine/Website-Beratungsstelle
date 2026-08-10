@@ -1,56 +1,47 @@
 import { supabase } from "./supabase.js";
 
-
 async function loadServices() {
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .eq("active", true)
+    .order("sort_order");
 
-    const { data, error } = await supabase
-        .from("services")
-        .select("*")
-        .eq("active", true)
-        .order("sort_order");
+  if (error) {
+    console.error("Fehler beim Laden der Services:", error);
 
+    const container = document.querySelector("#services-container");
 
-    if (error) {
-
-        console.error("Fehler beim Laden der Services:", error);
-
-        const container = document.querySelector("#services-container");
-
-        container.innerHTML = `
+    container.innerHTML = `
             <p>
                 Die Angebote konnten gerade nicht geladen werden.
                 Bitte versuchen Sie es später erneut.
             </p>
         `;
 
-        return;
-    }
+    return;
+  }
 
+  const container = document.querySelector("#services-container");
 
-    const container = document.querySelector("#services-container");
+  container.innerHTML = "";
 
-    container.innerHTML = "";
-
-    if (data.length === 0) {
-
-        container.innerHTML = `
+  if (data.length === 0) {
+    container.innerHTML = `
             <p>
                 Aktuell sind keine Beratungsangebote verfügbar.
             </p>
         `;
 
-        return;
-    }
+    return;
+  }
 
+  data.forEach((service) => {
+    const card = document.createElement("article");
 
-    data.forEach(service => {
+    card.className = "service-card";
 
-        const card = document.createElement("article");
-
-        card.className = "service-card";
-
-
-        card.innerHTML = `
+    card.innerHTML = `
             <div class="service-content">
 
                 <h3>${service.title}</h3>
@@ -68,12 +59,8 @@ async function loadServices() {
             </div>
         `;
 
-
-        container.appendChild(card);
-
-    });
-
+    container.appendChild(card);
+  });
 }
-
 
 loadServices();

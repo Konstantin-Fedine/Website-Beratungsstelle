@@ -1,4 +1,3 @@
-
 ============================================================
 DATEI: css\services-page.css
 ============================================================
@@ -6,114 +5,111 @@ DATEI: css\services-page.css
 /* Hero */
 
 .services-hero {
-    padding:90px 20px;
-    background:linear-gradient(
-        135deg,
-        var(--color-background),
-        var(--color-primary-soft)
-    );
-    text-align:center;
+padding:90px 20px;
+background:linear-gradient(
+135deg,
+var(--color-background),
+var(--color-primary-soft)
+);
+text-align:center;
 }
 
 .services-hero-content {
-    max-width:800px;
-    margin:0 auto;
-    opacity:0;
-    transform:translateY(20px);
-    animation:fadeUp .8s ease forwards;
+max-width:800px;
+margin:0 auto;
+opacity:0;
+transform:translateY(20px);
+animation:fadeUp .8s ease forwards;
 }
 
 .services-hero h1 {
-    margin-bottom:20px;
-    color:var(--color-dark);
-    font-size:2.3rem;
+margin-bottom:20px;
+color:var(--color-dark);
+font-size:2.3rem;
 }
 
 .services-hero p {
-    color:var(--color-text-muted);
-    line-height:1.7;
+color:var(--color-text-muted);
+line-height:1.7;
 }
-
 
 /* Allgemein */
 
 .services-container {
-    max-width:var(--container-width);
-    margin:0 auto;
+max-width:var(--container-width);
+margin:0 auto;
 }
 
 .services-overview,
 .services-process,
 .services-suitable,
 .services-cta {
-    padding:80px 20px;
+padding:80px 20px;
 }
 
 .services-container h2 {
-    margin-bottom:30px;
-    text-align:center;
-    color:var(--color-dark);
+margin-bottom:30px;
+text-align:center;
+color:var(--color-dark);
 }
-
 
 /* Angebote */
 
 .services-cards {
-    display:grid;
-    grid-template-columns:1fr;
-    gap:25px;
+display:grid;
+grid-template-columns:1fr;
+gap:25px;
 }
 
 .service-card {
-    padding:35px 25px;
-    background:var(--color-surface);
-    text-align:center;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    transition:var(--transition);
+padding:35px 25px;
+background:var(--color-surface);
+text-align:center;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+transition:var(--transition);
 }
 
 .service-card:hover {
-    transform:translateY(-5px);
+transform:translateY(-5px);
 }
 
 .service-icon {
-    margin-bottom:15px;
-    font-size:2rem;
+margin-bottom:15px;
+font-size:2rem;
 }
 
 .service-card h3 {
-    margin-bottom:15px;
-    color:var(--color-dark);
+margin-bottom:15px;
+color:var(--color-dark);
 }
 
 .service-card p {
-    color:var(--color-text-muted);
-    line-height:1.6;
+color:var(--color-text-muted);
+line-height:1.6;
 }
-
 
 /* Ablauf */
 
 .services-process {
-    background:var(--color-surface);
+background:var(--color-surface);
 }
 
 .services-steps {
-    display:grid;
-    grid-template-columns:1fr;
-    gap:45px;
+display:grid;
+grid-template-columns:1fr;
+gap:45px;
 }
 
 .services-step {
-    position:relative;
-    text-align:center;
+position:relative;
+text-align:center;
 }
 
 .services-step span {
-    display:flex;
-    justify-content:center;
-    align-items:center;
+display:flex;
+justify-content:center;
+align-items:center;
 
     width:60px;
     height:60px;
@@ -129,91 +125,88 @@ DATEI: css\services-page.css
     font-weight:700;
 
     transition:var(--transition);
+
 }
 
 .services-step:hover span {
-    transform:scale(1.15);
+transform:scale(1.15);
 }
 
 .services-step:not(:last-child)::after {
-    content:"↓";
-    display:block;
-    margin-top:35px;
-    font-size:1.5rem;
-    color:var(--color-primary);
+content:"↓";
+display:block;
+margin-top:35px;
+font-size:1.5rem;
+color:var(--color-primary);
 }
 
 .services-step h3 {
-    margin-bottom:15px;
-    color:var(--color-dark);
+margin-bottom:15px;
+color:var(--color-dark);
 }
 
 .services-step p {
-    color:var(--color-text-muted);
-    line-height:1.6;
+color:var(--color-text-muted);
+line-height:1.6;
 }
-
 
 /* Geeignet */
 
 .services-suitable {
-    background:var(--color-background);
+background:var(--color-background);
 }
 
 .services-suitable p {
-    max-width:800px;
-    margin:0 auto 30px;
-    color:var(--color-text-muted);
-    line-height:1.7;
-    text-align:center;
+max-width:800px;
+margin:0 auto 30px;
+color:var(--color-text-muted);
+line-height:1.7;
+text-align:center;
 }
 
 .services-suitable ul {
-    max-width:700px;
-    margin:0 auto;
-    color:var(--color-text-muted);
-    line-height:1.8;
+max-width:700px;
+margin:0 auto;
+color:var(--color-text-muted);
+line-height:1.8;
 }
-
 
 /* CTA */
 
 .services-cta {
-    background:var(--color-dark);
-    text-align:center;
+background:var(--color-dark);
+text-align:center;
 }
 
 .services-cta h2 {
-    color:var(--color-text-light);
-    margin-bottom:30px;
+color:var(--color-text-light);
+margin-bottom:30px;
 }
 
 .services-cta .btn {
-    display:inline-block;
-    padding:14px 28px;
-    background:var(--color-primary);
-    color:var(--color-dark);
-    border-radius:var(--radius);
-    text-decoration:none;
-    font-weight:600;
-    transition:var(--transition);
+display:inline-block;
+padding:14px 28px;
+background:var(--color-primary);
+color:var(--color-dark);
+border-radius:var(--radius);
+text-decoration:none;
+font-weight:600;
+transition:var(--transition);
 }
 
 .services-cta .btn:hover {
-    transform:translateY(-2px);
-    filter:brightness(.95);
+transform:translateY(-2px);
+filter:brightness(.95);
 }
-
 
 /* Animation */
 
 @keyframes fadeUp {
-    to {
-        opacity:1;
-        transform:translateY(0);
-    }
+to {
+opacity:1;
+transform:translateY(0);
 }
-
+}
 
 /* Desktop */
 
@@ -253,7 +246,6 @@ DATEI: css\services-page.css
 
 }
 
-
 ============================================================
 DATEI: services.html
 ============================================================
@@ -269,6 +261,7 @@ DATEI: services.html
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/services-page.css">
+
 </head>
 
 <body>
@@ -433,7 +426,7 @@ DATEI: services.html
                 </div>
 
             </div>
-            
+
         </div>
 
     </section>
@@ -504,13 +497,10 @@ DATEI: services.html
 
     </section>
 
-
 </main>
-
 
 <script src="js/header.js"></script>
 <script src="js/load-components.js"></script>
 
 </body>
 </html>
-
