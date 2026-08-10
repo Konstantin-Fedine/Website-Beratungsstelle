@@ -100,14 +100,81 @@
   font-weight: 600;
 }
 
-/* ── Schritt 2: Kalender ── */
+/* ── Schritt 2: Kalender & Uhrzeiten ── */
 
-#calendar-container {
+.booking-datetime-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+  max-width: 900px;
+  margin-bottom: 8px;
+}
+
+#calendar-container,
+#times-panel {
   background: white;
   padding: 24px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  max-width: 480px;
+}
+
+#times-panel {
+  min-height: 200px;
+}
+
+#times-placeholder {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+#selected-date-label {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  text-transform: capitalize;
+}
+
+.times-heading {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+#time-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.time-slot {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: #f2ece7;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-dark);
+  cursor: pointer;
+  text-align: center;
+  transition: background var(--transition), color var(--transition),
+    border-color var(--transition);
+}
+
+.time-slot:hover {
+  background: var(--color-primary);
+}
+
+.time-slot.selected {
+  background: var(--color-dark);
+  color: white;
+  border-color: var(--color-dark);
+}
+
+#calendar-container {
+  max-width: none;
 }
 
 .calendar-header {
@@ -213,6 +280,12 @@
 
 /* ── Responsive ── */
 
+@media (max-width: 768px) {
+  .booking-datetime-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 600px) {
   .booking-hero {
     padding: 40px 0 20px;
@@ -227,8 +300,12 @@
     padding: 8px 14px;
   }
 
-  #calendar-container {
+  #calendar-container,
+  #times-panel {
     padding: 16px;
+  }
+
+  #calendar-container {
     max-width: 100%;
   }
 

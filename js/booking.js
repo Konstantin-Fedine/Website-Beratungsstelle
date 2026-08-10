@@ -6,8 +6,8 @@ const servicesContainer = document.getElementById("services-list");
 
 const bookingState = {
   selectedService: null,
-
   selectedDate: null,
+  selectedTime: null,
 };
 
 const nextButtons = document.querySelectorAll(".next-step");
@@ -300,7 +300,12 @@ function renderCalendar() {
 
         bookingState.selectedDate = dayDate;
 
+        // Bei neuem Datum: alte Uhrzeit zurücksetzen
+        bookingState.selectedTime = null;
+
         console.log("Ausgewähltes Datum:", bookingState.selectedDate);
+
+        updateTimesPanel();
       });
     }
 
@@ -308,5 +313,62 @@ function renderCalendar() {
   }
 }
 
+// Vorläufige Demo-Zeiten – in Phase C kommen echte Zeiten aus Supabase
+const DEMO_TIME_SLOTS = ["09:00", "10:00", "11:00", "14:00", "15:00"];
+
+const timesPlaceholder = document.getElementById("times-placeholder");
+const timesContent = document.getElementById("times-content");
+const selectedDateLabel = document.getElementById("selected-date-label");
+const timeSlotsContainer = document.getElementById("time-slots");
+
+function formatDateLabel(date) {
+  return date.toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+}
+
+function updateTimesPanel() {
+  if (!bookingState.selectedDate) {
+    timesPlaceholder.hidden = false;
+    timesContent.hidden = true;
+    return;
+  }
+
+  timesPlaceholder.hidden = true;
+  timesContent.hidden = false;
+
+  selectedDateLabel.textContent = formatDateLabel(bookingState.selectedDate);
+
+  timeSlotsContainer.innerHTML = "";
+
+  DEMO_TIME_SLOTS.forEach((time) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "time-slot";
+    button.textContent = time;
+
+    if (bookingState.selectedTime === time) {
+      button.classList.add("selected");
+    }
+
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".time-slot.selected").forEach((el) => {
+        el.classList.remove("selected");
+      });
+
+      button.classList.add("selected");
+      bookingState.selectedTime = time;
+
+      console.log("Ausgewählte Uhrzeit:", bookingState.selectedTime);
+    });
+
+    timeSlotsContainer.appendChild(button);
+  });
+}
+
 loadServices();
 initCalendar();
+updateTimesPanel();

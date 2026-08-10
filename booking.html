@@ -58,38 +58,52 @@
           <div class="booking-step" id="booking-step-date">
             <h2>Datum & Uhrzeit auswählen</h2>
 
-            <div id="calendar-container">
-              <div class="calendar-header">
-                <button
-                  type="button"
-                  id="previous-month"
-                  aria-label="Vorheriger Monat"
-                >
-                  ←
-                </button>
+            <div class="booking-datetime-layout">
+              <div id="calendar-container">
+                <div class="calendar-header">
+                  <button
+                    type="button"
+                    id="previous-month"
+                    aria-label="Vorheriger Monat"
+                  >
+                    ←
+                  </button>
 
-                <h3 id="current-month">Monat Jahr</h3>
+                  <h3 id="current-month">Monat Jahr</h3>
 
-                <button
-                  type="button"
-                  id="next-month"
-                  aria-label="Nächster Monat"
-                >
-                  →
-                </button>
+                  <button
+                    type="button"
+                    id="next-month"
+                    aria-label="Nächster Monat"
+                  >
+                    →
+                  </button>
+                </div>
+
+                <div class="calendar-weekdays">
+                  <div>Mo</div>
+                  <div>Di</div>
+                  <div>Mi</div>
+                  <div>Do</div>
+                  <div>Fr</div>
+                  <div>Sa</div>
+                  <div>So</div>
+                </div>
+
+                <div id="calendar-days"></div>
               </div>
 
-              <div class="calendar-weekdays">
-                <div>Mo</div>
-                <div>Di</div>
-                <div>Mi</div>
-                <div>Do</div>
-                <div>Fr</div>
-                <div>Sa</div>
-                <div>So</div>
-              </div>
+              <div id="times-panel">
+                <p id="times-placeholder">
+                  Bitte wählen Sie zuerst ein Datum aus.
+                </p>
 
-              <div id="calendar-days"></div>
+                <div id="times-content" hidden>
+                  <h3 id="selected-date-label"></h3>
+                  <p class="times-heading">Freie Zeiten</p>
+                  <div id="time-slots"></div>
+                </div>
+              </div>
             </div>
 
             <button class="btn btn-secondary previous-step">Zurück</button>
