@@ -18,8 +18,6 @@ SELECT 2, '09:00', '17:00' WHERE NOT EXISTS (SELECT 1 FROM public.availability W
 INSERT INTO public.availability (weekday, start_time, end_time)
 SELECT 3, '09:00', '17:00' WHERE NOT EXISTS (SELECT 1 FROM public.availability WHERE weekday = 3);
 INSERT INTO public.availability (weekday, start_time, end_time)
-SELECT 4, '09:00', '12:00' WHERE NOT EXISTS (SELECT 1 FROM public.availability WHERE weekday = 4 AND start_time = '09:00');
+SELECT 4, '09:00', '17:00' WHERE NOT EXISTS (SELECT 1 FROM public.availability WHERE weekday = 4);
 INSERT INTO public.availability (weekday, start_time, end_time)
-SELECT 4, '14:00', '17:00' WHERE NOT EXISTS (SELECT 1 FROM public.availability WHERE weekday = 4 AND start_time = '14:00');
-INSERT INTO public.availability (weekday, start_time, end_time)
-SELECT 5, '09:00', '15:00' WHERE NOT EXISTS (SELECT 1 FROM public.availability WHERE weekday = 5);
+SELECT 5, '09:00', '17:00' WHERE NOT EXISTS (SELECT 1 FROM public.availability WHERE weekday = 5);

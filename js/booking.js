@@ -14,19 +14,88 @@ const bookingState = {
   selectedService: null,
   selectedDate: null,
   selectedTime: null,
+  customer: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: "",
+  },
 };
 
 const nextButtons = document.querySelectorAll(".next-step");
+const previousButtons = document.querySelectorAll(".previous-step");
+const bookingForm = document.getElementById("booking-form");
+const bookingFormError = document.getElementById("booking-form-error");
 
 nextButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (!bookingState.selectedService) {
-      alert("Bitte wählen Sie zuerst eine Beratung aus.");
+  button.addEventListener("click", (event) => {
+    const currentStep = event.target.closest(".booking-step");
 
+    if (!currentStep) {
       return;
     }
 
-    showStep("booking-step-date");
+    if (currentStep.id === "booking-step-service") {
+      if (!bookingState.selectedService) {
+        alert("Bitte wählen Sie zuerst eine Beratung aus.");
+        return;
+      }
+
+      showStep("booking-step-date");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-date") {
+      if (!bookingState.selectedDate) {
+        alert("Bitte wählen Sie zuerst ein Datum aus.");
+        return;
+      }
+
+      if (!bookingState.selectedTime) {
+        alert("Bitte wählen Sie zuerst eine Uhrzeit aus.");
+        return;
+      }
+
+      showStep("booking-step-data");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-data") {
+      collectCustomerFormValues();
+
+      if (!validateCustomerForm()) {
+        return;
+      }
+
+      showStep("booking-step-summary");
+      return;
+    }
+  });
+});
+
+previousButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const currentStep = button.closest(".booking-step");
+
+    if (!currentStep) {
+      return;
+    }
+
+    if (currentStep.id === "booking-step-date") {
+      showStep("booking-step-service");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-data") {
+      showStep("booking-step-date");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-summary") {
+      showStep("booking-step-data");
+      return;
+    }
   });
 });
 
@@ -61,6 +130,14 @@ function showStep(stepId) {
   if (activeStep) {
     activeStep.style.display = "block";
     activeStep.classList.add("active");
+  }
+
+  if (stepId === "booking-step-date") {
+    updateTimesPanel();
+  }
+
+  if (stepId === "booking-step-data") {
+    populateCustomerForm();
   }
 
   updateProgress(stepId);
@@ -343,6 +420,65 @@ function formatDateLabel(date) {
     day: "numeric",
     month: "long",
   });
+}
+
+function collectCustomerFormValues() {
+  if (!bookingForm) {
+    return;
+  }
+
+  bookingState.customer = {
+    firstName: document.getElementById("first-name").value.trim(),
+    lastName: document.getElementById("last-name").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    message: document.getElementById("message").value.trim(),
+  };
+}
+
+function populateCustomerForm() {
+  if (!bookingForm) {
+    return;
+  }
+
+  document.getElementById("first-name").value = bookingState.customer.firstName;
+  document.getElementById("last-name").value = bookingState.customer.lastName;
+  document.getElementById("email").value = bookingState.customer.email;
+  document.getElementById("phone").value = bookingState.customer.phone;
+  document.getElementById("message").value = bookingState.customer.message;
+
+  if (bookingFormError) {
+    bookingFormError.hidden = true;
+  }
+}
+
+function validateCustomerForm() {
+  if (!bookingForm) {
+    return false;
+  }
+
+  if (!bookingForm.checkValidity()) {
+    bookingForm.reportValidity();
+    return false;
+  }
+
+  const emailValue = bookingState.customer.email;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailPattern.test(emailValue)) {
+    if (bookingFormError) {
+      bookingFormError.textContent =
+        "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+      bookingFormError.hidden = false;
+    }
+    return false;
+  }
+
+  if (bookingFormError) {
+    bookingFormError.hidden = true;
+  }
+
+  return true;
 }
 
 async function updateTimesPanel() {

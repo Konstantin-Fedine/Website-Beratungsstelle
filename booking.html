@@ -117,7 +117,43 @@
             <h2>Ihre Daten</h2>
 
             <div id="booking-form-container">
-              <p>Formular wird später hinzugefügt.</p>
+              <form id="booking-form" class="booking-form" novalidate>
+                <div class="form-row">
+                  <label for="first-name">Vorname *</label>
+                  <input
+                    type="text"
+                    id="first-name"
+                    name="firstName"
+                    required
+                  />
+                </div>
+
+                <div class="form-row">
+                  <label for="last-name">Nachname *</label>
+                  <input type="text" id="last-name" name="lastName" required />
+                </div>
+
+                <div class="form-row">
+                  <label for="email">E-Mail *</label>
+                  <input type="email" id="email" name="email" required />
+                </div>
+
+                <div class="form-row">
+                  <label for="phone">Telefon</label>
+                  <input type="tel" id="phone" name="phone" />
+                </div>
+
+                <div class="form-row">
+                  <label for="message">Nachricht</label>
+                  <textarea id="message" name="message" rows="4"></textarea>
+                </div>
+
+                <p class="form-note">* Pflichtfelder</p>
+
+                <p id="booking-form-error" class="form-error" hidden>
+                  Bitte füllen Sie alle Pflichtfelder korrekt aus.
+                </p>
+              </form>
             </div>
 
             <button class="btn btn-secondary previous-step">Zurück</button>
