@@ -184,16 +184,61 @@ async function loadServices() {
   });
 }
 
-let currentDate = new Date();
+// Welcher Monat gerade im Kalender angezeigt wird (unabhängig vom gewählten Datum)
+let calendarViewDate = new Date();
+calendarViewDate.setDate(1);
+calendarViewDate.setHours(0, 0, 0, 0);
+
+function getTodayAtMidnight() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
+function createDateAtMidnight(year, month, day) {
+  const date = new Date(year, month, day);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function isSameDay(dateA, dateB) {
+  if (!dateA || !dateB) {
+    return false;
+  }
+
+  return (
+    dateA.getFullYear() === dateB.getFullYear() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getDate() === dateB.getDate()
+  );
+}
+
+function initCalendar() {
+  const previousMonthButton = document.getElementById("previous-month");
+  const nextMonthButton = document.getElementById("next-month");
+
+  previousMonthButton.addEventListener("click", () => {
+    calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+    renderCalendar();
+  });
+
+  nextMonthButton.addEventListener("click", () => {
+    calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+    renderCalendar();
+  });
+
+  renderCalendar();
+}
 
 function renderCalendar() {
   const monthTitle = document.getElementById("current-month");
   const daysContainer = document.getElementById("calendar-days");
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+  const year = calendarViewDate.getFullYear();
+  const month = calendarViewDate.getMonth();
+  const today = getTodayAtMidnight();
 
-  const monthName = currentDate.toLocaleDateString("de-DE", {
+  const monthName = calendarViewDate.toLocaleDateString("de-DE", {
     month: "long",
     year: "numeric",
   });
@@ -203,49 +248,65 @@ function renderCalendar() {
   daysContainer.innerHTML = "";
 
   const firstDay = new Date(year, month, 1);
-
   let startDay = firstDay.getDay();
 
-  // Sonntag = 0 → auf Montag verschieben
+  // Sonntag = 0 → Montag ist der erste Wochentag
   if (startDay === 0) {
     startDay = 7;
   }
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Leere Felder vor dem ersten Tag
-
+  // Leere Felder vor dem ersten Tag des Monats
   for (let i = 1; i < startDay; i++) {
     const empty = document.createElement("div");
-
     empty.className = "calendar-day empty";
-
     daysContainer.appendChild(empty);
   }
 
-  // Tage erstellen
-
+  // Tage des Monats erstellen
   for (let day = 1; day <= daysInMonth; day++) {
+    const dayDate = createDateAtMidnight(year, month, day);
     const dayElement = document.createElement("button");
 
+    dayElement.type = "button";
     dayElement.className = "calendar-day";
-
     dayElement.textContent = day;
 
-    dayElement.addEventListener("click", () => {
-      document.querySelectorAll(".calendar-day").forEach((day) => {
-        day.classList.remove("selected");
-      });
+    const isPastDay = dayDate < today;
+    const isToday = isSameDay(dayDate, today);
+    const isSelected = isSameDay(dayDate, bookingState.selectedDate);
 
+    if (isPastDay) {
+      dayElement.classList.add("past");
+      dayElement.disabled = true;
+    }
+
+    if (isToday) {
+      dayElement.classList.add("today");
+    }
+
+    if (isSelected) {
       dayElement.classList.add("selected");
+    }
 
-      bookingState.selectedDate = new Date(year, month, day);
+    if (!isPastDay) {
+      dayElement.addEventListener("click", () => {
+        document.querySelectorAll(".calendar-day.selected").forEach((el) => {
+          el.classList.remove("selected");
+        });
 
-      console.log("Ausgewähltes Datum:", bookingState.selectedDate);
-    });
+        dayElement.classList.add("selected");
+
+        bookingState.selectedDate = dayDate;
+
+        console.log("Ausgewähltes Datum:", bookingState.selectedDate);
+      });
+    }
 
     daysContainer.appendChild(dayElement);
   }
 }
 
-renderCalendar();
+loadServices();
+initCalendar();

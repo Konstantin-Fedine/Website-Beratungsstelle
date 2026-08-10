@@ -1,13 +1,80 @@
+/* ── Allgemeine Buchungsseite ── */
+
+.booking-step {
+  display: none;
+}
+
+.booking-step.active {
+  display: block;
+}
+
+.booking-container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.booking-hero {
+  padding: 60px 0 30px;
+  text-align: center;
+}
+
+.booking-hero h1 {
+  margin-bottom: 12px;
+}
+
+.booking-process {
+  padding-bottom: 80px;
+}
+
+.booking-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.progress-step {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #f2ece7;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.progress-step.active {
+  background: var(--color-dark);
+  color: white;
+}
+
+.booking-step h2 {
+  margin-bottom: 24px;
+}
+
+.booking-step .btn {
+  margin-top: 24px;
+}
+
+.booking-step .btn + .btn {
+  margin-left: 12px;
+}
+
+/* ── Schritt 1: Beratungsangebote ── */
+
 .booking-service-card {
   background: white;
-
   padding: 30px;
-
   border-radius: 20px;
-
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-
   max-width: 600px;
+  margin-bottom: 20px;
+  border: 2px solid transparent;
+  transition: border-color var(--transition);
+}
+
+.booking-service-card.selected {
+  border-color: var(--color-primary);
 }
 
 .booking-service-card h3 {
@@ -16,67 +83,185 @@
 
 .service-description {
   line-height: 1.6;
-
   margin-bottom: 25px;
 }
 
 .service-info {
   display: flex;
-
   gap: 20px;
-
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .service-info span {
   background: #f5eee8;
-
   padding: 10px 15px;
-
   border-radius: 10px;
-
   font-weight: 600;
+}
+
+/* ── Schritt 2: Kalender ── */
+
+#calendar-container {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 480px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.calendar-header h3 {
+  flex: 1;
+  text-align: center;
+  font-size: 1.2rem;
+  text-transform: capitalize;
+}
+
+.calendar-header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: #f2ece7;
+  color: var(--color-dark);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.calendar-header button:hover {
+  background: var(--color-primary);
 }
 
 .calendar-weekdays,
 #calendar-days {
   display: grid;
-
   grid-template-columns: repeat(7, 1fr);
-
-  gap: 10px;
+  gap: 8px;
 }
 
 .calendar-weekdays div {
   text-align: center;
-
   font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  padding-bottom: 4px;
 }
 
 .calendar-day {
   aspect-ratio: 1;
-
-  border: none;
-
+  border: 2px solid transparent;
   border-radius: 12px;
-
   background: #f2ece7;
-
   cursor: pointer;
-
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--color-dark);
+  transition: background var(--transition), color var(--transition),
+    border-color var(--transition);
 }
 
-.calendar-day:hover {
-  background: #d4b295;
+.calendar-day:hover:not(:disabled):not(.empty) {
+  background: var(--color-primary);
+}
+
+.calendar-day.today {
+  border-color: var(--color-primary);
+  font-weight: 700;
 }
 
 .calendar-day.selected {
-  background: #2a2421;
-
+  background: var(--color-dark);
   color: white;
+  border-color: var(--color-dark);
+}
+
+.calendar-day.selected.today {
+  border-color: white;
+}
+
+.calendar-day.past,
+.calendar-day:disabled {
+  background: #ece8e4;
+  color: #b0aaa4;
+  cursor: not-allowed;
+}
+
+.calendar-day.past:hover,
+.calendar-day:disabled:hover {
+  background: #ece8e4;
 }
 
 .calendar-day.empty {
   background: transparent;
+  cursor: default;
+  border: none;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 600px) {
+  .booking-hero {
+    padding: 40px 0 20px;
+  }
+
+  .booking-container {
+    padding: 0 16px;
+  }
+
+  .progress-step {
+    font-size: 0.8rem;
+    padding: 8px 14px;
+  }
+
+  #calendar-container {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .calendar-header h3 {
+    font-size: 1rem;
+  }
+
+  .calendar-header button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .calendar-weekdays,
+  #calendar-days {
+    gap: 4px;
+  }
+
+  .calendar-weekdays div {
+    font-size: 0.7rem;
+  }
+
+  .calendar-day {
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .booking-step .btn {
+    display: block;
+    width: 100%;
+  }
+
+  .booking-step .btn + .btn {
+    margin-left: 0;
+    margin-top: 12px;
+  }
 }
