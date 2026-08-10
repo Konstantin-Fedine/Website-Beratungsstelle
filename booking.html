@@ -150,7 +150,7 @@
 
                 <p class="form-note">* Pflichtfelder</p>
 
-                <p id="booking-form-error" class="form-error" hidden>
+                <p id="booking-form-error" class="form-error" role="alert" aria-live="assertive" hidden>
                   Bitte füllen Sie alle Pflichtfelder korrekt aus.
                 </p>
               </form>
@@ -170,9 +170,15 @@
               <p>Zusammenfassung wird später angezeigt.</p>
             </div>
 
+            <p id="booking-summary-error" class="form-error" role="alert" aria-live="assertive" hidden>
+              Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.
+            </p>
+
             <button class="btn btn-secondary previous-step">Zurück</button>
 
-            <button class="btn btn-primary">Termin bestätigen</button>
+            <button id="booking-confirm-button" class="btn btn-primary" type="button">
+              Termin bestätigen
+            </button>
           </div>
         </div>
       </section>

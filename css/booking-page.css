@@ -56,6 +56,11 @@
   margin-top: 24px;
 }
 
+.booking-step .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .booking-step .btn + .btn {
   margin-left: 12px;
 }
@@ -243,35 +248,42 @@
   max-width: none;
 }
 
-.calendar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  gap: 12px;
+.booking-summary-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 22px;
 }
 
-.calendar-header h3 {
-  flex: 1;
-  text-align: center;
-  font-size: 1.2rem;
-  text-transform: capitalize;
-}
-
-.calendar-header button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 12px;
-  background: #f2ece7;
+.booking-summary-card h3 {
+  margin: 0;
+  font-size: 1.6rem;
   color: var(--color-dark);
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background var(--transition);
-  flex-shrink: 0;
+}
+
+.summary-section {
+  display: grid;
+  gap: 10px;
+}
+
+.summary-heading {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-dark);
+  letter-spacing: 0.01em;
+}
+
+.summary-value {
+  margin: 0;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.summary-subtext {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
 }
 
 .calendar-header button:hover {

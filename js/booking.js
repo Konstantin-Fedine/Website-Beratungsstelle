@@ -27,6 +27,25 @@ const nextButtons = document.querySelectorAll(".next-step");
 const previousButtons = document.querySelectorAll(".previous-step");
 const bookingForm = document.getElementById("booking-form");
 const bookingFormError = document.getElementById("booking-form-error");
+const bookingSummaryError = document.getElementById("booking-summary-error");
+const bookingConfirmButton = document.getElementById("booking-confirm-button");
+let isBookingSubmitting = false;
+
+function setBookingSubmitting(isSubmitting) {
+  isBookingSubmitting = isSubmitting;
+  if (!bookingConfirmButton) {
+    return;
+  }
+
+  bookingConfirmButton.disabled = isSubmitting;
+  bookingConfirmButton.textContent = isSubmitting
+    ? "Buchung wird verarbeitet..."
+    : "Termin bestätigen";
+}
+
+if (bookingConfirmButton) {
+  bookingConfirmButton.addEventListener("click", confirmBooking);
+}
 
 nextButtons.forEach((button) => {
   button.addEventListener("click", (event) => {
@@ -140,6 +159,10 @@ function showStep(stepId) {
     populateCustomerForm();
   }
 
+  if (stepId === "booking-step-summary") {
+    renderBookingSummary();
+  }
+
   updateProgress(stepId);
 }
 
@@ -202,49 +225,32 @@ async function loadServices() {
 
   data.forEach((service) => {
     const card = document.createElement("div");
-
     card.className = "booking-service-card";
 
-    card.innerHTML = `
+    const titleEl = document.createElement("h3");
+    titleEl.textContent = service.title;
 
+    const descriptionEl = document.createElement("p");
+    descriptionEl.textContent = service.description || "";
 
-            <h3>
-                ${service.title}
-            </h3>
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "service-info";
 
+    const durationSpan = document.createElement("span");
+    durationSpan.textContent = `⏱ ${service.duration} Minuten`;
 
-            <p>
-                ${service.description}
-            </p>
+    const priceSpan = document.createElement("span");
+    priceSpan.textContent = `💶 ${service.price} €`;
 
+    infoDiv.append(durationSpan, priceSpan);
 
-            <div class="service-info">
+    const button = document.createElement("button");
+    button.className = "btn btn-primary select-service-button";
+    button.type = "button";
+    button.textContent = "Auswählen";
 
-                <span>
-                    ⏱ ${service.duration} Minuten
-                </span>
-
-
-                <span>
-                    💶 ${service.price} €
-                </span>
-
-
-            </div>
-
-
-            <button
-                class="btn btn-primary select-service-button"
-            >
-                Auswählen
-            </button>
-
-
-        `;
-
+    card.append(titleEl, descriptionEl, infoDiv, button);
     servicesContainer.appendChild(card);
-
-    const button = card.querySelector(".select-service-button");
 
     button.addEventListener("click", () => {
       document.querySelectorAll(".booking-service-card").forEach((card) => {
@@ -422,6 +428,102 @@ function formatDateLabel(date) {
   });
 }
 
+function formatDateLabelShort(date) {
+  return date.toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+  }).format(value);
+}
+
+function renderBookingSummary() {
+  const summaryContainer = document.getElementById("booking-summary");
+
+  if (!summaryContainer) {
+    return;
+  }
+
+  const service = bookingState.selectedService;
+  const date = bookingState.selectedDate;
+  const time = bookingState.selectedTime;
+  const customer = bookingState.customer;
+
+  if (!service || !date || !time) {
+    summaryContainer.innerHTML = `
+      <p class="times-empty">Bitte wählen Sie zuerst eine Beratung, ein Datum und eine Uhrzeit aus.</p>
+    `;
+    return;
+  }
+
+  summaryContainer.innerHTML = "";
+
+  const summaryCard = document.createElement("div");
+  summaryCard.className = "booking-summary-card";
+
+  const title = document.createElement("h3");
+  title.textContent = "Ihre Buchung";
+  summaryCard.appendChild(title);
+
+  function appendSummaryRow(section, label, value, isLink = false) {
+    const heading = document.createElement("p");
+    heading.className = "summary-heading";
+    heading.textContent = label;
+
+    const valueEl = document.createElement("p");
+    valueEl.className = "summary-value";
+
+    if (isLink) {
+      const link = document.createElement("a");
+      link.href = `mailto:${value}`;
+      link.textContent = value;
+      valueEl.appendChild(link);
+    } else {
+      valueEl.textContent = value;
+    }
+
+    section.append(heading, valueEl);
+  }
+
+  const serviceSection = document.createElement("div");
+  serviceSection.className = "summary-section";
+  appendSummaryRow(serviceSection, "Beratung", service.title);
+  appendSummaryRow(serviceSection, "Dauer", `${service.duration} Minuten`);
+  appendSummaryRow(serviceSection, "Preis", formatCurrency(service.price));
+  summaryCard.appendChild(serviceSection);
+
+  const dateSection = document.createElement("div");
+  dateSection.className = "summary-section";
+  appendSummaryRow(dateSection, "Datum", formatDateLabelShort(date));
+  appendSummaryRow(dateSection, "Uhrzeit", `${time} Uhr`);
+  summaryCard.appendChild(dateSection);
+
+  const customerSection = document.createElement("div");
+  customerSection.className = "summary-section";
+  appendSummaryRow(customerSection, "Ihre Daten", `${customer.firstName} ${customer.lastName}`);
+  appendSummaryRow(customerSection, "E-Mail", customer.email, true);
+
+  if (customer.phone) {
+    appendSummaryRow(customerSection, "Telefon", customer.phone);
+  }
+
+  if (customer.message) {
+    appendSummaryRow(customerSection, "Nachricht", customer.message);
+  }
+
+  summaryCard.appendChild(customerSection);
+
+  summaryContainer.appendChild(summaryCard);
+}
+
 function collectCustomerFormValues() {
   if (!bookingForm) {
     return;
@@ -538,6 +640,116 @@ async function updateTimesPanel() {
 
     timeSlotsContainer.appendChild(button);
   });
+}
+
+function showSummaryError(message) {
+  if (!bookingSummaryError) {
+    return;
+  }
+
+  bookingSummaryError.textContent = message;
+  bookingSummaryError.hidden = false;
+}
+
+function hideSummaryError() {
+  if (bookingSummaryError) {
+    bookingSummaryError.hidden = true;
+  }
+}
+
+async function confirmBooking() {
+  if (isBookingSubmitting) {
+    return;
+  }
+
+  hideSummaryError();
+  setBookingSubmitting(true);
+
+  if (!bookingState.selectedService) {
+    showSummaryError("Bitte wählen Sie zuerst ein Beratungsangebot aus.");
+    setBookingSubmitting(false);
+    return;
+  }
+
+  if (!bookingState.selectedDate) {
+    showSummaryError("Bitte wählen Sie zuerst ein Datum aus.");
+    setBookingSubmitting(false);
+    return;
+  }
+
+  if (!bookingState.selectedTime) {
+    showSummaryError("Bitte wählen Sie zuerst eine Uhrzeit aus.");
+    setBookingSubmitting(false);
+    return;
+  }
+
+  collectCustomerFormValues();
+
+  if (!validateCustomerForm()) {
+    showSummaryError("Bitte füllen Sie alle Pflichtfelder aus.");
+    setBookingSubmitting(false);
+    return;
+  }
+
+  try {
+    const { data: serviceData, error: serviceError } = await supabase
+      .from("services")
+      .select("id, duration, price, active")
+      .eq("id", bookingState.selectedService.id)
+      .single();
+
+    if (serviceError || !serviceData || !serviceData.active) {
+      console.error("Fehler beim Laden des Dienstes:", serviceError);
+      showSummaryError("Der gewählte Service ist leider nicht mehr verfügbar.");
+      return;
+    }
+
+    const availableSlots = await getAvailableSlots(
+      bookingState.selectedDate,
+      serviceData.duration,
+    );
+
+    if (!availableSlots.includes(bookingState.selectedTime)) {
+      showSummaryError(
+        "Der gewählte Termin ist leider inzwischen vergeben. Bitte wählen Sie eine andere Uhrzeit.",
+      );
+      return;
+    }
+
+    const bookingDate = bookingState.selectedDate.toISOString().split("T")[0];
+    const bookingTime = bookingState.selectedTime;
+    const customerName = `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
+
+    const { error: insertError } = await supabase.from("bookings").insert([
+      {
+        service_id: serviceData.id,
+        customer_name: customerName,
+        customer_email: bookingState.customer.email,
+        customer_phone: bookingState.customer.phone || null,
+        booking_date: bookingDate,
+        booking_time: bookingTime,
+        notes: bookingState.customer.message || null,
+        status: "pending",
+      },
+    ]);
+
+    if (insertError) {
+      console.error("Fehler beim Speichern der Buchung:", insertError);
+      showSummaryError(
+        "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+      );
+      setBookingSubmitting(false);
+      return;
+    }
+
+    window.location.href = "success.html";
+  } catch (error) {
+    console.error("Unbekannter Fehler bei der Buchungsbestätigung:", error);
+    showSummaryError(
+      "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+    );
+    setBookingSubmitting(false);
+  }
 }
 
 async function initBookingPage() {

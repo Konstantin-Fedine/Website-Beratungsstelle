@@ -69,3 +69,30 @@ body {
     transform: translateY(0);
   }
 }
+
+/* Responsive images and basic accessibility */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+:focus {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* Mobile tweaks: larger tap targets and readable text */
+@media (max-width: 600px) {
+  .btn {
+    padding: 16px 20px;
+    font-size: 1.05rem;
+  }
+
+  input,
+  textarea,
+  select,
+  .btn {
+    min-height: 44px;
+  }
+}

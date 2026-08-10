@@ -98,6 +98,20 @@ export async function initBookingData() {
   bookingSettings = settings;
   availabilityRules = availability;
 
+  if (!availabilityRules.length) {
+    console.warn(
+      "Keine aktiven Verfügbarkeiten gefunden. Verwende Platzhalter Mo–Fr 09:00–17:00.",
+    );
+
+    availabilityRules = [
+      { weekday: 1, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 2, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 3, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 4, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 5, start_time: "09:00", end_time: "17:00", active: true },
+    ];
+  }
+
   const now = new Date();
   await loadBlockedDaysForMonth(now.getFullYear(), now.getMonth());
 }
@@ -172,12 +186,9 @@ function filterSlotsByBookings(
     const slotEnd = slot + durationMinutes;
 
     return !bookings.some((booking) => {
-      const bookStart =
-        timeToMinutes(booking.booking_time) - bufferBefore;
+      const bookStart = timeToMinutes(booking.booking_time) - bufferBefore;
       const bookEnd =
-        timeToMinutes(booking.booking_time) +
-        booking.duration +
-        bufferAfter;
+        timeToMinutes(booking.booking_time) + booking.duration + bufferAfter;
 
       return rangesOverlap(slot, slotEnd, bookStart, bookEnd);
     });
