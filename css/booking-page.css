@@ -96,6 +96,7 @@
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .service-info span {

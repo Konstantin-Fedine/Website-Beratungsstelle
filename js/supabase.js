@@ -1,8 +1,13 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const supabaseUrl = "http://127.0.0.1:54321";
+// Use your machine's LAN IP so other devices on the same network can reach
+// the local Supabase instance. Replace with your hosted Supabase URL
+// if you move to a production project.
+const supabaseUrl = "http://192.168.10.153:54321";
 
+// Use the publishable (anon) key for client-side requests.
+// This value comes from your local Supabase 'Publishable' key shown when running `supabase start`.
 const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+  "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
