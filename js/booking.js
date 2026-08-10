@@ -1,4 +1,10 @@
 import { supabase } from "./supabase.js";
+import {
+  initBookingData,
+  loadBlockedDaysForMonth,
+  isDateSelectable,
+  getAvailableSlots,
+} from "./booking-api.js";
 
 console.log("Booking System gestartet");
 
@@ -217,13 +223,21 @@ function initCalendar() {
   const previousMonthButton = document.getElementById("previous-month");
   const nextMonthButton = document.getElementById("next-month");
 
-  previousMonthButton.addEventListener("click", () => {
+  previousMonthButton.addEventListener("click", async () => {
     calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+    await loadBlockedDaysForMonth(
+      calendarViewDate.getFullYear(),
+      calendarViewDate.getMonth(),
+    );
     renderCalendar();
   });
 
-  nextMonthButton.addEventListener("click", () => {
+  nextMonthButton.addEventListener("click", async () => {
     calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+    await loadBlockedDaysForMonth(
+      calendarViewDate.getFullYear(),
+      calendarViewDate.getMonth(),
+    );
     renderCalendar();
   });
 
@@ -276,10 +290,15 @@ function renderCalendar() {
     const isPastDay = dayDate < today;
     const isToday = isSameDay(dayDate, today);
     const isSelected = isSameDay(dayDate, bookingState.selectedDate);
+    const canSelect = isDateSelectable(dayDate, today);
 
-    if (isPastDay) {
-      dayElement.classList.add("past");
+    if (!canSelect) {
+      dayElement.classList.add("unavailable");
       dayElement.disabled = true;
+
+      if (isPastDay) {
+        dayElement.classList.add("past");
+      }
     }
 
     if (isToday) {
@@ -290,7 +309,7 @@ function renderCalendar() {
       dayElement.classList.add("selected");
     }
 
-    if (!isPastDay) {
+    if (canSelect) {
       dayElement.addEventListener("click", () => {
         document.querySelectorAll(".calendar-day.selected").forEach((el) => {
           el.classList.remove("selected");
@@ -313,9 +332,6 @@ function renderCalendar() {
   }
 }
 
-// Vorläufige Demo-Zeiten – in Phase C kommen echte Zeiten aus Supabase
-const DEMO_TIME_SLOTS = ["09:00", "10:00", "11:00", "14:00", "15:00"];
-
 const timesPlaceholder = document.getElementById("times-placeholder");
 const timesContent = document.getElementById("times-content");
 const selectedDateLabel = document.getElementById("selected-date-label");
@@ -329,7 +345,7 @@ function formatDateLabel(date) {
   });
 }
 
-function updateTimesPanel() {
+async function updateTimesPanel() {
   if (!bookingState.selectedDate) {
     timesPlaceholder.hidden = false;
     timesContent.hidden = true;
@@ -341,9 +357,28 @@ function updateTimesPanel() {
 
   selectedDateLabel.textContent = formatDateLabel(bookingState.selectedDate);
 
+  timeSlotsContainer.innerHTML =
+    '<p class="times-loading">Zeiten werden geladen...</p>';
+
+  const duration = bookingState.selectedService?.duration;
+
+  if (!duration) {
+    timeSlotsContainer.innerHTML =
+      '<p class="times-empty">Bitte wählen Sie zuerst eine Beratung aus.</p>';
+    return;
+  }
+
+  const slots = await getAvailableSlots(bookingState.selectedDate, duration);
+
   timeSlotsContainer.innerHTML = "";
 
-  DEMO_TIME_SLOTS.forEach((time) => {
+  if (slots.length === 0) {
+    timeSlotsContainer.innerHTML =
+      '<p class="times-empty">Keine freien Zeiten an diesem Tag.</p>';
+    return;
+  }
+
+  slots.forEach((time) => {
     const button = document.createElement("button");
 
     button.type = "button";
@@ -369,6 +404,11 @@ function updateTimesPanel() {
   });
 }
 
-loadServices();
-initCalendar();
-updateTimesPanel();
+async function initBookingPage() {
+  await initBookingData();
+  loadServices();
+  initCalendar();
+  updateTimesPanel();
+}
+
+initBookingPage();

@@ -159,7 +159,9 @@
   color: var(--color-dark);
   cursor: pointer;
   text-align: center;
-  transition: background var(--transition), color var(--transition),
+  transition:
+    background var(--transition),
+    color var(--transition),
     border-color var(--transition);
 }
 
@@ -171,6 +173,12 @@
   background: var(--color-dark);
   color: white;
   border-color: var(--color-dark);
+}
+
+.times-loading,
+.times-empty {
+  color: var(--color-text-muted);
+  line-height: 1.6;
 }
 
 #calendar-container {
@@ -237,7 +245,9 @@
   font-family: inherit;
   font-weight: 600;
   color: var(--color-dark);
-  transition: background var(--transition), color var(--transition),
+  transition:
+    background var(--transition),
+    color var(--transition),
     border-color var(--transition);
 }
 
@@ -261,6 +271,7 @@
 }
 
 .calendar-day.past,
+.calendar-day.unavailable,
 .calendar-day:disabled {
   background: #ece8e4;
   color: #b0aaa4;
@@ -268,6 +279,7 @@
 }
 
 .calendar-day.past:hover,
+.calendar-day.unavailable:hover,
 .calendar-day:disabled:hover {
   background: #ece8e4;
 }
