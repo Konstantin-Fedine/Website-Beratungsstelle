@@ -5,7 +5,6 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const supabaseUrl = "https://osesjuwfgytibasmnacl.supabase.co";
 
 // Use the publishable (anon) key for client-side requests.
-const supabaseKey =
-  "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+const supabaseKey = "sb_publishable_am5h5emmjCuvdz69L2PHkw_2Pankgs5";
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
