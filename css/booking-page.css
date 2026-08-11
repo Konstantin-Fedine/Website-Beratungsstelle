@@ -52,17 +52,26 @@
   margin-bottom: 24px;
 }
 
-.booking-step .btn {
-  margin-top: 24px;
+.booking-step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.booking-step-actions.is-backward {
+  justify-content: flex-start;
+}
+
+.booking-step-actions .btn {
+  margin: 0;
 }
 
 .booking-step .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.booking-step .btn + .btn {
-  margin-left: 12px;
 }
 
 /* ── Schritt 1: Beratungsangebote ── */
@@ -250,16 +259,17 @@
 }
 
 .booking-summary-card {
-  background: white;
+  background: linear-gradient(180deg, #ffffff 0%, #fdf8f4 100%);
+  border: 1px solid rgba(212, 178, 149, 0.28);
   border-radius: 20px;
   padding: 28px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   display: grid;
-  gap: 22px;
+  gap: 0;
 }
 
 .booking-summary-card h3 {
-  margin: 0;
+  margin: 0 0 18px;
   font-size: 1.6rem;
   color: var(--color-dark);
 }
@@ -267,6 +277,13 @@
 .summary-section {
   display: grid;
   gap: 10px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(42, 36, 33, 0.08);
+}
+
+.summary-section:first-of-type {
+  border-top: none;
+  padding-top: 0;
 }
 
 .summary-heading {
@@ -282,13 +299,51 @@
   line-height: 1.6;
 }
 
+.summary-value a {
+  color: var(--color-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .summary-subtext {
   color: var(--color-text-muted);
   font-size: 0.95rem;
 }
 
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.calendar-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--color-dark);
+  text-align: center;
+}
+
+.calendar-header button {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--color-dark);
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
 .calendar-header button:hover {
-  background: var(--color-primary);
+  background: #f2ece7;
+  border-color: #d7c6b5;
+  color: var(--color-dark);
 }
 
 .calendar-weekdays,
@@ -415,13 +470,19 @@
     border-radius: 8px;
   }
 
-  .booking-step .btn {
-    display: block;
-    width: 100%;
+  .booking-step-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
   }
 
-  .booking-step .btn + .btn {
-    margin-left: 0;
-    margin-top: 12px;
+  .booking-step-actions.is-backward {
+    justify-content: flex-end;
+  }
+
+  .booking-step-actions .btn {
+    display: inline-flex;
+    width: auto;
+    flex: 0 0 auto;
   }
 }

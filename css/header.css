@@ -82,13 +82,29 @@
   text-align: center;
   text-decoration: none;
   color: var(--color-text-light);
+  background: transparent;
   border-radius: var(--radius);
+  font-weight: 500;
   transition: var(--transition);
 }
 
-.navigation a:is(:hover, .active) {
-  color: var(--color-dark);
+.navigation a.nav-cta {
   background: var(--color-primary);
+  color: var(--color-dark);
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(212, 178, 149, 0.2);
+}
+
+.navigation a.active:not(.nav-cta),
+.navigation a:hover:not(.nav-cta),
+.navigation a.nav-cta:hover {
+  background: var(--color-primary);
+  color: var(--color-dark);
+}
+
+.navigation a.active:not(.nav-cta),
+.navigation a:hover:not(.nav-cta) {
+  border-radius: var(--radius);
 }
 
 @media (min-width: 1024px) {

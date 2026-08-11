@@ -32,13 +32,13 @@ function initHeader() {
     });
   }
 
-  const currentPage = window.location.pathname.split("/").pop();
+  const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
   document.querySelectorAll(".navigation a").forEach((link) => {
     const linkPage = link.getAttribute("href");
+    const isCurrentPage = linkPage && currentPage === linkPage;
 
-    if (window.location.pathname.endsWith(linkPage)) {
-      link.classList.add("active");
-    }
+    link.classList.toggle("active", isCurrentPage);
+    link.classList.toggle("nav-cta", isCurrentPage && linkPage === "booking.html");
   });
 }
