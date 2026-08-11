@@ -1,12 +1,10 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// Use your machine's LAN IP so other devices on the same network can reach
-// the local Supabase instance. Replace with your hosted Supabase URL
-// if you move to a production project.
-const supabaseUrl = "https://freewill-paying-police.ngrok-free.dev";
+// Use the hosted Supabase project URL for public client access.
+// This is the Project URL shown in the Supabase dashboard under Project Settings > API.
+const supabaseUrl = "https://osesjuwfgytibasmnacl.supabase.co";
 
 // Use the publishable (anon) key for client-side requests.
-// This value comes from your local Supabase 'Publishable' key shown when running `supabase start`.
 const supabaseKey =
   "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
 
