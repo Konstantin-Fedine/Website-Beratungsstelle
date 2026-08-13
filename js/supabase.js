@@ -1,10 +1,17 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// Use the hosted Supabase project URL for public client access.
-// This is the Project URL shown in the Supabase dashboard under Project Settings > API.
-const supabaseUrl = "https://osesjuwfgytibasmnacl.supabase.co";
+// Development helper: if the site is served from localhost/127.0.0.1,
+// use the local Supabase dev instance started with `supabase start`.
+const hostname = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
+const isLocalhost = hostname === "127.0.0.1" || hostname === "localhost";
 
-// Use the publishable (anon) key for client-side requests.
-const supabaseKey = "sb_publishable_am5h5emmjCuvdz69L2PHkw_2Pankgs5";
+const LOCAL_SUPABASE_URL = "http://127.0.0.1:54321";
+const LOCAL_SUPABASE_ANON_KEY = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+
+const PROD_SUPABASE_URL = "https://osesjuwfgytibasmnacl.supabase.co";
+const PROD_SUPABASE_ANON_KEY = "sb_publishable_am5h5emmjCuvdz69L2PHkw_2Pankgs5";
+
+const supabaseUrl = isLocalhost ? LOCAL_SUPABASE_URL : PROD_SUPABASE_URL;
+const supabaseKey = isLocalhost ? LOCAL_SUPABASE_ANON_KEY : PROD_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseKey);

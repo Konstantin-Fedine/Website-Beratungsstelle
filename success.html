@@ -22,19 +22,17 @@
         <div class="success-card">
           <div class="success-icon">✅</div>
 
-          <h1>Vielen Dank für Ihre Nachricht!</h1>
+          <h1>Termin erfolgreich gebucht</h1>
 
-          <p>Ihre Anfrage wurde erfolgreich übermittelt.</p>
+          <p id="success-intro">Vielen Dank — Ihre Buchung wurde gespeichert.</p>
 
-          <p>
-            Ich werde mich so schnell wie möglich bei Ihnen melden. In der Regel
-            erhalten Sie innerhalb von 1–2 Werktagen eine Rückmeldung.
-          </p>
+          <div class="booking-details">
+            <p><strong>Buchungsnummer:</strong> <span id="booking-id">—</span></p>
+            <p><strong>Leistung:</strong> <span id="booking-service">—</span></p>
+            <p><strong>Datum &amp; Uhrzeit:</strong> <span id="booking-datetime">—</span></p>
+          </div>
 
-          <p>
-            Falls Sie innerhalb weniger Tage keine Antwort erhalten, schauen Sie
-            bitte auch in Ihrem Spam-Ordner nach.
-          </p>
+          <p id="success-note">Sie erhalten in Kürze eine Bestätigung per E‑Mail.</p>
 
           <a href="index.html" class="btn btn-primary"> Zur Startseite </a>
         </div>
@@ -43,5 +41,36 @@
 
     <script src="js/header.js"></script>
     <script src="js/load-components.js"></script>
+    <script>
+      // Parse query params und fülle die Erfolgseite
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        const service = params.get("service");
+        const date = params.get("date");
+        const time = params.get("time");
+
+        if (id) {
+          document.getElementById("booking-id").textContent = id;
+        }
+
+        if (service) {
+          document.getElementById("booking-service").textContent = decodeURIComponent(service);
+        }
+
+        if (date || time) {
+          const parts = [];
+          if (date) parts.push(date);
+          if (time) parts.push(time);
+          document.getElementById("booking-datetime").textContent = parts.join(" um ");
+        }
+
+        // If no params, show a generic message
+        if (!id && !service && !date && !time) {
+          document.getElementById("success-intro").textContent =
+            "Ihre Buchung wurde verarbeitet. Weitere Details finden Sie in Ihrem Posteingang.";
+        }
+      })();
+    </script>
   </body>
 </html>

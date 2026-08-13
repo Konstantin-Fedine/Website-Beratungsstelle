@@ -720,29 +720,57 @@ async function confirmBooking() {
     const bookingTime = bookingState.selectedTime;
     const customerName = `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
 
-    const { error: insertError } = await supabase.from("bookings").insert([
-      {
-        service_id: serviceData.id,
-        customer_name: customerName,
-        customer_email: bookingState.customer.email,
-        customer_phone: bookingState.customer.phone || null,
-        booking_date: bookingDate,
-        booking_time: bookingTime,
-        notes: bookingState.customer.message || null,
-        status: "pending",
-      },
-    ]);
+    const { data: insertedBooking, error: insertError } = await supabase
+      .from("bookings")
+      .insert([
+        {
+          service_id: serviceData.id,
+          customer_name: customerName,
+          customer_email: bookingState.customer.email,
+          customer_phone: bookingState.customer.phone || null,
+          booking_date: bookingDate,
+          booking_time: bookingTime,
+          notes: bookingState.customer.message || null,
+          status: "pending",
+        },
+      ])
+      .select("id")
+      .single();
 
-    if (insertError) {
+    if (insertError || !insertedBooking) {
       console.error("Fehler beim Speichern der Buchung:", insertError);
-      showSummaryError(
-        "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
-      );
+
+      // Mehr Details ausgeben, damit 401/403 leichter zu identifizieren sind
+      try {
+        console.error("Insert error status:", insertError?.status);
+        console.error("Insert error message:", insertError?.message);
+      } catch (e) {
+        // ignore
+      }
+
+      if (insertError && insertError.status === 401) {
+        showSummaryError(
+          "Zugriff verweigert (401). Bitte überprüfe den Supabase-Anon-Key in js/supabase.js oder die RLS-Policies.",
+        );
+      } else {
+        showSummaryError(
+          "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+        );
+      }
+
       setBookingSubmitting(false);
       return;
     }
 
-    window.location.href = "success.html";
+    // Leite weiter und übergebe Booking-Daten per Query-String für die Success-Page
+    const params = new URLSearchParams({
+      id: insertedBooking.id,
+      service: bookingState.selectedService?.title || "",
+      date: bookingDate,
+      time: bookingTime,
+    });
+
+    window.location.href = `success.html?${params.toString()}`;
   } catch (error) {
     console.error("Unbekannter Fehler bei der Buchungsbestätigung:", error);
     showSummaryError(
