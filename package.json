@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@supabase/supabase-js": "^2.112.1"
+    "@supabase/supabase-js": "^2.112.1",
+    "csv-parse": "^7.0.2"
   },
   "name": "website-beratungsstelle",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

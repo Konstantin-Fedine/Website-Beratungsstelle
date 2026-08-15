@@ -16,35 +16,77 @@
     <link rel="stylesheet" href="css/success.css" />
   </head>
 
-  <body>
+  <body data-page="success">
     <main>
       <section class="success">
         <div class="success-card">
-          <div class="success-icon">✅</div>
-
-          <h1>Termin erfolgreich gebucht</h1>
-
-          <p id="success-intro">Vielen Dank — Ihre Buchung wurde gespeichert.</p>
-
-          <div class="booking-details">
-            <p><strong>Buchungsnummer:</strong> <span id="booking-id">—</span></p>
-            <p><strong>Leistung:</strong> <span id="booking-service">—</span></p>
-            <p><strong>Datum &amp; Uhrzeit:</strong> <span id="booking-datetime">—</span></p>
+          <div class="success-icon" data-text="success_Hero_icon">
+            ✅
           </div>
 
-          <p id="success-note">Sie erhalten in Kürze eine Bestätigung per E‑Mail.</p>
+          <h1 data-text="success_Hero_title">
+            Termin erfolgreich gebucht
+          </h1>
 
-          <a href="index.html" class="btn btn-primary"> Zur Startseite </a>
+          <p
+            id="success-intro"
+            data-text="success_Hero_intro"
+          >
+            Vielen Dank — Ihre Buchung wurde gespeichert.
+          </p>
+
+          <div class="booking-details">
+            <p>
+              <strong data-text="success_Buchungsdetails_booking_id_label">
+                Buchungsnummer:
+              </strong>
+
+              <span id="booking-id">—</span>
+            </p>
+
+            <p>
+              <strong data-text="success_Buchungsdetails_service_label">
+                Leistung:
+              </strong>
+
+              <span id="booking-service">—</span>
+            </p>
+
+            <p>
+              <strong data-text="success_Buchungsdetails_datetime_label">
+                Datum &amp; Uhrzeit:
+              </strong>
+
+              <span id="booking-datetime">—</span>
+            </p>
+          </div>
+
+          <p
+            id="success-note"
+            data-text="success_Bestätigung_note"
+          >
+            Sie erhalten in Kürze eine Bestätigung per E-Mail.
+          </p>
+
+          <a
+            href="index.html"
+            class="btn btn-primary"
+            data-text="success_CTA_button"
+          >
+            Zur Startseite
+          </a>
         </div>
       </section>
     </main>
 
     <script src="js/header.js"></script>
     <script src="js/load-components.js"></script>
+
     <script>
       // Parse query params und fülle die Erfolgseite
       (function () {
         const params = new URLSearchParams(window.location.search);
+
         const id = params.get("id");
         const service = params.get("service");
         const date = params.get("date");
@@ -56,19 +98,24 @@
         }
 
         if (service) {
-          document.getElementById("booking-service").textContent = decodeURIComponent(service);
+          document.getElementById("booking-service").textContent =
+            decodeURIComponent(service);
         }
 
         if (date || time) {
           const parts = [];
+
           if (date) parts.push(date);
           if (time) parts.push(time);
-          document.getElementById("booking-datetime").textContent = parts.join(" um ");
+
+          document.getElementById("booking-datetime").textContent =
+            parts.join(" um ");
         }
 
         if (createdAt) {
           try {
             const d = new Date(createdAt);
+
             const formatted = d.toLocaleString(undefined, {
               year: "numeric",
               month: "2-digit",
@@ -76,9 +123,21 @@
               hour: "2-digit",
               minute: "2-digit",
             });
+
             const p = document.createElement("p");
-            p.innerHTML = `<strong>Erfasst am:</strong> ${formatted}`;
-            document.querySelector(".booking-details").appendChild(p);
+
+            const strong = document.createElement("strong");
+
+            // Der Text kommt später ebenfalls aus Google Sheets
+            strong.dataset.text = "success_Buchungsdetails_created_at_label";
+            strong.textContent = "Erfasst am:";
+
+            p.appendChild(strong);
+            p.appendChild(document.createTextNode(` ${formatted}`));
+
+            document
+              .querySelector(".booking-details")
+              .appendChild(p);
           } catch (e) {
             // ignore parse errors
           }

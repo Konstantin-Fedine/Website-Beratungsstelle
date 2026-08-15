@@ -21,44 +21,63 @@
     <main>
       <section class="booking-hero">
         <div class="booking-container">
-          <h1>Termin buchen</h1>
+          <h1 data-text="booking_Hero_title">Termin buchen</h1>
 
-          <p>Wählen Sie Schritt für Schritt Ihren passenden Termin.</p>
+          <p data-text="booking_Hero_text">
+            Wählen Sie Schritt für Schritt Ihren passenden Termin.
+          </p>
         </div>
       </section>
 
       <section class="booking-process">
         <div class="booking-container">
+
           <!-- Fortschritt -->
 
           <div class="booking-progress">
-            <div class="progress-step active">1. Beratung</div>
+            <div class="progress-step active" data-text="booking_Fortschritt_step_1">
+              1. Beratung
+            </div>
 
-            <div class="progress-step">2. Termin</div>
+            <div class="progress-step" data-text="booking_Fortschritt_step_2">
+              2. Termin
+            </div>
 
-            <div class="progress-step">3. Daten</div>
+            <div class="progress-step" data-text="booking_Fortschritt_step_3">
+              3. Daten
+            </div>
 
-            <div class="progress-step">4. Bestätigung</div>
+            <div class="progress-step" data-text="booking_Fortschritt_step_4">
+              4. Bestätigung
+            </div>
           </div>
 
           <!-- Schritt 1 -->
 
           <div class="booking-step active" id="booking-step-service">
-            <h2>Ihre Beratung</h2>
+            <h2 data-text="booking_Beratung_title">
+              Ihre Beratung
+            </h2>
 
             <div id="services-list">
-              <p>Beratungsangebote werden geladen...</p>
+              <p data-text="booking_Beratung_loading">
+                Beratungsangebote werden geladen...
+              </p>
             </div>
 
             <div class="booking-step-actions">
-              <button class="btn btn-primary next-step">Weiter zu Datum &amp; Uhrzeit</button>
+              <button class="btn btn-primary next-step" data-text="booking_Beratung_next_button">
+                Weiter zu Datum &amp; Uhrzeit
+              </button>
             </div>
           </div>
 
           <!-- Schritt 2 -->
 
           <div class="booking-step" id="booking-step-date">
-            <h2>Datum &amp; Uhrzeit auswählen</h2>
+            <h2 data-text="booking_Datum_title">
+              Datum &amp; Uhrzeit auswählen
+            </h2>
 
             <div class="booking-datetime-layout">
               <div id="calendar-container">
@@ -83,46 +102,76 @@
                 </div>
 
                 <div class="calendar-weekdays">
-                  <div>Mo</div>
-                  <div>Di</div>
-                  <div>Mi</div>
-                  <div>Do</div>
-                  <div>Fr</div>
-                  <div>Sa</div>
-                  <div>So</div>
+                  <div data-text="booking_Datum_weekday_monday">Mo</div>
+                  <div data-text="booking_Datum_weekday_tuesday">Di</div>
+                  <div data-text="booking_Datum_weekday_wednesday">Mi</div>
+                  <div data-text="booking_Datum_weekday_thursday">Do</div>
+                  <div data-text="booking_Datum_weekday_friday">Fr</div>
+                  <div data-text="booking_Datum_weekday_saturday">Sa</div>
+                  <div data-text="booking_Datum_weekday_sunday">So</div>
                 </div>
 
                 <div id="calendar-days"></div>
               </div>
 
               <div id="times-panel">
-                <p id="times-placeholder">
+                <p
+                  id="times-placeholder"
+                  data-text="booking_Datum_date_placeholder"
+                >
                   Bitte wählen Sie zuerst ein Datum aus.
                 </p>
 
                 <div id="times-content" hidden>
                   <h3 id="selected-date-label"></h3>
-                  <p class="times-heading">Freie Zeiten</p>
+
+                  <p
+                    class="times-heading"
+                    data-text="booking_Datum_available_times"
+                  >
+                    Freie Zeiten
+                  </p>
+
                   <div id="time-slots"></div>
                 </div>
               </div>
             </div>
 
             <div class="booking-step-actions is-backward">
-              <button class="btn btn-secondary previous-step">Zurück</button>
-              <button class="btn btn-primary next-step">Weiter zu Ihren Daten</button>
+              <button
+                class="btn btn-secondary previous-step"
+                data-text="booking_Datum_previous_button"
+              >
+                Zurück
+              </button>
+
+              <button
+                class="btn btn-primary next-step"
+                data-text="booking_Datum_next_button"
+              >
+                Weiter zu Ihren Daten
+              </button>
             </div>
           </div>
 
           <!-- Schritt 3 -->
 
           <div class="booking-step" id="booking-step-data">
-            <h2>Ihre Daten</h2>
+            <h2 data-text="booking_Daten_title">
+              Ihre Daten
+            </h2>
 
             <div id="booking-form-container">
               <form id="booking-form" class="booking-form" novalidate>
+
                 <div class="form-row">
-                  <label for="first-name">Vorname *</label>
+                  <label
+                    for="first-name"
+                    data-text="booking_Daten_first_name_label"
+                  >
+                    Vorname *
+                  </label>
+
                   <input
                     type="text"
                     id="first-name"
@@ -132,66 +181,172 @@
                 </div>
 
                 <div class="form-row">
-                  <label for="last-name">Nachname *</label>
-                  <input type="text" id="last-name" name="lastName" required />
+                  <label
+                    for="last-name"
+                    data-text="booking_Daten_last_name_label"
+                  >
+                    Nachname *
+                  </label>
+
+                  <input
+                    type="text"
+                    id="last-name"
+                    name="lastName"
+                    required
+                  />
                 </div>
 
                 <div class="form-row">
-                  <label for="email">E-Mail *</label>
-                  <input type="email" id="email" name="email" required />
+                  <label
+                    for="email"
+                    data-text="booking_Daten_email_label"
+                  >
+                    E-Mail *
+                  </label>
+
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                  />
                 </div>
 
                 <div class="form-row">
-                  <label for="phone">Telefon</label>
-                  <input type="tel" id="phone" name="phone" />
+                  <label
+                    for="phone"
+                    data-text="booking_Daten_phone_label"
+                  >
+                    Telefon
+                  </label>
+
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                  />
                 </div>
 
                 <div class="form-row">
-                  <label for="message">Nachricht</label>
-                  <textarea id="message" name="message" rows="4" maxlength="2000"></textarea>
+                  <label
+                    for="message"
+                    data-text="booking_Daten_message_label"
+                  >
+                    Nachricht
+                  </label>
+
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="4"
+                    maxlength="2000"
+                  ></textarea>
+
                   <div class="message-counter">
                     <span id="message-counter">0</span>
-                    <span class="muted">/ 2000</span>
+
+                    <span
+                      class="muted"
+                      data-text="booking_Daten_message_counter"
+                    >
+                      / 2000
+                    </span>
                   </div>
-                  <p id="message-warning" class="form-error" role="alert" aria-live="polite" hidden>
-                    Die Nachricht ist zu lang. Bitte kürzen Sie auf maximal 2000 Zeichen.
+
+                  <p
+                    id="message-warning"
+                    class="form-error"
+                    role="alert"
+                    aria-live="polite"
+                    hidden
+                    data-text="booking_Daten_message_too_long"
+                  >
+                    Die Nachricht ist zu lang. Bitte kürzen Sie auf maximal
+                    2000 Zeichen.
                   </p>
                 </div>
 
-                <p class="form-note">* Pflichtfelder</p>
+                <p
+                  class="form-note"
+                  data-text="booking_Daten_required_note"
+                >
+                  * Pflichtfelder
+                </p>
 
-                <p id="booking-form-error" class="form-error" role="alert" aria-live="assertive" hidden>
+                <p
+                  id="booking-form-error"
+                  class="form-error"
+                  role="alert"
+                  aria-live="assertive"
+                  hidden
+                  data-text="booking_Daten_form_error"
+                >
                   Bitte füllen Sie alle Pflichtfelder korrekt aus.
                 </p>
               </form>
             </div>
 
             <div class="booking-step-actions is-backward">
-              <button class="btn btn-secondary previous-step">Zurück</button>
-              <button class="btn btn-primary next-step">Weiter zur Zusammenfassung</button>
+              <button
+                class="btn btn-secondary previous-step"
+                data-text="booking_Daten_previous_button"
+              >
+                Zurück
+              </button>
+
+              <button
+                class="btn btn-primary next-step"
+                data-text="booking_Daten_next_button"
+              >
+                Weiter zur Zusammenfassung
+              </button>
             </div>
           </div>
 
           <!-- Schritt 4 -->
 
           <div class="booking-step" id="booking-step-summary">
-            <h2>Zusammenfassung</h2>
+            <h2 data-text="booking_Zusammenfassung_title">
+              Zusammenfassung
+            </h2>
 
             <div id="booking-summary">
-              <p>Zusammenfassung wird später angezeigt.</p>
+              <p data-text="booking_Zusammenfassung_loading">
+                Zusammenfassung wird später angezeigt.
+              </p>
             </div>
 
-            <p id="booking-summary-error" class="form-error" role="alert" aria-live="assertive" hidden>
-              Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.
+            <p
+              id="booking-summary-error"
+              class="form-error"
+              role="alert"
+              aria-live="assertive"
+              hidden
+              data-text="booking_Zusammenfassung_booking_error"
+            >
+              Die Buchung konnte leider nicht abgeschlossen werden.
+              Bitte versuchen Sie es erneut.
             </p>
 
             <div class="booking-step-actions is-backward">
-              <button class="btn btn-secondary previous-step">Zurück</button>
-              <button id="booking-confirm-button" class="btn btn-primary" type="button">
+              <button
+                class="btn btn-secondary previous-step"
+                data-text="booking_Zusammenfassung_previous_button"
+              >
+                Zurück
+              </button>
+
+              <button
+                id="booking-confirm-button"
+                class="btn btn-primary"
+                type="button"
+                data-text="booking_Zusammenfassung_confirm_button"
+              >
                 Termin bestätigen
               </button>
             </div>
           </div>
+
         </div>
       </section>
     </main>
