@@ -1379,6 +1379,7 @@ DATEI: index.html
   </head>
 
   <body data-page="index">
+  <main>
     <section class="hero">
       <div class="hero-content">
         <h1 data-text="index_Hero_title">Systemisch. Auf Augenhöhe. Damit Orientierung, Handlungsspielräume und Sicherheit wachsen können.</h1>
@@ -1626,6 +1627,7 @@ DATEI: index.html
     <script src="js/faq.js"></script>
     <script src="js/load-components.js"></script>
     <script src="js/content-loader.js"></script>
+  </main>
   </body>
 </html>
 

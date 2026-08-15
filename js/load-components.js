@@ -34,8 +34,13 @@ async function loadComponent(file, position) {
 }
 
 async function loadComponents() {
-  await loadComponent("components/header.html", "before-main");
-  await loadComponent("components/footer.html", "after-main");
+  const basePath = window.location.pathname.substring(
+    0,
+    window.location.pathname.lastIndexOf("/") + 1
+  );
+
+  await loadComponent(`${basePath}components/header.html`, "before-main");
+  await loadComponent(`${basePath}components/footer.html`, "after-main");
 
   // Content-Loader informieren, dass Header und Footer jetzt vorhanden sind
   document.dispatchEvent(new Event("componentsLoaded"));
