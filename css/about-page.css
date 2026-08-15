@@ -1,29 +1,56 @@
+/* ========================================
+   ABOUT PAGE – HERO
+   ======================================== */
+
 .about-hero {
   padding: 90px 20px;
-  background: linear-gradient(135deg, var(--color-background), #f4e7db);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-background),
+      var(--color-primary-soft)
+    );
+
   text-align: center;
 }
 
 .about-hero-content {
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
+
   opacity: 0;
   transform: translateY(20px);
+
   animation: fadeUp 0.8s ease forwards;
 }
 
 .about-hero h1 {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+
   color: var(--color-dark);
-  font-size: 2.3rem;
+
+  font-size: 2.4rem;
+  line-height: 1.2;
 }
 
 .about-hero p {
+  max-width: 700px;
+  margin: 0 auto;
+
   color: var(--color-text-muted);
+
+  font-size: 1.05rem;
   line-height: 1.7;
 }
 
+
+/* ========================================
+   ALLGEMEIN
+   ======================================== */
+
 .about-container {
+  width: 100%;
   max-width: var(--container-width);
   margin: 0 auto;
 }
@@ -38,34 +65,87 @@
   padding: 80px 20px;
 }
 
-.about-container h2 {
-  margin-bottom: 30px;
-  text-align: center;
+.about-container > h2 {
+  max-width: 850px;
+  margin: 0 auto 45px;
+
   color: var(--color-dark);
+
+  text-align: center;
+
+  font-size: 2rem;
+  line-height: 1.25;
+}
+
+
+/* ========================================
+   EINLEITUNG
+   ======================================== */
+
+.about-introduction {
+  background: var(--color-background);
 }
 
 .about-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 45px;
+
+  align-items: center;
+}
+
+.about-image {
+  order: 1;
+}
+
+.about-text {
+  order: 2;
 }
 
 .about-image img,
 .about-school-image img {
+  display: block;
+
   width: 100%;
+  height: auto;
+
   border-radius: var(--radius);
+
   box-shadow: var(--shadow);
+
+  object-fit: cover;
+}
+
+.about-text h2 {
+  margin-bottom: 25px;
+
+  color: var(--color-dark);
+
+  font-size: 2rem;
+  line-height: 1.25;
 }
 
 .about-text p,
 .about-school p {
   margin-bottom: 20px;
+
   color: var(--color-text-muted);
-  line-height: 1.7;
+
+  line-height: 1.75;
 }
 
+.about-text p:last-child,
+.about-school p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ========================================
+   BERATUNGSANSATZ
+   ======================================== */
+
 .about-values {
-  background: var(--color-background);
+  background: var(--color-surface);
 }
 
 .about-cards {
@@ -75,29 +155,90 @@
 }
 
 .about-card {
-  padding: 30px 25px;
-  background: var(--color-surface);
+  padding: 30px;
+
+  background: var(--color-background);
+
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
+
   box-shadow: var(--shadow);
-  transition: var(--transition);
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
 }
 
 .about-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
+
+  box-shadow: 0 14px 30px rgba(42, 36, 33, 0.12);
 }
 
 .about-card h3 {
   margin-bottom: 15px;
+
   color: var(--color-dark);
+
+  font-size: 1.2rem;
+  line-height: 1.35;
 }
 
 .about-card p {
+  margin: 0;
+
   color: var(--color-text-muted);
-  line-height: 1.6;
+
+  line-height: 1.7;
 }
+
+
+/* ========================================
+   ZIELGRUPPE
+   ======================================== */
+
+.about-target {
+  background: var(--color-background);
+}
+
+.about-target .about-card {
+  background: var(--color-surface);
+}
+
+
+/* ========================================
+   SCHULE
+   ======================================== */
 
 .about-school {
   background: var(--color-surface);
+}
+
+.about-school-image {
+  order: 1;
+}
+
+.about-school > .about-container > div:last-child {
+  order: 2;
+}
+
+.about-school h2 {
+  margin-bottom: 25px;
+
+  color: var(--color-dark);
+
+  font-size: 2rem;
+  line-height: 1.3;
+}
+
+
+/* ========================================
+   QUALIFIKATIONEN
+   ======================================== */
+
+.about-qualification {
+  background: var(--color-background);
 }
 
 .qualification-grid {
@@ -108,64 +249,177 @@
 
 .qualification-grid > div {
   padding: 30px;
-  background: var(--color-background);
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
 }
 
 .qualification-grid h3 {
   margin-bottom: 20px;
+
   color: var(--color-dark);
+
+  font-size: 1.15rem;
+  line-height: 1.4;
 }
 
 .qualification-grid ul {
+  margin: 0;
   padding-left: 20px;
 }
 
 .qualification-grid li {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+
   color: var(--color-text-muted);
+
+  line-height: 1.6;
 }
 
+.qualification-grid li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ========================================
+   ZITAT
+   ======================================== */
+
 .about-quote {
-  background: var(--color-background);
+  background: var(--color-primary-soft);
+
   text-align: center;
 }
 
 .about-quote blockquote {
   max-width: 850px;
   margin: 0 auto 25px;
+
   color: var(--color-dark);
-  font-size: 1.5rem;
+
+  font-size: 1.45rem;
   font-style: italic;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .about-quote p {
+  margin: 0;
+
   color: var(--color-text-muted);
+
+  line-height: 1.6;
 }
+
+
+/* ========================================
+   CTA
+   ======================================== */
 
 .about-cta {
   background: var(--color-dark);
+
   text-align: center;
 }
 
 .about-cta h2 {
-  margin-bottom: 30px;
+  max-width: 750px;
+  margin: 0 auto 30px;
+
   color: var(--color-text-light);
+
+  font-size: 2rem;
+  line-height: 1.3;
 }
 
+
+/* ========================================
+   ANIMATION
+   ======================================== */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ========================================
+   TABLET
+   ======================================== */
+
+@media (min-width: 700px) {
+  .about-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .qualification-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* ========================================
+   DESKTOP
+   ======================================== */
+
 @media (min-width: 1024px) {
+  .about-hero {
+    padding: 120px 20px;
+  }
+
   .about-hero h1 {
     font-size: 3.5rem;
   }
 
-  .about-grid {
-    display: grid;
-    grid-template-columns: 40% 60%;
-    align-items: center;
+  .about-hero p {
+    font-size: 1.15rem;
   }
 
-  .about-cards {
+  .about-introduction,
+  .about-values,
+  .about-target,
+  .about-school,
+  .about-qualification,
+  .about-quote,
+  .about-cta {
+    padding: 100px 20px;
+  }
+
+  .about-container > h2 {
+    font-size: 2.8rem;
+  }
+
+  .about-grid {
+    grid-template-columns: 40% 60%;
+    gap: 70px;
+  }
+
+  .about-image,
+  .about-school-image {
+    order: initial;
+  }
+
+  .about-text,
+  .about-school > .about-container > div:last-child {
+    order: initial;
+  }
+
+  .about-text h2,
+  .about-school h2 {
+    font-size: 2.4rem;
+  }
+
+  .about-values .about-cards {
     grid-template-columns: repeat(3, 1fr);
   }
 
@@ -179,5 +433,33 @@
 
   .about-quote blockquote {
     font-size: 2rem;
+  }
+
+  .about-cta h2 {
+    font-size: 2.5rem;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 699px) {
+  .about-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .about-container > h2 {
+    font-size: 2rem;
+  }
+
+  .about-card,
+  .qualification-grid > div {
+    padding: 25px;
+  }
+
+  .about-quote blockquote {
+    font-size: 1.3rem;
   }
 }

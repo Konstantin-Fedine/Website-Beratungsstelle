@@ -1,63 +1,146 @@
-/* ── Allgemeine Buchungsseite ── */
+/* ========================================
+   BOOKING PAGE
+   ======================================== */
 
-.booking-step {
-  display: none;
-}
 
-.booking-step.active {
-  display: block;
-}
+/* ========================================
+   ALLGEMEIN
+   ======================================== */
 
 .booking-container {
+  width: 100%;
   max-width: var(--container-width);
   margin: 0 auto;
   padding: 0 20px;
-}
-
-.booking-hero {
-  padding: 60px 0 30px;
-  text-align: center;
-}
-
-.booking-hero h1 {
-  margin-bottom: 12px;
 }
 
 .booking-process {
   padding-bottom: 80px;
 }
 
+
+/* ========================================
+   HERO
+   ======================================== */
+
+.booking-hero {
+  padding: 80px 20px 35px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-background),
+      var(--color-primary-soft)
+    );
+
+  text-align: center;
+}
+
+.booking-hero > .booking-container {
+  opacity: 0;
+  transform: translateY(20px);
+
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.booking-hero h1 {
+  margin-bottom: 15px;
+
+  color: var(--color-dark);
+
+  font-size: 2.4rem;
+  line-height: 1.2;
+}
+
+.booking-hero p {
+  max-width: 650px;
+  margin: 0 auto;
+
+  color: var(--color-text-muted);
+
+  line-height: 1.7;
+}
+
+
+/* ========================================
+   FORTSCHRITT
+   ======================================== */
+
 .booking-progress {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
-  margin-bottom: 40px;
+  gap: 10px;
+
+  margin-bottom: 45px;
 }
 
 .progress-step {
   padding: 10px 18px;
+
+  background: var(--color-background);
+
+  border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: #f2ece7;
-  font-weight: 600;
+
+  color: var(--color-text-muted);
+
   font-size: 0.9rem;
+  font-weight: 600;
+
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
 }
 
 .progress-step.active {
   background: var(--color-dark);
-  color: white;
+
+  border-color: var(--color-dark);
+
+  color: var(--color-text-light);
+}
+
+
+/* ========================================
+   SCHRITTE
+   ======================================== */
+
+.booking-step {
+  display: none;
+
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.booking-step.active {
+  display: block;
 }
 
 .booking-step h2 {
-  margin-bottom: 24px;
+  margin-bottom: 30px;
+
+  color: var(--color-dark);
+
+  font-size: 2rem;
+  line-height: 1.25;
 }
+
+
+/* ========================================
+   BUTTON-BEREICH
+   ======================================== */
 
 .booking-step-actions {
   display: flex;
   flex-wrap: wrap;
+
   justify-content: flex-end;
   align-items: center;
+
   gap: 16px;
+
   margin-top: 30px;
 }
 
@@ -69,68 +152,377 @@
   margin: 0;
 }
 
-.booking-step .btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
 
-/* ── Schritt 1: Beratungsangebote ── */
+/* ========================================
+   SCHRITT 1 – BERATUNGSANGEBOTE
+   ======================================== */
 
 .booking-service-card {
-  background: white;
+  max-width: 700px;
+
+  margin: 0 auto 20px;
+
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  max-width: 600px;
-  margin-bottom: 20px;
+
+  background: var(--color-surface);
+
   border: 2px solid transparent;
-  transition: border-color var(--transition);
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+}
+
+.booking-service-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 14px 30px rgba(42, 36, 33, 0.11);
 }
 
 .booking-service-card.selected {
   border-color: var(--color-primary);
+
+  box-shadow:
+    0 10px 25px rgba(212, 178, 149, 0.2);
 }
 
 .booking-service-card h3 {
   margin-bottom: 15px;
+
+  color: var(--color-dark);
+
+  font-size: 1.3rem;
+  line-height: 1.35;
 }
 
 .service-description {
-  line-height: 1.6;
   margin-bottom: 25px;
+
+  color: var(--color-text-muted);
+
+  line-height: 1.7;
 }
 
 .service-info {
   display: flex;
-  gap: 20px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
-  margin-top: 10px;
+  gap: 10px;
+
+  margin: 10px 0 20px;
 }
 
 .service-info span {
-  background: #f5eee8;
-  padding: 10px 15px;
+  padding: 9px 13px;
+
+  background: var(--color-primary-soft);
+
   border-radius: 10px;
+
+  color: var(--color-dark);
+
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
-/* ── Schritt 2: Kalender & Uhrzeiten ── */
+
+/* ========================================
+   SCHRITT 2 – KALENDER
+   ======================================== */
 
 .booking-datetime-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
+
   gap: 24px;
+
   align-items: start;
-  max-width: 900px;
-  margin-bottom: 8px;
+
+  max-width: 1000px;
+
+  margin-bottom: 10px;
 }
 
-/* ── Schritt 3: Kundendatenformular ── */
+#calendar-container,
+#times-panel {
+  background: var(--color-surface);
+
+  padding: 24px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+}
+
+#calendar-container {
+  max-width: none;
+}
+
+#times-panel {
+  min-height: 260px;
+}
+
+
+/* ========================================
+   KALENDER HEADER
+   ======================================== */
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 18px;
+}
+
+.calendar-header h3 {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1.1rem;
+
+  text-align: center;
+}
+
+.calendar-header button {
+  width: 36px;
+  height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+
+  background: var(--color-background);
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 1.15rem;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+.calendar-header button:hover {
+  background: var(--color-primary-soft);
+
+  border-color: var(--color-primary);
+
+  transform: translateY(-1px);
+}
+
+
+/* ========================================
+   WOCHENTAGE
+   ======================================== */
+
+.calendar-weekdays,
+#calendar-days {
+  display: grid;
+
+  grid-template-columns: repeat(7, 1fr);
+
+  gap: 8px;
+}
+
+.calendar-weekdays div {
+  padding-bottom: 4px;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+
+/* ========================================
+   KALENDERTAGE
+   ======================================== */
+
+.calendar-day {
+  aspect-ratio: 1;
+
+  border: 2px solid transparent;
+  border-radius: 12px;
+
+  background: var(--color-background);
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+.calendar-day:hover:not(:disabled):not(.empty) {
+  background: var(--color-primary);
+
+  transform: translateY(-1px);
+}
+
+.calendar-day.today {
+  border-color: var(--color-primary);
+
+  font-weight: 700;
+}
+
+.calendar-day.selected {
+  background: var(--color-dark);
+
+  border-color: var(--color-dark);
+
+  color: var(--color-text-light);
+}
+
+.calendar-day.selected.today {
+  border-color: var(--color-primary);
+}
+
+.calendar-day.past,
+.calendar-day.unavailable,
+.calendar-day:disabled {
+  background: #ece8e4;
+
+  color: #aaa39d;
+
+  cursor: not-allowed;
+}
+
+.calendar-day.past:hover,
+.calendar-day.unavailable:hover,
+.calendar-day:disabled:hover {
+  background: #ece8e4;
+
+  transform: none;
+}
+
+.calendar-day.empty {
+  background: transparent;
+
+  border: none;
+
+  cursor: default;
+}
+
+
+/* ========================================
+   UHRZEITEN
+   ======================================== */
+
+#times-placeholder {
+  color: var(--color-text-muted);
+
+  line-height: 1.7;
+}
+
+#selected-date-label {
+  margin-bottom: 16px;
+
+  color: var(--color-dark);
+
+  font-size: 1.1rem;
+  text-transform: capitalize;
+}
+
+.times-heading {
+  margin-bottom: 12px;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+#time-slots {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.time-slot {
+  width: 100%;
+
+  padding: 13px 16px;
+
+  border: 2px solid transparent;
+  border-radius: 10px;
+
+  background: var(--color-background);
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  text-align: center;
+
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+.time-slot:hover {
+  background: var(--color-primary);
+
+  border-color: var(--color-primary);
+
+  transform: translateY(-1px);
+}
+
+.time-slot.selected {
+  background: var(--color-dark);
+
+  border-color: var(--color-dark);
+
+  color: var(--color-text-light);
+}
+
+.times-loading,
+.times-empty {
+  color: var(--color-text-muted);
+
+  line-height: 1.7;
+}
+
+
+/* ========================================
+   SCHRITT 3 – FORMULAR
+   ======================================== */
 
 .booking-form {
   display: grid;
   gap: 18px;
+
   max-width: 720px;
 }
 
@@ -140,43 +532,63 @@
 }
 
 .form-row label {
-  font-weight: 600;
   color: var(--color-dark);
+
+  font-weight: 600;
 }
 
 .booking-form input,
 .booking-form textarea {
   width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
+
   padding: 14px 16px;
-  font: inherit;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+
+  background: var(--color-surface);
   color: var(--color-dark);
-  background: #ffffff;
+
+  font: inherit;
+
   transition:
     border-color var(--transition),
-    box-shadow var(--transition);
+    box-shadow var(--transition),
+    background var(--transition);
 }
 
 .booking-form input:focus,
 .booking-form textarea:focus {
   outline: none;
+
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(212, 178, 149, 0.15);
+
+  box-shadow:
+    0 0 0 4px rgba(212, 178, 149, 0.15);
+}
+
+.booking-form input::placeholder,
+.booking-form textarea::placeholder {
+  color: #99928d;
 }
 
 .booking-form textarea {
   min-height: 140px;
+
   resize: vertical;
 }
 
 .message-counter {
   display: flex;
-  gap: 6px;
   align-items: center;
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
+
+  gap: 6px;
+
   margin-top: 6px;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.9rem;
 }
 
 .message-counter .muted {
@@ -184,284 +596,204 @@
 }
 
 .form-note {
-  margin-top: 0;
+  margin: 0;
+
   color: var(--color-text-muted);
+
   font-size: 0.9rem;
 }
+
+
+/* ========================================
+   FEHLERMELDUNGEN
+   ======================================== */
 
 .form-error {
-  color: #b33a3a;
-  background: rgba(179, 58, 58, 0.12);
-  padding: 12px 16px;
-  border-radius: 12px;
   margin: 0;
-}
 
-#calendar-container,
-#times-panel {
-  background: white;
-  padding: 24px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
+  padding: 12px 16px;
 
-#times-panel {
-  min-height: 200px;
-}
+  background: rgba(179, 58, 58, 0.1);
 
-#times-placeholder {
-  color: var(--color-text-muted);
-  line-height: 1.6;
-}
-
-#selected-date-label {
-  font-size: 1.1rem;
-  margin-bottom: 16px;
-  text-transform: capitalize;
-}
-
-.times-heading {
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-}
-
-#time-slots {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.time-slot {
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid transparent;
+  border: 1px solid rgba(179, 58, 58, 0.18);
   border-radius: 12px;
-  background: #f2ece7;
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-dark);
-  cursor: pointer;
-  text-align: center;
-  transition:
-    background var(--transition),
-    color var(--transition),
-    border-color var(--transition);
+
+  color: #9f3333;
+
+  line-height: 1.5;
 }
 
-.time-slot:hover {
-  background: var(--color-primary);
-}
 
-.time-slot.selected {
-  background: var(--color-dark);
-  color: white;
-  border-color: var(--color-dark);
-}
-
-.times-loading,
-.times-empty {
-  color: var(--color-text-muted);
-  line-height: 1.6;
-}
-
-#calendar-container {
-  max-width: none;
-}
+/* ========================================
+   SCHRITT 4 – ZUSAMMENFASSUNG
+   ======================================== */
 
 .booking-summary-card {
-  background: linear-gradient(180deg, #ffffff 0%, #fdf8f4 100%);
-  border: 1px solid rgba(212, 178, 149, 0.28);
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   display: grid;
+
   gap: 0;
+
+  padding: 30px;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--color-surface) 0%,
+      #fdf8f4 100%
+    );
+
+  border: 1px solid rgba(212, 178, 149, 0.28);
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
 }
 
 .booking-summary-card h3 {
   margin: 0 0 18px;
-  font-size: 1.6rem;
+
   color: var(--color-dark);
+
+  font-size: 1.6rem;
 }
 
 .summary-section {
   display: grid;
+
   gap: 10px;
+
   padding: 18px 0;
+
   border-top: 1px solid rgba(42, 36, 33, 0.08);
 }
 
 .summary-section:first-of-type {
-  border-top: none;
   padding-top: 0;
+
+  border-top: none;
 }
 
 .summary-heading {
   margin: 0;
-  font-weight: 700;
+
   color: var(--color-dark);
-  letter-spacing: 0.01em;
+
+  font-weight: 700;
 }
 
 .summary-value {
   margin: 0;
+
   color: var(--color-text);
+
   line-height: 1.6;
 }
 
 .summary-value a {
   color: var(--color-dark);
+
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .summary-subtext {
   color: var(--color-text-muted);
+
   font-size: 0.95rem;
 }
 
-.calendar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-}
 
-.calendar-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: var(--color-dark);
-  text-align: center;
-}
+/* ========================================
+   TABLET
+   ======================================== */
 
-.calendar-header button {
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--color-dark);
-  font-size: 1.15rem;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.calendar-header button:hover {
-  background: #f2ece7;
-  border-color: #d7c6b5;
-  color: var(--color-dark);
-}
-
-.calendar-weekdays,
-#calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-}
-
-.calendar-weekdays div {
-  text-align: center;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  padding-bottom: 4px;
-}
-
-.calendar-day {
-  aspect-ratio: 1;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  background: #f2ece7;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-family: inherit;
-  font-weight: 600;
-  color: var(--color-dark);
-  transition:
-    background var(--transition),
-    color var(--transition),
-    border-color var(--transition);
-}
-
-.calendar-day:hover:not(:disabled):not(.empty) {
-  background: var(--color-primary);
-}
-
-.calendar-day.today {
-  border-color: var(--color-primary);
-  font-weight: 700;
-}
-
-.calendar-day.selected {
-  background: var(--color-dark);
-  color: white;
-  border-color: var(--color-dark);
-}
-
-.calendar-day.selected.today {
-  border-color: white;
-}
-
-.calendar-day.past,
-.calendar-day.unavailable,
-.calendar-day:disabled {
-  background: #ece8e4;
-  color: #b0aaa4;
-  cursor: not-allowed;
-}
-
-.calendar-day.past:hover,
-.calendar-day.unavailable:hover,
-.calendar-day:disabled:hover {
-  background: #ece8e4;
-}
-
-.calendar-day.empty {
-  background: transparent;
-  cursor: default;
-  border: none;
-}
-
-/* ── Responsive ── */
-
-@media (max-width: 768px) {
-  .booking-datetime-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
+@media (min-width: 700px) {
   .booking-hero {
-    padding: 40px 0 20px;
+    padding: 100px 20px 40px;
   }
 
+  .booking-hero h1 {
+    font-size: 3rem;
+  }
+
+  .booking-step h2 {
+    font-size: 2.3rem;
+  }
+}
+
+
+/* ========================================
+   DESKTOP
+   ======================================== */
+
+@media (min-width: 1024px) {
+  .booking-hero {
+    padding: 120px 20px 45px;
+  }
+
+  .booking-hero h1 {
+    font-size: 3.5rem;
+  }
+
+  .booking-hero p {
+    font-size: 1.1rem;
+  }
+
+  .booking-process {
+    padding-bottom: 100px;
+  }
+
+  .booking-step h2 {
+    font-size: 2.5rem;
+  }
+
+  .booking-progress {
+    margin-bottom: 55px;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 699px) {
   .booking-container {
     padding: 0 16px;
   }
 
+  .booking-hero {
+    padding: 55px 16px 30px;
+  }
+
+  .booking-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .booking-progress {
+    gap: 8px;
+
+    margin-bottom: 35px;
+  }
+
   .progress-step {
+    padding: 8px 13px;
+
     font-size: 0.8rem;
-    padding: 8px 14px;
+  }
+
+  .booking-step h2 {
+    font-size: 1.8rem;
+  }
+
+  .booking-datetime-layout {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
   }
 
   #calendar-container,
   #times-panel {
-    padding: 16px;
-  }
-
-  #calendar-container {
-    max-width: 100%;
-  }
-
-  .calendar-header h3 {
-    font-size: 1rem;
+    padding: 18px;
   }
 
   .calendar-header button {
@@ -480,13 +812,14 @@
 
   .calendar-day {
     font-size: 0.8rem;
+
     border-radius: 8px;
   }
 
   .booking-step-actions {
-    flex-direction: row;
-    align-items: center;
     justify-content: flex-end;
+
+    gap: 10px;
   }
 
   .booking-step-actions.is-backward {
@@ -494,8 +827,30 @@
   }
 
   .booking-step-actions .btn {
-    display: inline-flex;
     width: auto;
+
     flex: 0 0 auto;
+  }
+
+  .booking-service-card,
+  .booking-summary-card {
+    padding: 24px;
+  }
+}
+
+
+/* ========================================
+   ANIMATION
+   ======================================== */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

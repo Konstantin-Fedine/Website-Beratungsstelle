@@ -1,17 +1,22 @@
-/* Hero */
+/* ========================================
+   SERVICES PAGE – HERO
+   ======================================== */
 
 .services-hero {
   padding: 90px 20px;
-  background: linear-gradient(
-    135deg,
-    var(--color-background),
-    var(--color-primary-soft)
-  );
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-background),
+      var(--color-primary-soft)
+    );
+
   text-align: center;
 }
 
 .services-hero-content {
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
 
   opacity: 0;
@@ -21,21 +26,32 @@
 }
 
 .services-hero h1 {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 
   color: var(--color-dark);
 
-  font-size: 2.3rem;
+  font-size: 2.4rem;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .services-hero p {
+  max-width: 700px;
+  margin: 0 auto;
+
   color: var(--color-text-muted);
+
+  font-size: 1.05rem;
   line-height: 1.7;
 }
 
-/* Allgemein */
+
+/* ========================================
+   ALLGEMEIN
+   ======================================== */
 
 .services-container {
+  width: 100%;
   max-width: var(--container-width);
   margin: 0 auto;
 }
@@ -49,20 +65,26 @@
   padding: 80px 20px;
 }
 
-.services-container h2 {
-  margin-bottom: 40px;
+.services-container > h2 {
+  max-width: 850px;
+  margin: 0 auto 45px;
 
   color: var(--color-dark);
 
   text-align: center;
+
+  font-size: 2rem;
+  line-height: 1.25;
 }
 
-/* Karten */
+
+/* ========================================
+   ANGEBOTS-KARTEN
+   ======================================== */
 
 .services-cards {
   display: grid;
   grid-template-columns: 1fr;
-
   gap: 25px;
 }
 
@@ -71,18 +93,26 @@
 
   background: var(--color-surface);
 
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
 
   box-shadow: var(--shadow);
 
-  transition: var(--transition);
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
+
+  box-shadow: 0 14px 30px rgba(42, 36, 33, 0.12);
 }
 
 .service-card img {
+  display: block;
+
   width: 100%;
   height: 220px;
 
@@ -90,49 +120,94 @@
 }
 
 .service-content {
-  padding: 30px 25px;
-
-  text-align: center;
+  padding: 30px;
 }
 
 .service-card h3 {
   margin-bottom: 15px;
 
   color: var(--color-dark);
+
+  font-size: 1.3rem;
+  line-height: 1.35;
 }
 
 .service-card p {
+  margin: 0;
+
   color: var(--color-text-muted);
 
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-/* Beratungsansatz */
 
-.services-approach {
+/* ========================================
+   ANGEBOTSÜBERSICHT
+   ======================================== */
+
+.services-overview {
   background: var(--color-background);
 }
 
-.services-approach .services-cards {
-  justify-content: center;
+.services-overview .services-cards {
+  grid-template-columns: 1fr;
 }
 
-/* Beratungsformen */
 
-.services-form {
+/* ========================================
+   BERATUNGSANSATZ
+   ======================================== */
+
+.services-approach {
   background: var(--color-surface);
 }
 
-/* Kosten */
+.services-approach .services-cards {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+
+/* ========================================
+   BERATUNGSFORMEN
+   ======================================== */
+
+.services-form {
+  background: var(--color-background);
+}
+
+.services-form .services-container > h2 {
+  max-width: 900px;
+
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.8;
+
+  color: var(--color-text-muted);
+}
+
+.services-form .services-cards {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+
+/* ========================================
+   KOSTEN
+   ======================================== */
 
 .services-cost {
-  background: var(--color-background);
+  background: var(--color-primary-soft);
 
   text-align: center;
 }
 
+.services-cost h2 {
+  margin-bottom: 20px;
+}
+
 .services-cost p {
-  max-width: 800px;
+  max-width: 750px;
   margin: 0 auto;
 
   color: var(--color-text-muted);
@@ -140,7 +215,10 @@
   line-height: 1.7;
 }
 
-/* Ablauf */
+
+/* ========================================
+   ABLAUF
+   ======================================== */
 
 .services-process {
   background: var(--color-surface);
@@ -149,8 +227,10 @@
 .services-steps {
   display: grid;
   grid-template-columns: 1fr;
+  gap: 50px;
 
-  gap: 45px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .services-step {
@@ -160,44 +240,53 @@
 }
 
 .services-step span {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
   width: 60px;
   height: 60px;
 
   margin: 0 auto 20px;
 
-  background: var(--color-primary);
-
-  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   border-radius: 50%;
+
+  background: var(--color-primary);
+  color: var(--color-dark);
 
   font-size: 1.3rem;
   font-weight: 700;
 
-  transition: var(--transition);
+  box-shadow: 0 8px 20px rgba(212, 178, 149, 0.2);
+
+  transition: transform var(--transition);
 }
 
 .services-step:hover span {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .services-step h3 {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 
   color: var(--color-dark);
+
+  font-size: 1.15rem;
 }
 
 .services-step p {
+  max-width: 300px;
+  margin: 0 auto;
+
   color: var(--color-text-muted);
 
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-/* CTA */
+
+/* ========================================
+   CTA
+   ======================================== */
 
 .services-cta {
   background: var(--color-dark);
@@ -206,52 +295,147 @@
 }
 
 .services-cta h2 {
+  margin-bottom: 25px;
+
   color: var(--color-text-light);
 }
 
-/* Animation */
+
+/* ========================================
+   LOADING
+   ======================================== */
+
+.loading-text {
+  grid-column: 1 / -1;
+
+  padding: 30px;
+
+  color: var(--color-text-muted);
+
+  text-align: center;
+}
+
+
+/* ========================================
+   ANIMATION
+   ======================================== */
 
 @keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Desktop */
 
-@media (min-width: 1024px) {
-  .services-hero h1 {
-    font-size: 3.5rem;
-  }
+/* ========================================
+   TABLET
+   ======================================== */
 
+@media (min-width: 700px) {
   .services-cards {
     grid-template-columns: repeat(2, 1fr);
-
-    max-width: 1000px;
-    margin: 0 auto;
   }
 
   .services-overview .services-cards {
-    grid-template-columns: repeat(4, 1fr);
-
-    max-width: none;
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .services-approach .services-cards,
+  .services-approach .services-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .services-form .services-cards {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .services-steps {
     grid-template-columns: repeat(3, 1fr);
-
     gap: 30px;
   }
+}
 
-  .services-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+
+/* ========================================
+   DESKTOP
+   ======================================== */
+
+@media (min-width: 1024px) {
+  .services-hero {
+    padding: 120px 20px;
+  }
+
+  .services-hero h1 {
+    font-size: 3.5rem;
+  }
+
+  .services-hero p {
+    font-size: 1.15rem;
+  }
+
+  .services-overview,
+  .services-approach,
+  .services-form,
+  .services-cost,
+  .services-process,
+  .services-cta {
+    padding: 100px 20px;
+  }
+
+  .services-container > h2 {
+    font-size: 2.8rem;
+  }
+
+  .services-overview .services-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .services-approach .services-cards {
+    max-width: 950px;
+  }
+
+  .services-form .services-container > h2 {
+    font-size: 1.25rem;
+  }
+
+  .services-step:not(:last-child)::after {
+    content: "→";
+
+    position: absolute;
+
+    top: 30px;
+    right: -20px;
+
+    color: var(--color-primary);
+
+    font-size: 1.5rem;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 699px) {
+  .services-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .services-container > h2 {
+    font-size: 2rem;
+  }
+
+  .services-form .services-container > h2 {
+    font-size: 1.15rem;
+  }
+
+  .service-content {
+    padding: 25px;
   }
 }

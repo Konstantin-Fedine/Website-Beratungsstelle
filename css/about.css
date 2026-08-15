@@ -1,13 +1,19 @@
+/* ========================================
+   ABOUT
+   ======================================== */
+
 .about-section {
   padding: 80px 20px;
-  background: var(--color-background);
+  background: var(--color-surface);
 }
 
 .about-container {
   max-width: var(--container-width);
   margin: 0 auto;
+
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+
   gap: 40px;
 }
 
@@ -16,26 +22,40 @@
 }
 
 .about-content h2 {
-  font-size: 2rem;
   margin-bottom: 25px;
+
+  color: var(--color-dark);
+  font-size: 2rem;
+  line-height: 1.2;
 }
 
 .about-content p {
-  line-height: 1.7;
   margin-bottom: 20px;
+
+  color: var(--color-text);
+  line-height: 1.75;
 }
 
 .about-content .btn {
   margin-top: 10px;
 }
 
+.about-image {
+  order: -1;
+}
+
 .about-image img {
+  display: block;
+
   width: 100%;
   height: auto;
+
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+
   object-fit: cover;
 }
+
 
 @media (min-width: 1024px) {
   .about-section {
@@ -45,6 +65,7 @@
   .about-container {
     flex-direction: row;
     align-items: center;
+
     gap: 70px;
   }
 
@@ -54,6 +75,7 @@
 
   .about-image {
     width: 40%;
+    order: 0;
   }
 
   .about-content h2 {

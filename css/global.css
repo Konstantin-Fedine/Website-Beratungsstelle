@@ -83,7 +83,6 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-
   filter: brightness(0.95);
 
   box-shadow: 0 10px 24px rgba(212, 178, 149, 0.35);
@@ -110,7 +109,10 @@ body {
   box-shadow: 0 10px 24px rgba(42, 36, 33, 0.14);
 }
 
-/* Button-Reihen */
+/* ========================================
+   BUTTON ROW
+   ======================================== */
+
 .btn-row {
   display: flex;
   flex-wrap: wrap;
@@ -119,12 +121,29 @@ body {
   margin-top: 24px;
 }
 
+.btn-row .btn {
+  margin: 0;
+}
+
 .btn-row.justify-between {
   justify-content: space-between;
 }
 
-.btn-row .btn {
-  margin: 0;
+/* ========================================
+   DISABLED
+   ======================================== */
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn:disabled:hover {
+  transform: none;
+  filter: none;
+  box-shadow: none;
 }
 
 
