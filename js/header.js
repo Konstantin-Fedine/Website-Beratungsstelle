@@ -1,5 +1,4 @@
 function initHeader() {
-  const navigation = document.querySelector(".navigation");
   document.addEventListener("componentsLoaded", () => {
     const menuToggle = document.querySelector(".menu-toggle");
     const navigation = document.querySelector(".navigation");
@@ -9,50 +8,61 @@ function initHeader() {
       return;
     }
 
-    menuToggle.addEventListener("click", () => {
-      const isOpen = navigation.classList.toggle("active");
-
-      menuToggle.setAttribute("aria-expanded", isOpen);
-    });
-  });
-
-  if (!navigation) {
-    return;
-  }
-
-  if (menuToggle) {
+    // Mobile-Menü öffnen/schließen
     menuToggle.addEventListener("click", () => {
       const isActive = navigation.classList.toggle("is-active");
-      menuToggle.setAttribute("aria-expanded", isActive ? "true" : "false");
+
+      menuToggle.setAttribute(
+        "aria-expanded",
+        isActive ? "true" : "false"
+      );
     });
 
-    // Close menu when clicking outside
+    // Menü schließen, wenn außerhalb geklickt wird
     document.addEventListener("click", (e) => {
-      if (!navigation.contains(e.target) && !menuToggle.contains(e.target)) {
-        if (navigation.classList.contains("is-active")) {
-          navigation.classList.remove("is-active");
-          menuToggle.setAttribute("aria-expanded", "false");
-        }
+      if (
+        !navigation.contains(e.target) &&
+        !menuToggle.contains(e.target)
+      ) {
+        navigation.classList.remove("is-active");
+        menuToggle.setAttribute("aria-expanded", "false");
       }
     });
 
-    // Close on Escape
+    // Menü mit Escape schließen
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && navigation.classList.contains("is-active")) {
+      if (
+        e.key === "Escape" &&
+        navigation.classList.contains("is-active")
+      ) {
         navigation.classList.remove("is-active");
         menuToggle.setAttribute("aria-expanded", "false");
         menuToggle.focus();
       }
     });
-  }
 
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
+    // Aktuelle Seite hervorheben
+    const currentPage =
+      window.location.pathname.split("/").pop() || "index.html";
 
-  document.querySelectorAll(".navigation a").forEach((link) => {
-    const linkPage = link.getAttribute("href");
-    const isCurrentPage = linkPage && currentPage === linkPage;
+    document.querySelectorAll(".navigation a").forEach((link) => {
+      const linkPage = link.getAttribute("href");
 
-    link.classList.toggle("active", isCurrentPage);
-    link.classList.toggle("nav-cta", isCurrentPage && linkPage === "booking.html");
+      const isCurrentPage =
+        linkPage === currentPage;
+
+      link.classList.toggle("active", isCurrentPage);
+
+      // Termin buchen auf der Booking-Seite als CTA hervorheben
+      link.classList.toggle(
+        "nav-cta",
+        isCurrentPage && linkPage === "booking.html"
+      );
+    });
+
+    console.log(`✓ Aktive Navigation: ${currentPage}`);
   });
 }
+
+// Header initialisieren
+initHeader();

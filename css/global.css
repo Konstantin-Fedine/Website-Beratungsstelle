@@ -34,47 +34,83 @@ body {
   color: var(--color-text);
 }
 
+/* ========================================
+   BUTTONS – Einheitliches Design
+   ======================================== */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   min-height: 48px;
   padding: 14px 28px;
+
   border: 2px solid transparent;
   border-radius: var(--radius);
+
   font-family: inherit;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
+
   text-decoration: none;
   text-align: center;
+
   cursor: pointer;
-  transition: var(--transition);
+
+  transition:
+    transform var(--transition),
+    background var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    box-shadow var(--transition),
+    filter var(--transition);
+
   white-space: nowrap;
 }
+
+/* ========================================
+   PRIMARY
+   ======================================== */
 
 .btn-primary {
   background: var(--color-primary);
   color: var(--color-dark);
+
   box-shadow: 0 8px 20px rgba(212, 178, 149, 0.2);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
+
   filter: brightness(0.95);
+
+  box-shadow: 0 10px 24px rgba(212, 178, 149, 0.35);
 }
+
+/* ========================================
+   SECONDARY
+   ======================================== */
 
 .btn-secondary {
   background: rgba(42, 36, 33, 0.04);
   border-color: rgba(42, 36, 33, 0.18);
   color: var(--color-dark);
+
+  box-shadow: 0 8px 20px rgba(42, 36, 33, 0.08);
 }
 
 .btn-secondary:hover {
+  transform: translateY(-2px);
+
   background: rgba(42, 36, 33, 0.06);
   border-color: rgba(42, 36, 33, 0.28);
+
+  box-shadow: 0 10px 24px rgba(42, 36, 33, 0.14);
 }
 
+/* Button-Reihen */
 .btn-row {
   display: flex;
   flex-wrap: wrap;
@@ -90,6 +126,7 @@ body {
 .btn-row .btn {
   margin: 0;
 }
+
 
 @keyframes fadeUp {
   from {
@@ -118,7 +155,8 @@ img {
 /* Mobile tweaks: larger tap targets and readable text */
 @media (max-width: 600px) {
   .btn {
-    padding: 16px 20px;
+    min-height: 48px;
+    padding: 14px 20px;
     font-size: 1.05rem;
   }
 

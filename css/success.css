@@ -37,7 +37,6 @@
   text-align: center;
 }
 
-.btn p {
-  margin-bottom: 10px;
-  color: var(--color-dark);
+.success-card .btn {
+  margin-top: 30px;
 }
