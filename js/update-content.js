@@ -78,7 +78,7 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
-function updateHtmlFile(filePath, content, dryRun = true) {
+function updateHtmlFile(filePath, content, dryRun = false) {
   let html = fs.readFileSync(filePath, "utf8");
   const originalHtml = html;
 
@@ -96,6 +96,8 @@ function updateHtmlFile(filePath, content, dryRun = true) {
       }
 
       console.log(`  ↳ ${key}`);
+      console.log(`     ALT: ${oldText.trim()}`);
+      console.log(`     NEU: ${newText.trim()}`);
 
       return `${openingTag}${newText}${closingTag}`;
     },
@@ -169,7 +171,7 @@ async function main() {
 
     console.log(`${file}:`);
 
-    const changed = updateHtmlFile(filePath, content, true);
+    const changed = updateHtmlFile(filePath, content, false);
 
     if (changed) {
       changedFiles.push(file);
