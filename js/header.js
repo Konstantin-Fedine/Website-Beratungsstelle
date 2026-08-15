@@ -1,6 +1,20 @@
 function initHeader() {
   const navigation = document.querySelector(".navigation");
-  const menuToggle = document.querySelector(".menu-toggle");
+  document.addEventListener("componentsLoaded", () => {
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navigation = document.querySelector(".navigation");
+
+    if (!menuToggle || !navigation) {
+      console.error("❌ Header-Elemente nicht gefunden");
+      return;
+    }
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = navigation.classList.toggle("active");
+
+      menuToggle.setAttribute("aria-expanded", isOpen);
+    });
+  });
 
   if (!navigation) {
     return;

@@ -20,7 +20,13 @@ async function loadComponent(file, position) {
     }
 
     if (position === "before-main") {
-      document.body.insertBefore(component, document.body.querySelector("main"));
+      const main = document.querySelector("main");
+
+      if (main) {
+        document.body.insertBefore(component, main);
+      } else {
+        document.body.prepend(component);
+      }
     }
 
     if (position === "after-main") {
@@ -28,22 +34,40 @@ async function loadComponent(file, position) {
     }
 
     console.log(`✓ Komponente geladen: ${file}`);
+
+    return component;
   } catch (error) {
     console.error(`❌ Fehler beim Laden von ${file}:`, error);
+    return null;
   }
 }
 
 async function loadComponents() {
-  const basePath = window.location.pathname.substring(
-    0,
-    window.location.pathname.lastIndexOf("/") + 1
+  const basePath =
+    window.location.pathname.substring(
+      0,
+      window.location.pathname.lastIndexOf("/") + 1
+    );
+
+  const header = await loadComponent(
+    `${basePath}components/header.html`,
+    "before-main"
   );
 
-  await loadComponent(`${basePath}components/header.html`, "before-main");
-  await loadComponent(`${basePath}components/footer.html`, "after-main");
+  const footer = await loadComponent(
+    `${basePath}components/footer.html`,
+    "after-main"
+  );
 
-  // Content-Loader informieren, dass Header und Footer jetzt vorhanden sind
-  document.dispatchEvent(new Event("componentsLoaded"));
+  // Erst wenn beide Komponenten wirklich da sind
+  document.dispatchEvent(
+    new CustomEvent("componentsLoaded", {
+      detail: {
+        header,
+        footer,
+      },
+    })
+  );
 }
 
 loadComponents();

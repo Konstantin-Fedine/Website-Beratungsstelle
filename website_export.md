@@ -208,8 +208,13 @@ async function loadComponent(file, position) {
 }
 
 async function loadComponents() {
-  await loadComponent("components/header.html", "before-main");
-  await loadComponent("components/footer.html", "after-main");
+  const basePath = window.location.pathname.substring(
+    0,
+    window.location.pathname.lastIndexOf("/") + 1
+  );
+
+  await loadComponent(`${basePath}components/header.html`, "before-main");
+  await loadComponent(`${basePath}components/footer.html`, "after-main");
 
   // Content-Loader informieren, dass Header und Footer jetzt vorhanden sind
   document.dispatchEvent(new Event("componentsLoaded"));
@@ -592,10 +597,11 @@ DATEI: about.html
         >Kontakt aufnehmen</a>
       </section>
     </main>
-
+    
+    <script src="js/load-components.js"></script>
     <script src="js/header.js"></script>
     <script src="js/content-loader.js"></script>
-    <script src="js/load-components.js"></script>
+
   </body>
 </html>
 
@@ -1027,8 +1033,8 @@ DATEI: booking.html
       </section>
     </main>
 
+    <script src="js/load-components.js"></script>#
     <script src="js/header.js"></script>
-    <script src="js/load-components.js"></script>
     <script type="module" src="js/booking.js"></script>
   </body>
 </html>
@@ -1208,8 +1214,8 @@ Terminabsage Wenn Sie einen vereinbarten Termin nicht einhalten können, bitte i
       </section>
     </main>
 
-    <script src="js/header.js"></script>
     <script src="js/load-components.js"></script>
+    <script src="js/header.js"></script>
     <script src="js/content-loader.js"></script>
   </body>
 </html>
@@ -1342,10 +1348,11 @@ Am Ende des Gesprächs besprechen wir, ob und in welcher Form eine weitere Berat
       </section>
     </main>
 
+    <script src="js/load-components.js"></script>
     <script src="js/header.js"></script>
     <script src="js/faq.js"></script>
-    <script src="js/load-components.js"></script>
-    <script src="js/content-loader.js"></script>
+    <script src="js/content-loader.js"></script>#
+    
   </body>
 </html>
 
@@ -1623,12 +1630,14 @@ DATEI: index.html
       </div>
     </section>
 
-    <script src="js/header.js"></script>
-    <script src="js/faq.js"></script>
-    <script src="js/load-components.js"></script>
-    <script src="js/content-loader.js"></script>
   </main>
   </body>
+
+  <script src="js/load-components.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/faq.js"></script>
+  <script src="js/content-loader.js"></script>
+
 </html>
 
 
@@ -1777,8 +1786,8 @@ DATEI: services.html
       </section>
     </main>
 
-    <script src="js/header.js"></script>
     <script src="js/load-components.js"></script>
+    <script src="js/header.js"></script>
     <script src="js/content-loader.js"></script>
 
     <script type="module" src="js/services.js"></script>
@@ -1872,7 +1881,7 @@ DATEI: success.html
       </section>
     </main>
 
-    <script src="js/header.js"></script>
+    <script src="js/load-components.js"></script>
     <script src="js/load-components.js"></script>
 
     <script>
