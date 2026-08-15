@@ -148,7 +148,14 @@
 
                 <div class="form-row">
                   <label for="message">Nachricht</label>
-                  <textarea id="message" name="message" rows="4"></textarea>
+                  <textarea id="message" name="message" rows="4" maxlength="2000"></textarea>
+                  <div class="message-counter">
+                    <span id="message-counter">0</span>
+                    <span class="muted">/ 2000</span>
+                  </div>
+                  <p id="message-warning" class="form-error" role="alert" aria-live="polite" hidden>
+                    Die Nachricht ist zu lang. Bitte kürzen Sie auf maximal 2000 Zeichen.
+                  </p>
                 </div>
 
                 <p class="form-note">* Pflichtfelder</p>

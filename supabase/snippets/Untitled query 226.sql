@@ -1,0 +1,1 @@
+INSERT INTO public.admins (user_id, email) VALUES ('<f018735e-be67-4454-ad6d-26e9209c8bf0>', 'konstantin.fedine@icloud.com');

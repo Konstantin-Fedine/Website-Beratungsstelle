@@ -170,6 +170,19 @@
   resize: vertical;
 }
 
+.message-counter {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+}
+
+.message-counter .muted {
+  color: var(--color-text-muted);
+}
+
 .form-note {
   margin-top: 0;
   color: var(--color-text-muted);

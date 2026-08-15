@@ -8,6 +8,16 @@ import {
 
 console.log("Booking System gestartet");
 
+// Utility: race a promise against a timeout (does not abort underlying request)
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), ms),
+    ),
+  ]);
+}
+
 const servicesContainer = document.getElementById("services-list");
 
 const bookingState = {
@@ -46,6 +56,19 @@ function setBookingSubmitting(isSubmitting) {
 if (bookingConfirmButton) {
   bookingConfirmButton.addEventListener("click", confirmBooking);
 }
+
+// Attach live counter to message textarea
+document.addEventListener("DOMContentLoaded", () => {
+  const msg = document.getElementById("message");
+  if (msg) {
+    msg.addEventListener("input", updateMessageCounter);
+    // initialize
+    updateMessageCounter();
+    // also check message length state (warning + disable next)
+    msg.addEventListener("input", checkMessageLengthState);
+    checkMessageLengthState();
+  }
+});
 
 nextButtons.forEach((button) => {
   button.addEventListener("click", (event) => {
@@ -549,8 +572,43 @@ function populateCustomerForm() {
   document.getElementById("phone").value = bookingState.customer.phone;
   document.getElementById("message").value = bookingState.customer.message;
 
+  // update message counter when populating
+  const msgEl = document.getElementById("message");
+  if (msgEl) {
+    updateMessageCounter();
+  }
+
   if (bookingFormError) {
     bookingFormError.hidden = true;
+  }
+}
+
+function updateMessageCounter() {
+  const counter = document.getElementById("message-counter");
+  const msg = document.getElementById("message");
+  if (!counter || !msg) return;
+  const len = msg.value.length;
+  counter.textContent = len;
+  if (len > 1800) {
+    counter.style.color = "#b45200"; // warn color
+  } else {
+    counter.style.color = "";
+  }
+}
+
+function checkMessageLengthState() {
+  const msg = document.getElementById("message");
+  const warning = document.getElementById("message-warning");
+  if (!msg || !warning) return;
+  const len = msg.value.length;
+  const nexts = document.querySelectorAll(".next-step");
+
+  if (len > 2000) {
+    warning.hidden = false;
+    nexts.forEach((b) => (b.disabled = true));
+  } else {
+    warning.hidden = true;
+    nexts.forEach((b) => (b.disabled = false));
   }
 }
 
@@ -571,6 +629,43 @@ function validateCustomerForm() {
     if (bookingFormError) {
       bookingFormError.textContent =
         "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+      bookingFormError.hidden = false;
+    }
+    return false;
+  }
+
+  // Vorname / Nachname Mindestlänge
+  const first = bookingState.customer.firstName || "";
+  const last = bookingState.customer.lastName || "";
+  if (first.length < 2 || last.length < 2) {
+    if (bookingFormError) {
+      bookingFormError.textContent =
+        "Bitte geben Sie Vor- und Nachname mit mindestens 2 Zeichen an.";
+      bookingFormError.hidden = false;
+    }
+    return false;
+  }
+
+  // Telefon: optional, aber wenn angegeben muss es ein plausibles Format haben
+  const phone = bookingState.customer.phone || "";
+  if (phone.length > 0) {
+    const phonePattern = /^[+0-9()\s\-]{6,20}$/;
+    if (!phonePattern.test(phone)) {
+      if (bookingFormError) {
+        bookingFormError.textContent =
+          "Bitte geben Sie eine gültige Telefonnummer ein (Ziffern, +, -, Leerzeichen).";
+        bookingFormError.hidden = false;
+      }
+      return false;
+    }
+  }
+
+  // Nachricht: optional, max Länge
+  const message = bookingState.customer.message || "";
+  if (message.length > 2000) {
+    if (bookingFormError) {
+      bookingFormError.textContent =
+        "Die Nachricht ist zu lang. Bitte kürzen Sie Ihre Mitteilung.";
       bookingFormError.hidden = false;
     }
     return false;
@@ -720,44 +815,60 @@ async function confirmBooking() {
     const bookingTime = bookingState.selectedTime;
     const customerName = `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
 
-    const { data: insertedBooking, error: insertError } = await supabase
-      .from("bookings")
-      .insert([
-        {
-          service_id: serviceData.id,
-          customer_name: customerName,
-          customer_email: bookingState.customer.email,
-          customer_phone: bookingState.customer.phone || null,
-          booking_date: bookingDate,
-          booking_time: bookingTime,
-          notes: bookingState.customer.message || null,
-          status: "pending",
-        },
-      ])
-      .select("id")
-      .single();
+    // Versuch, Insert mit Timeout durchzuführen
+    let insertedBooking = null;
+    try {
+      const insertPromise = supabase
+        .from("bookings")
+        .insert([
+          {
+            service_id: serviceData.id,
+            customer_name: customerName,
+            customer_email: bookingState.customer.email,
+            customer_phone: bookingState.customer.phone || null,
+            booking_date: bookingDate,
+            booking_time: bookingTime,
+            notes: bookingState.customer.message || null,
+            status: "pending",
+          },
+        ])
+        .select("id, created_at")
+        .single();
 
-    if (insertError || !insertedBooking) {
-      console.error("Fehler beim Speichern der Buchung:", insertError);
+      const result = await withTimeout(insertPromise, 10000);
+      const insertError = result?.error;
 
-      // Mehr Details ausgeben, damit 401/403 leichter zu identifizieren sind
-      try {
+      if (insertError || !result?.data) {
+        console.error("Fehler beim Speichern der Buchung:", insertError);
         console.error("Insert error status:", insertError?.status);
         console.error("Insert error message:", insertError?.message);
-      } catch (e) {
-        // ignore
+
+        if (insertError && insertError.status === 401) {
+          showSummaryError(
+            "Zugriff verweigert (401). Bitte überprüfe den Supabase-Anon-Key in js/supabase.js oder die RLS-Policies.",
+          );
+        } else {
+          showSummaryError(
+            "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+          );
+        }
+
+        setBookingSubmitting(false);
+        return;
       }
 
-      if (insertError && insertError.status === 401) {
+      insertedBooking = result.data;
+    } catch (e) {
+      console.error("Fehler beim Insert-Versuch:", e);
+      if (e && e.message === "timeout") {
         showSummaryError(
-          "Zugriff verweigert (401). Bitte überprüfe den Supabase-Anon-Key in js/supabase.js oder die RLS-Policies.",
+          "Die Anfrage hat zu lange gedauert. Bitte überprüfe deine Verbindung und versuche es erneut.",
         );
       } else {
         showSummaryError(
           "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
         );
       }
-
       setBookingSubmitting(false);
       return;
     }
@@ -768,6 +879,7 @@ async function confirmBooking() {
       service: bookingState.selectedService?.title || "",
       date: bookingDate,
       time: bookingTime,
+      created_at: insertedBooking.created_at || "",
     });
 
     window.location.href = `success.html?${params.toString()}`;
