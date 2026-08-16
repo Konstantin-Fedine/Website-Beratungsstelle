@@ -317,19 +317,13 @@
    SPEICHERN
    ======================================== */
 
-/* ========================================
-   NACHRICHTEN
-   ======================================== */
+.availability-actions {
+  display: flex;
+  justify-content: flex-end;
 
-.availability-message {
-  padding: 10px 14px;
+  margin-top: 22px;
 
-  border-radius: var(--radius);
-
-  font-size: 0.85rem;
-  font-weight: 600;
-
-  white-space: nowrap;
+  padding-bottom: 30px;
 }
 
 .availability-save {
