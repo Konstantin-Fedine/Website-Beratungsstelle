@@ -760,54 +760,60 @@ async function confirmBooking() {
   hideSummaryError();
   setBookingSubmitting(true);
 
-  if (!bookingState.selectedService) {
-    showSummaryError("Bitte wählen Sie zuerst ein Beratungsangebot aus.");
-    setBookingSubmitting(false);
-    return;
-  }
-
-  if (!bookingState.selectedDate) {
-    showSummaryError("Bitte wählen Sie zuerst ein Datum aus.");
-    setBookingSubmitting(false);
-    return;
-  }
-
-  if (!bookingState.selectedTime) {
-    showSummaryError("Bitte wählen Sie zuerst eine Uhrzeit aus.");
-    setBookingSubmitting(false);
-    return;
-  }
-
-  collectCustomerFormValues();
-
-  if (!validateCustomerForm()) {
-    showSummaryError("Bitte füllen Sie alle Pflichtfelder aus.");
-    setBookingSubmitting(false);
-    return;
-  }
-
   try {
-    // Service noch einmal direkt aus der Datenbank überprüfen.
-    // Dadurch kann niemand einen veralteten oder deaktivierten Service buchen.
+    // --------------------------------------------------
+    // 1. Grundlegende Validierung
+    // --------------------------------------------------
+
+    if (!bookingState.selectedService) {
+      showSummaryError("Bitte wählen Sie zuerst ein Beratungsangebot aus.");
+      return;
+    }
+
+    if (!bookingState.selectedDate) {
+      showSummaryError("Bitte wählen Sie zuerst ein Datum aus.");
+      return;
+    }
+
+    if (!bookingState.selectedTime) {
+      showSummaryError("Bitte wählen Sie zuerst eine Uhrzeit aus.");
+      return;
+    }
+
+    collectCustomerFormValues();
+
+    if (!validateCustomerForm()) {
+      showSummaryError("Bitte füllen Sie alle Pflichtfelder aus.");
+      return;
+    }
+
+    // --------------------------------------------------
+    // 2. Service noch einmal direkt aus Supabase laden
+    // --------------------------------------------------
+
     const { data: serviceData, error: serviceError } = await supabase
       .from("services")
-      .select("id, title, duration, price, active")
+      .select("id, duration, price, active")
       .eq("id", bookingState.selectedService.id)
       .single();
 
     if (serviceError || !serviceData || !serviceData.active) {
-      console.error("Fehler beim Laden des Dienstes:", serviceError);
+      console.error(
+        "Fehler beim Laden des Dienstes:",
+        serviceError,
+      );
 
       showSummaryError(
         "Der gewählte Service ist leider nicht mehr verfügbar.",
       );
 
-      setBookingSubmitting(false);
       return;
     }
 
-    // Direkt vor dem Insert noch einmal prüfen,
-    // ob die gewünschte Uhrzeit tatsächlich noch frei ist.
+    // --------------------------------------------------
+    // 3. Verfügbarkeit unmittelbar vor der Buchung prüfen
+    // --------------------------------------------------
+
     const availableSlots = await getAvailableSlots(
       bookingState.selectedDate,
       serviceData.duration,
@@ -818,26 +824,34 @@ async function confirmBooking() {
         "Der gewählte Termin ist leider inzwischen vergeben. Bitte wählen Sie eine andere Uhrzeit.",
       );
 
-      setBookingSubmitting(false);
       return;
     }
 
-    const bookingDate = formatDateISO(bookingState.selectedDate);
+    // --------------------------------------------------
+    // 4. Buchungsdaten vorbereiten
+    // --------------------------------------------------
+
+    const bookingDate = bookingState.selectedDate
+      .toISOString()
+      .split("T")[0];
+
     const bookingTime = bookingState.selectedTime;
 
     const customerName =
-      `${bookingState.customer.firstName} ${bookingState.customer.lastName}`.trim();
+      `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
 
-    // Buchung speichern.
-    //
-    // WICHTIG:
-    // Kein .select() und kein .single().
-    //
-    // Dadurch benötigt der öffentliche Benutzer
-    // nur INSERT-Rechte auf der bookings-Tabelle.
-    const { error: insertError } = await supabase
+    // ID bereits im Browser erzeugen.
+    // Dadurch brauchen wir nach dem INSERT kein SELECT.
+    const bookingId = crypto.randomUUID();
+
+    // --------------------------------------------------
+    // 5. Buchung speichern
+    // --------------------------------------------------
+
+    const insertPromise = supabase
       .from("bookings")
       .insert({
+        id: bookingId,
         service_id: serviceData.id,
         customer_name: customerName,
         customer_email: bookingState.customer.email,
@@ -848,17 +862,38 @@ async function confirmBooking() {
         status: "pending",
       });
 
-    if (insertError) {
-      console.error("Fehler beim Speichern der Buchung:", insertError);
-      console.error("Insert error code:", insertError.code);
-      console.error("Insert error status:", insertError.status);
-      console.error("Insert error message:", insertError.message);
-      console.error("Insert error details:", insertError.details);
-      console.error("Insert error hint:", insertError.hint);
+    const result = await withTimeout(insertPromise, 10000);
+
+    if (result?.error) {
+      const insertError = result.error;
+
+      console.error(
+        "Fehler beim Speichern der Buchung:",
+        insertError,
+      );
+
+      console.error(
+        "Insert error code:",
+        insertError.code,
+      );
+
+      console.error(
+        "Insert error status:",
+        insertError.status,
+      );
+
+      console.error(
+        "Insert error message:",
+        insertError.message,
+      );
 
       if (insertError.code === "42501") {
         showSummaryError(
-          "Die Buchung konnte wegen einer Berechtigung in der Datenbank nicht gespeichert werden.",
+          "Die Buchung konnte wegen fehlender Berechtigungen nicht gespeichert werden.",
+        );
+      } else if (insertError.code === "23505") {
+        showSummaryError(
+          "Dieser Termin wurde gerade von jemand anderem gebucht. Bitte wählen Sie eine andere Uhrzeit.",
         );
       } else {
         showSummaryError(
@@ -866,31 +901,44 @@ async function confirmBooking() {
         );
       }
 
-      setBookingSubmitting(false);
       return;
     }
 
-    console.log("✓ Buchung erfolgreich gespeichert.");
+    // --------------------------------------------------
+    // 6. Erfolgreiche Buchung
+    // --------------------------------------------------
 
-    // Die Success-Seite bekommt die Daten direkt aus dem aktuellen
-    // bookingState. Es ist kein SELECT auf bookings erforderlich.
+    console.log("Buchung erfolgreich gespeichert:", bookingId);
+
+    const createdAt = new Date().toISOString();
+
     const params = new URLSearchParams({
-      service: serviceData.title || bookingState.selectedService.title || "",
+      id: bookingId,
+      service: bookingState.selectedService.title || "",
       date: bookingDate,
       time: bookingTime,
+      created_at: createdAt,
     });
 
     window.location.href = `success.html?${params.toString()}`;
+
   } catch (error) {
     console.error(
       "Unbekannter Fehler bei der Buchungsbestätigung:",
       error,
     );
 
-    showSummaryError(
-      "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
-    );
+    if (error?.message === "timeout") {
+      showSummaryError(
+        "Die Anfrage hat zu lange gedauert. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+      );
+    } else {
+      showSummaryError(
+        "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+      );
+    }
 
+  } finally {
     setBookingSubmitting(false);
   }
 }
