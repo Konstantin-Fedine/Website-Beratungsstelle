@@ -1,3 +1,5 @@
+import { supabase } from "./supabase.js";
+
 import {
   initBookingData,
   loadBlockedDaysForMonth,
@@ -219,14 +221,15 @@ async function loadServices() {
   console.log("Lade Beratungsangebote...");
 
   const { data, error } = await supabase
-
     .from("services")
-
     .select("*")
-
     .eq("active", true)
-
     .order("sort_order");
+
+  console.log("Services-Abfrage:", {
+    data,
+    error,
+  });
 
   if (error) {
     console.error("Fehler beim Laden der Services:", error);
