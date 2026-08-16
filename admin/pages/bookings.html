@@ -404,4 +404,199 @@
     <script type="module" src="../js/bookings.js"></script>
 
   </body>
+
+  <!-- BUCHUNGS-MODAL -->
+
+  <div
+    class="booking-modal"
+    id="booking-modal"
+    hidden
+    aria-hidden="true"
+  >
+    <div
+      class="booking-modal-backdrop"
+      data-modal-close
+    ></div>
+
+    <div
+      class="booking-modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="booking-modal-title"
+    >
+
+      <header class="booking-modal-header">
+
+        <div>
+          <h2 id="booking-modal-title">
+            Buchung
+          </h2>
+
+          <p id="booking-modal-subtitle">
+            Buchungsdetails
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="booking-modal-close"
+          id="booking-modal-close"
+          aria-label="Modal schließen"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <div class="booking-modal-content">
+
+        <div class="booking-details-grid">
+
+          <div class="booking-details-column">
+
+            <section class="booking-details-section">
+              <span class="booking-details-label">
+                Kunde
+              </span>
+
+              <strong
+                class="booking-details-value"
+                id="booking-modal-customer"
+              >
+                –
+              </strong>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-email"
+              >
+                –
+              </span>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-phone"
+              >
+                –
+              </span>
+            </section>
+
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Termin
+              </span>
+
+              <strong
+                class="booking-details-value"
+                id="booking-modal-date"
+              >
+                –
+              </strong>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-time"
+              >
+                –
+              </span>
+
+            </section>
+
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Beratungsangebot
+              </span>
+
+              <strong
+                class="booking-details-value"
+                id="booking-modal-service"
+              >
+                –
+              </strong>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-duration"
+              >
+                –
+              </span>
+
+            </section>
+
+          </div>
+
+
+          <div class="booking-details-column">
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Status
+              </span>
+
+              <span
+                class="booking-card-status"
+                id="booking-modal-status"
+              >
+                –
+              </span>
+
+            </section>
+
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Notizen
+              </span>
+
+              <div
+                class="booking-details-notes"
+                id="booking-modal-notes"
+              >
+                Keine Notizen vorhanden.
+              </div>
+
+            </section>
+
+          </div>
+
+        </div>
+
+
+        <div class="booking-details-actions">
+
+          <button
+            type="button"
+            class="booking-modal-action booking-modal-confirm"
+            id="booking-modal-confirm"
+            data-action="confirm"
+          >
+            Buchung bestätigen
+          </button>
+
+          <button
+            type="button"
+            class="booking-modal-action booking-modal-cancel"
+            id="booking-modal-cancel"
+            data-action="cancel"
+          >
+            Buchung stornieren
+          </button>
+
+        </div>
+
+
+        <p class="booking-modal-info">
+          Die Buchung wurde über die Website eingereicht.
+        </p>
+
+      </div>
+
+    </div>
+  </div>
 </html>
