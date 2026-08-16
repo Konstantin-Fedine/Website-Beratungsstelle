@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Dashboard | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Gemeinsame Website-Styles -->
+    <link rel="stylesheet" href="../../css/global.css" />
+
+    <!-- Admin-Styles -->
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- ========================================
+           SIDEBAR
+           ======================================== -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+
+          <a href="dashboard.html" class="sidebar-logo">
+            <span class="sidebar-logo-mark">A</span>
+            <span class="sidebar-logo-text">
+              Aufwind
+            </span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
+
+        </div>
+
+
+        <!-- ========================================
+             NAVIGATION
+             ======================================== -->
+
+        <nav
+          class="sidebar-navigation"
+          aria-label="Admin-Navigation"
+        >
+
+          <a
+            href="dashboard.html"
+            class="sidebar-link active"
+          >
+            <span class="sidebar-icon">⌂</span>
+            <span class="sidebar-link-text">
+              Dashboard
+            </span>
+          </a>
+
+          <a
+            href="bookings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">▣</span>
+            <span class="sidebar-link-text">
+              Termine
+            </span>
+          </a>
+
+          <a
+            href="availability.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◷</span>
+            <span class="sidebar-link-text">
+              Verfügbarkeit
+            </span>
+          </a>
+
+          <a
+            href="services.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◇</span>
+            <span class="sidebar-link-text">
+              Beratungsangebote
+            </span>
+          </a>
+
+          <a
+            href="settings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-link-text">
+              Einstellungen
+            </span>
+          </a>
+
+        </nav>
+
+
+        <!-- ========================================
+             SIDEBAR UNTEN
+             ======================================== -->
+
+        <div class="sidebar-bottom">
+
+          <a
+            href="/"
+            class="sidebar-link sidebar-public-link"
+          >
+            <span class="sidebar-icon">↗</span>
+            <span class="sidebar-link-text">
+              Zur Website
+            </span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-link-text">
+              Abmelden
+            </span>
+          </button>
+
+        </div>
+
+      </aside>
+
+
+      <!-- ========================================
+           MOBILE OVERLAY
+           ======================================== -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+
+      <!-- ========================================
+           MAIN
+           ======================================== -->
+
+      <main class="admin-main">
+
+        <!-- ========================================
+             TOPBAR
+             ======================================== -->
+
+        <header class="admin-topbar">
+
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <div class="topbar-title">
+              <h1>Dashboard</h1>
+              <p>
+                Willkommen im Admin-Bereich
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+              <div class="admin-user-info">
+
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        <!-- ========================================
+             DASHBOARD
+             ======================================== -->
+
+        <section class="dashboard-content">
+
+          <div class="dashboard-stats">
+
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Heutige Termine
+              </span>
+
+              <strong id="today-bookings">
+                –
+              </strong>
+            </article>
+
+
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Offene Buchungen
+              </span>
+
+              <strong id="pending-bookings">
+                –
+              </strong>
+            </article>
+
+
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Beratungsangebote
+              </span>
+
+              <strong id="total-services">
+                –
+              </strong>
+            </article>
+
+
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Nächster Termin
+              </span>
+
+              <strong id="next-booking">
+                –
+              </strong>
+            </article>
+
+          </div>
+
+
+          <!-- NÄCHSTE TERMINE -->
+
+          <section class="dashboard-section">
+
+            <div class="section-header">
+
+              <div>
+                <h2>Nächste Termine</h2>
+
+                <p>
+                  Die nächsten gebuchten Beratungen.
+                </p>
+              </div>
+
+              <a
+                href="bookings.html"
+                class="dashboard-link"
+              >
+                Alle Buchungen
+              </a>
+
+            </div>
+
+
+            <div
+              id="upcoming-bookings"
+              class="booking-list"
+            >
+
+              <div class="empty-state">
+                <p>
+                  Termine werden geladen...
+                </p>
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- SCHNELLZUGRIFF -->
+
+          <section class="dashboard-section">
+
+            <div class="section-header">
+
+              <div>
+                <h2>Schnellzugriff</h2>
+
+                <p>
+                  Häufig benötigte Bereiche.
+                </p>
+              </div>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+              <a
+                href="bookings.html"
+                class="quick-action"
+              >
+                <strong>
+                  Buchungen verwalten
+                </strong>
+
+                <span>
+                  Termine ansehen und bearbeiten
+                </span>
+              </a>
+
+
+              <a
+                href="availability.html"
+                class="quick-action"
+              >
+                <strong>
+                  Verfügbarkeit bearbeiten
+                </strong>
+
+                <span>
+                  Arbeitszeiten und Ausnahmen verwalten
+                </span>
+              </a>
+
+
+              <a
+                href="services.html"
+                class="quick-action"
+              >
+                <strong>
+                  Beratungsangebote
+                </strong>
+
+                <span>
+                  Preise, Dauer und Angebote verwalten
+                </span>
+              </a>
+
+            </div>
+
+          </section>
+
+        </section>
+
+      </main>
+
+    </div>
+
+
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
+
+    <script type="module" src="../js/auth.js"></script>
+    <script src="../js/admin-layout.js"></script>
+    <script type="module" src="../js/dashboard.js"></script>
+
+  </body>
+</html>

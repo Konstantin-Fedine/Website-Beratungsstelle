@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Buchungen | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/bookings.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- SIDEBAR -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+          <a href="dashboard.html" class="sidebar-logo">
+            <span class="sidebar-logo-mark">A</span>
+            <span class="sidebar-logo-text">Aufwind</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <nav class="sidebar-navigation" aria-label="Admin-Navigation">
+
+          <a href="dashboard.html" class="sidebar-link">
+            <span class="sidebar-icon">⌂</span>
+            <span class="sidebar-link-text">Dashboard</span>
+          </a>
+
+          <a href="bookings.html" class="sidebar-link active">
+            <span class="sidebar-icon">▣</span>
+            <span class="sidebar-link-text">Termine</span>
+          </a>
+
+          <a href="availability.html" class="sidebar-link">
+            <span class="sidebar-icon">◷</span>
+            <span class="sidebar-link-text">Verfügbarkeit</span>
+          </a>
+
+          <a href="services.html" class="sidebar-link">
+            <span class="sidebar-icon">◇</span>
+            <span class="sidebar-link-text">Beratungsangebote</span>
+          </a>
+
+          <a href="settings.html" class="sidebar-link">
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-link-text">Einstellungen</span>
+          </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+          <a href="/" class="sidebar-link sidebar-public-link">
+            <span class="sidebar-icon">↗</span>
+            <span class="sidebar-link-text">Zur Website</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-link-text">Abmelden</span>
+          </button>
+
+        </div>
+
+      </aside>
+
+
+      <!-- MOBILE OVERLAY -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+
+      <!-- MAIN -->
+
+      <main class="admin-main">
+
+        <!-- TOPBAR -->
+
+        <header class="admin-topbar">
+
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <div class="topbar-title">
+              <h1>Termine</h1>
+              <p>Alle Buchungen verwalten</p>
+            </div>
+
+          </div>
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+              <div class="admin-user-info">
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="bookings-content">
+
+          <!-- HEADER -->
+
+          <div class="bookings-header">
+
+            <div>
+              <h2>Buchungen</h2>
+
+              <p>
+                Hier kannst du alle eingegangenen Termine verwalten.
+              </p>
+            </div>
+
+          </div>
+
+
+          <!-- FILTER -->
+
+          <div class="bookings-toolbar">
+
+            <div class="booking-filter">
+
+              <label for="status-filter">
+                Status
+              </label>
+
+              <select id="status-filter">
+                <option value="all">
+                  Alle
+                </option>
+
+                <option value="pending">
+                  Offen
+                </option>
+
+                <option value="confirmed">
+                  Bestätigt
+                </option>
+
+                <option value="completed">
+                  Abgeschlossen
+                </option>
+
+                <option value="cancelled">
+                  Storniert
+                </option>
+
+                <option value="no_show">
+                  Nicht erschienen
+                </option>
+              </select>
+
+            </div>
+
+            <button
+              type="button"
+              class="bookings-refresh"
+              id="refresh-bookings"
+            >
+              Aktualisieren
+            </button>
+
+          </div>
+
+
+          <!-- LISTE -->
+
+          <div
+            id="bookings-list"
+            class="bookings-list"
+          >
+
+            <div class="empty-state">
+              <p>
+                Buchungen werden geladen...
+              </p>
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script type="module" src="../js/auth.js"></script>
+    <script src="../js/admin-layout.js"></script>
+    <script type="module" src="../js/bookings.js"></script>
+
+  </body>
+</html>

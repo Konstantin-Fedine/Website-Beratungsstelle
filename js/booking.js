@@ -787,18 +787,27 @@ async function confirmBooking() {
   }
 
   try {
+    // Service noch einmal direkt aus der Datenbank überprüfen.
+    // Dadurch kann niemand einen veralteten oder deaktivierten Service buchen.
     const { data: serviceData, error: serviceError } = await supabase
       .from("services")
-      .select("id, duration, price, active")
+      .select("id, title, duration, price, active")
       .eq("id", bookingState.selectedService.id)
       .single();
 
     if (serviceError || !serviceData || !serviceData.active) {
       console.error("Fehler beim Laden des Dienstes:", serviceError);
-      showSummaryError("Der gewählte Service ist leider nicht mehr verfügbar.");
+
+      showSummaryError(
+        "Der gewählte Service ist leider nicht mehr verfügbar.",
+      );
+
+      setBookingSubmitting(false);
       return;
     }
 
+    // Direkt vor dem Insert noch einmal prüfen,
+    // ob die gewünschte Uhrzeit tatsächlich noch frei ist.
     const availableSlots = await getAvailableSlots(
       bookingState.selectedDate,
       serviceData.duration,
@@ -808,86 +817,80 @@ async function confirmBooking() {
       showSummaryError(
         "Der gewählte Termin ist leider inzwischen vergeben. Bitte wählen Sie eine andere Uhrzeit.",
       );
+
+      setBookingSubmitting(false);
       return;
     }
 
-    const bookingDate = bookingState.selectedDate.toISOString().split("T")[0];
+    const bookingDate = formatDateISO(bookingState.selectedDate);
     const bookingTime = bookingState.selectedTime;
-    const customerName = `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
 
-    // Versuch, Insert mit Timeout durchzuführen
-    let insertedBooking = null;
-    try {
-      const insertPromise = supabase
-        .from("bookings")
-        .insert([
-          {
-            service_id: serviceData.id,
-            customer_name: customerName,
-            customer_email: bookingState.customer.email,
-            customer_phone: bookingState.customer.phone || null,
-            booking_date: bookingDate,
-            booking_time: bookingTime,
-            notes: bookingState.customer.message || null,
-            status: "pending",
-          },
-        ])
-        .select("id, created_at")
-        .single();
+    const customerName =
+      `${bookingState.customer.firstName} ${bookingState.customer.lastName}`.trim();
 
-      const result = await withTimeout(insertPromise, 10000);
-      const insertError = result?.error;
+    // Buchung speichern.
+    //
+    // WICHTIG:
+    // Kein .select() und kein .single().
+    //
+    // Dadurch benötigt der öffentliche Benutzer
+    // nur INSERT-Rechte auf der bookings-Tabelle.
+    const { error: insertError } = await supabase
+      .from("bookings")
+      .insert({
+        service_id: serviceData.id,
+        customer_name: customerName,
+        customer_email: bookingState.customer.email,
+        customer_phone: bookingState.customer.phone || null,
+        booking_date: bookingDate,
+        booking_time: bookingTime,
+        notes: bookingState.customer.message || null,
+        status: "pending",
+      });
 
-      if (insertError || !result?.data) {
-        console.error("Fehler beim Speichern der Buchung:", insertError);
-        console.error("Insert error status:", insertError?.status);
-        console.error("Insert error message:", insertError?.message);
+    if (insertError) {
+      console.error("Fehler beim Speichern der Buchung:", insertError);
+      console.error("Insert error code:", insertError.code);
+      console.error("Insert error status:", insertError.status);
+      console.error("Insert error message:", insertError.message);
+      console.error("Insert error details:", insertError.details);
+      console.error("Insert error hint:", insertError.hint);
 
-        if (insertError && insertError.status === 401) {
-          showSummaryError(
-            "Zugriff verweigert (401). Bitte überprüfe den Supabase-Anon-Key in js/supabase.js oder die RLS-Policies.",
-          );
-        } else {
-          showSummaryError(
-            "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
-          );
-        }
-
-        setBookingSubmitting(false);
-        return;
-      }
-
-      insertedBooking = result.data;
-    } catch (e) {
-      console.error("Fehler beim Insert-Versuch:", e);
-      if (e && e.message === "timeout") {
+      if (insertError.code === "42501") {
         showSummaryError(
-          "Die Anfrage hat zu lange gedauert. Bitte überprüfe deine Verbindung und versuche es erneut.",
+          "Die Buchung konnte wegen einer Berechtigung in der Datenbank nicht gespeichert werden.",
         );
       } else {
         showSummaryError(
           "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
         );
       }
+
       setBookingSubmitting(false);
       return;
     }
 
-    // Leite weiter und übergebe Booking-Daten per Query-String für die Success-Page
+    console.log("✓ Buchung erfolgreich gespeichert.");
+
+    // Die Success-Seite bekommt die Daten direkt aus dem aktuellen
+    // bookingState. Es ist kein SELECT auf bookings erforderlich.
     const params = new URLSearchParams({
-      id: insertedBooking.id,
-      service: bookingState.selectedService?.title || "",
+      service: serviceData.title || bookingState.selectedService.title || "",
       date: bookingDate,
       time: bookingTime,
-      created_at: insertedBooking.created_at || "",
     });
 
     window.location.href = `success.html?${params.toString()}`;
   } catch (error) {
-    console.error("Unbekannter Fehler bei der Buchungsbestätigung:", error);
+    console.error(
+      "Unbekannter Fehler bei der Buchungsbestätigung:",
+      error,
+    );
+
     showSummaryError(
       "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
     );
+
     setBookingSubmitting(false);
   }
 }
