@@ -1,9 +1,9 @@
-import { supabase } from "./supabase.js";
 import {
   initBookingData,
   loadBlockedDaysForMonth,
   isDateSelectable,
   getAvailableSlots,
+  formatDateISO,
 } from "./booking-api.js";
 
 console.log("Booking System gestartet");
@@ -831,9 +831,7 @@ async function confirmBooking() {
     // 4. Buchungsdaten vorbereiten
     // --------------------------------------------------
 
-    const bookingDate = bookingState.selectedDate
-      .toISOString()
-      .split("T")[0];
+    const bookingDate = formatDateISO(bookingState.selectedDate);
 
     const bookingTime = bookingState.selectedTime;
 
