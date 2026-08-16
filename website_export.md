@@ -1,456 +1,319 @@
 
 ============================================================
-DATEI: admin\css\bookings.css
+DATEI: admin\css\dashboard.css
 ============================================================
 
 /* ========================================
-   BUCHUNGEN – GRUNDLAGEN
+   DASHBOARD CONTENT
    ======================================== */
 
-.bookings-content {
-  padding: 32px;
+.dashboard-content {
+  width: 100%;
   max-width: 1400px;
+
   margin: 0 auto;
+
+  padding: 35px 40px;
 }
 
 
 /* ========================================
-   HEADER
+   STATISTICS
    ======================================== */
 
-.bookings-header {
-  margin-bottom: 28px;
-}
+.dashboard-stats {
+  display: grid;
 
-.bookings-header h2 {
-  margin: 0;
-
-  color: var(--color-dark);
-
-  font-size: 1.7rem;
-  font-weight: 700;
-}
-
-.bookings-header p {
-  margin: 6px 0 0;
-
-  color: var(--color-text-muted);
-
-  font-size: 0.95rem;
-}
-
-
-/* ========================================
-   TOOLBAR
-   ======================================== */
-
-.bookings-toolbar {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
 
   gap: 20px;
 
-  margin-bottom: 24px;
-  padding: 20px;
+  margin-bottom: 30px;
+}
 
-  background: var(--admin-surface);
+.dashboard-stat {
+  padding: 24px;
 
-  border: 1px solid var(--admin-border);
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+
   border-radius: var(--radius);
 
-  box-shadow: var(--admin-shadow);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.05);
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
 }
 
-.booking-filter {
-  display: flex;
-  flex-direction: column;
+.dashboard-stat:hover {
+  transform: translateY(-2px);
 
-  gap: 7px;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.booking-filter label {
+.stat-label {
+  display: block;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.9rem;
+}
+
+.dashboard-stat strong {
+  display: block;
+
+  margin-top: 8px;
+
   color: var(--color-dark);
 
-  font-size: 0.85rem;
+  font-size: 1.8rem;
+}
+
+
+/* ========================================
+   SECTIONS
+   ======================================== */
+
+.dashboard-section {
+  margin-bottom: 30px;
+
+  padding: 28px;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ========================================
+   SECTION HEADER
+   ======================================== */
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 22px;
+}
+
+.section-header h2 {
+  color: var(--color-dark);
+
+  font-size: 1.25rem;
   font-weight: 700;
 }
 
-.booking-filter select {
-  min-width: 190px;
+.section-header p {
+  margin-top: 4px;
 
-  padding: 10px 14px;
+  color: var(--color-text-muted);
 
-  border: 1px solid var(--admin-border);
+  font-size: 0.9rem;
+}
+
+
+/* ========================================
+   LINKS
+   ======================================== */
+
+.dashboard-link {
+  color: var(--color-dark);
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    color var(--transition);
+}
+
+.dashboard-link:hover {
+  color: var(--color-primary);
+}
+
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+
+.empty-state {
+  padding: 30px;
+
+  text-align: center;
+
+  color: var(--color-text-muted);
+
+  background: var(--color-primary-soft);
+
+  border-radius: var(--radius);
+}
+
+
+/* ========================================
+   QUICK ACTIONS
+   ======================================== */
+
+.quick-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+.quick-action {
+  display: block;
+
+  padding: 20px;
+
+  border: 1px solid var(--color-border);
+
   border-radius: var(--radius);
 
   background: var(--color-surface);
 
-  color: var(--color-dark);
+  color: var(--color-text);
 
-  font-family: inherit;
-  font-size: 0.9rem;
-
-  outline: none;
-
-  cursor: pointer;
+  text-decoration: none;
 
   transition:
+    transform var(--transition),
     border-color var(--transition),
     box-shadow var(--transition);
 }
 
-.booking-filter select:focus {
+.quick-action:hover {
+  transform: translateY(-2px);
+
   border-color: var(--color-primary);
 
   box-shadow:
-    0 0 0 3px rgba(212, 178, 149, 0.15);
+    0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
+.quick-action strong {
+  display: block;
 
-/* ========================================
-   AKTUALISIEREN
-   ======================================== */
-
-.bookings-refresh {
-  padding: 11px 18px;
-
-  border: none;
-  border-radius: var(--radius);
-
-  background: var(--color-primary);
+  margin-bottom: 6px;
 
   color: var(--color-dark);
+}
 
-  font-family: inherit;
+.quick-action span {
+  color: var(--color-text-muted);
+
   font-size: 0.9rem;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition),
-    background var(--transition);
-}
-
-.bookings-refresh:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 5px 12px rgba(212, 178, 149, 0.25);
-}
-
-.bookings-refresh:active {
-  transform: translateY(0);
-}
-
-.bookings-refresh:disabled {
-  opacity: 0.6;
-
-  cursor: not-allowed;
-
-  transform: none;
 }
 
 
 /* ========================================
-   BUCHUNGEN-LISTE
+   BOOKING LIST
    ======================================== */
 
-.bookings-list {
+.booking-list {
   display: flex;
   flex-direction: column;
-
-  gap: 14px;
+  gap: 12px;
 }
 
-
-/* ========================================
-   BUCHUNG
-   ======================================== */
-
-.booking-card {
-  display: grid;
-
-  grid-template-columns:
-    minmax(170px, 0.8fr)
-    minmax(200px, 1fr)
-    minmax(160px, 0.8fr)
-    auto;
-
+.booking-item {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
 
-  gap: 24px;
+  gap: 20px;
 
-  padding: 22px 24px;
+  padding: 16px 18px;
 
-  background: var(--admin-surface);
-
-  border: 1px solid var(--admin-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
 
-  box-shadow:
-    0 4px 14px rgba(42, 36, 33, 0.04);
+  background: var(--color-surface);
 
   transition:
     transform var(--transition),
     box-shadow var(--transition);
 }
 
-.booking-card:hover {
+.booking-item:hover {
   transform: translateY(-1px);
 
   box-shadow:
-    0 7px 20px rgba(42, 36, 33, 0.07);
+    0 5px 14px rgba(0, 0, 0, 0.06);
 }
 
-
-/* ========================================
-   DATUM / ZEIT
-   ======================================== */
-
-.booking-date {
-  display: flex;
-  flex-direction: column;
-
-  gap: 4px;
+.booking-item-main {
+  min-width: 0;
 }
 
-.booking-date strong {
+.booking-item-name {
   color: var(--color-dark);
 
-  font-size: 0.95rem;
   font-weight: 700;
 }
 
-.booking-date span {
+.booking-item-service {
+  margin-top: 3px;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.9rem;
+}
+
+.booking-item-meta {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  flex-shrink: 0;
+
   color: var(--color-text-muted);
 
   font-size: 0.85rem;
 }
 
-
-/* ========================================
-   KUNDE
-   ======================================== */
-
-.booking-customer {
-  display: flex;
-  flex-direction: column;
-
-  gap: 4px;
-
-  min-width: 0;
-}
-
-.booking-customer strong {
-  overflow: hidden;
-
-  color: var(--color-dark);
-
-  font-size: 0.95rem;
-  font-weight: 700;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.booking-customer span {
-  overflow: hidden;
-
-  color: var(--color-text-muted);
-
-  font-size: 0.82rem;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-
-/* ========================================
-   BERATUNG
-   ======================================== */
-
-.booking-service {
-  display: flex;
-  flex-direction: column;
-
-  gap: 4px;
-
-  min-width: 0;
-}
-
-.booking-service strong {
-  overflow: hidden;
-
-  color: var(--color-dark);
-
-  font-size: 0.9rem;
-  font-weight: 600;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.booking-service span {
-  color: var(--color-text-muted);
-
-  font-size: 0.8rem;
-}
-
-
-/* ========================================
-   STATUS
-   ======================================== */
-
 .booking-status {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
 
-  width: fit-content;
+  padding: 5px 10px;
 
-  padding: 6px 10px;
+  margin-top: 5px;
 
   border-radius: 999px;
 
   font-size: 0.75rem;
   font-weight: 700;
-
-  white-space: nowrap;
 }
 
-.booking-status-pending {
-  background: rgba(212, 178, 149, 0.18);
-
+.booking-status.pending {
+  background: rgba(212, 178, 149, 0.2);
   color: var(--color-dark);
 }
 
-.booking-status-confirmed {
-  background: rgba(80, 140, 100, 0.12);
-
-  color: #3d704d;
+.booking-status.confirmed {
+  background: rgba(70, 130, 90, 0.12);
+  color: #356b47;
 }
 
-.booking-status-completed {
-  background: rgba(80, 110, 150, 0.12);
-
-  color: #3d5e82;
-}
-
-.booking-status-cancelled {
-  background: rgba(180, 80, 80, 0.12);
-
-  color: #8a3d3d;
-}
-
-.booking-status-no_show {
-  background: rgba(100, 100, 100, 0.12);
-
-  color: #555;
-}
-
-
-/* ========================================
-   AKTIONEN
-   ======================================== */
-
-.booking-actions {
-  display: flex;
-  align-items: center;
-
-  justify-content: flex-end;
-
-  gap: 8px;
-}
-
-.booking-action {
-  padding: 8px 12px;
-
-  border: 1px solid var(--admin-border);
-  border-radius: 8px;
-
-  background: transparent;
-
-  color: var(--color-dark);
-
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition:
-    background var(--transition),
-    border-color var(--transition),
-    transform var(--transition);
-}
-
-.booking-action:hover {
-  background: rgba(42, 36, 33, 0.04);
-
-  transform: translateY(-1px);
-}
-
-.booking-action-confirm {
-  border-color: rgba(80, 140, 100, 0.25);
-
-  color: #3d704d;
-}
-
-.booking-action-confirm:hover {
-  background: rgba(80, 140, 100, 0.08);
-}
-
-.booking-action-cancel {
-  border-color: rgba(180, 80, 80, 0.25);
-
-  color: #8a3d3d;
-}
-
-.booking-action-cancel:hover {
-  background: rgba(180, 80, 80, 0.08);
-}
-
-
-/* ========================================
-   LEERER ZUSTAND
-   ======================================== */
-
-.bookings-list .empty-state {
-  padding: 50px 20px;
-
-  background: var(--admin-surface);
-
-  border: 1px solid var(--admin-border);
-  border-radius: var(--radius);
-
-  text-align: center;
-
-  color: var(--color-text-muted);
-}
-
-.bookings-list .empty-state p {
-  margin: 0;
-}
-
-
-/* ========================================
-   FEHLER
-   ======================================== */
-
-.bookings-error {
-  padding: 18px 20px;
-
-  background: rgba(180, 80, 80, 0.08);
-
-  border: 1px solid rgba(180, 80, 80, 0.2);
-  border-radius: var(--radius);
-
-  color: #8a3d3d;
-
-  font-size: 0.9rem;
+.booking-status.cancelled {
+  background: rgba(180, 70, 70, 0.12);
+  color: #8a3535;
 }
 
 
@@ -458,56 +321,56 @@ DATEI: admin\css\bookings.css
    RESPONSIVE
    ======================================== */
 
-@media (max-width: 1050px) {
-  .booking-card {
-    grid-template-columns:
-      1fr
-      1fr;
+@media (max-width: 1000px) {
 
-    align-items: start;
+  .dashboard-stats {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
-  .booking-actions {
-    justify-content: flex-start;
+  .quick-actions {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }
 
 
-@media (max-width: 800px) {
-  .bookings-content {
-    padding: 24px 18px;
+@media (max-width: 700px) {
+
+  .dashboard-content {
+    padding: 25px 20px;
   }
 
-  .bookings-toolbar {
-    align-items: stretch;
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
 
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-section {
+    padding: 20px;
+  }
+
+  .section-header {
+    align-items: flex-start;
     flex-direction: column;
   }
 
-  .booking-filter select {
-    width: 100%;
+  .booking-item {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
-  .bookings-refresh {
-    width: 100%;
-  }
-
-  .booking-card {
-    grid-template-columns: 1fr;
-
-    gap: 16px;
-
-    padding: 18px;
-  }
-
-  .booking-actions {
-    flex-wrap: wrap;
+  .booking-item-meta {
+    align-items: flex-start;
   }
 }
 
 
 ============================================================
-DATEI: admin\js\bookings.js
+DATEI: admin\js\dashboard.js
 ============================================================
 
 import { supabase } from "../../js/supabase.js";
@@ -516,60 +379,46 @@ import { supabase } from "../../js/supabase.js";
    ELEMENTE
    ======================================== */
 
-const bookingsList = document.getElementById("bookings-list");
-const bookingCount = document.getElementById("booking-count");
-const statusFilter = document.getElementById("status-filter");
+const todayBookingsElement = document.getElementById("today-bookings");
+const pendingBookingsElement =
+  document.getElementById("pending-bookings");
+const totalServicesElement =
+  document.getElementById("total-services");
+const nextBookingElement =
+  document.getElementById("next-booking");
+const upcomingBookingsElement =
+  document.getElementById("upcoming-bookings");
 
 
 /* ========================================
-   HILFSFUNKTIONEN
+   DATUM / ZEIT
    ======================================== */
 
-function escapeHtml(value) {
-  if (value === null || value === undefined) {
-    return "";
-  }
+function getToday() {
+  const now = new Date();
 
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 
 function formatDate(dateString) {
-  if (!dateString) return "–";
-
   const date = new Date(`${dateString}T00:00:00`);
 
-  return date.toLocaleDateString("de-DE", {
+  return new Intl.DateTimeFormat("de-DE", {
     weekday: "short",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-  });
+  }).format(date);
 }
 
 
 function formatTime(timeString) {
-  if (!timeString) return "–";
-
   return timeString.slice(0, 5);
-}
-
-
-function getStatusLabel(status) {
-  const labels = {
-    pending: "Offen",
-    confirmed: "Bestätigt",
-    cancelled: "Storniert",
-    completed: "Abgeschlossen",
-    no_show: "Nicht erschienen",
-  };
-
-  return labels[status] ?? status;
 }
 
 
@@ -578,191 +427,143 @@ function getStatusLabel(status) {
    ======================================== */
 
 async function loadBookings() {
-  if (!bookingsList) return;
+  const today = getToday();
 
-  bookingsList.innerHTML = `
-    <div class="empty-state">
-      <p>Buchungen werden geladen...</p>
-    </div>
-  `;
-
-  let query = supabase
+  const { data, error } = await supabase
     .from("bookings")
     .select(`
       id,
-      created_at,
-      service_id,
       customer_name,
       customer_email,
-      customer_phone,
       booking_date,
       booking_time,
-      notes,
       status,
       services (
         title,
-        duration,
-        price
+        duration
       )
     `)
+    .in("status", ["pending", "confirmed"])
     .order("booking_date", { ascending: true })
     .order("booking_time", { ascending: true });
 
-  const selectedStatus = statusFilter?.value;
-
-  if (selectedStatus && selectedStatus !== "all") {
-    query = query.eq("status", selectedStatus);
-  }
-
-  const { data, error } = await query;
-
   if (error) {
     console.error("Buchungen konnten nicht geladen werden:", error);
-
-    bookingsList.innerHTML = `
-      <div class="empty-state">
-        <p>Buchungen konnten nicht geladen werden.</p>
-      </div>
-    `;
-
-    if (bookingCount) {
-      bookingCount.textContent = "–";
-    }
-
-    return;
+    throw error;
   }
 
-  renderBookings(data ?? []);
+  const bookings = data ?? [];
+
+
+  /* ========================================
+     HEUTIGE TERMINE
+     ======================================== */
+
+  const todayBookings = bookings.filter(
+    (booking) => booking.booking_date === today
+  );
+
+  if (todayBookingsElement) {
+    todayBookingsElement.textContent = todayBookings.length;
+  }
+
+
+  /* ========================================
+     OFFENE BUCHUNGEN
+     ======================================== */
+
+  const pendingBookings = bookings.filter(
+    (booking) => booking.status === "pending"
+  );
+
+  if (pendingBookingsElement) {
+    pendingBookingsElement.textContent = pendingBookings.length;
+  }
+
+
+  /* ========================================
+     NÄCHSTER TERMIN
+     ======================================== */
+
+  if (nextBookingElement) {
+    const nextBooking = bookings.find(
+      (booking) => booking.booking_date >= today
+    );
+
+    if (!nextBooking) {
+      nextBookingElement.textContent = "–";
+    } else {
+      nextBookingElement.textContent =
+        `${formatDate(nextBooking.booking_date)}, ${formatTime(
+          nextBooking.booking_time
+        )}`;
+    }
+  }
+
+
+  /* ========================================
+     NÄCHSTE TERMINE
+     ======================================== */
+
+  renderUpcomingBookings(bookings.slice(0, 5));
 }
 
 
 /* ========================================
-   BUCHUNGEN DARSTELLEN
+   NÄCHSTE TERMINE DARSTELLEN
    ======================================== */
 
-function renderBookings(bookings) {
-  if (bookingCount) {
-    bookingCount.textContent = bookings.length;
-  }
+function renderUpcomingBookings(bookings) {
+  if (!upcomingBookingsElement) return;
 
-  if (!bookings.length) {
-    bookingsList.innerHTML = `
+  if (bookings.length === 0) {
+    upcomingBookingsElement.innerHTML = `
       <div class="empty-state">
-        <p>Keine Buchungen gefunden.</p>
+        <p>Keine kommenden Termine vorhanden.</p>
       </div>
     `;
 
     return;
   }
 
-  bookingsList.innerHTML = bookings
+  upcomingBookingsElement.innerHTML = bookings
     .map((booking) => {
-      const service = booking.services;
+      const serviceTitle =
+        booking.services?.title ?? "Beratung";
+
+      const statusLabel =
+        booking.status === "pending"
+          ? "Offen"
+          : "Bestätigt";
 
       return `
-        <article class="booking-card" data-booking-id="${booking.id}">
+        <article class="booking-item">
 
-          <div class="booking-card-main">
+          <div class="booking-item-date">
+            <strong>
+              ${formatDate(booking.booking_date)}
+            </strong>
 
-            <div class="booking-card-date">
-              <strong>
-                ${formatDate(booking.booking_date)}
-              </strong>
+            <span>
+              ${formatTime(booking.booking_time)}
+            </span>
+          </div>
 
-              <span>
-                ${formatTime(booking.booking_time)} Uhr
-              </span>
-            </div>
+          <div class="booking-item-info">
 
-            <div class="booking-card-customer">
+            <strong>
+              ${escapeHtml(booking.customer_name)}
+            </strong>
 
-              <strong>
-                ${escapeHtml(booking.customer_name)}
-              </strong>
-
-              <span>
-                ${escapeHtml(booking.customer_email)}
-              </span>
-
-              ${
-                booking.customer_phone
-                  ? `<span>${escapeHtml(booking.customer_phone)}</span>`
-                  : ""
-              }
-
-            </div>
-
-            <div class="booking-card-service">
-
-              <strong>
-                ${escapeHtml(service?.title ?? "Beratung")}
-              </strong>
-
-              <span>
-                ${service?.duration ?? "–"} Minuten
-              </span>
-
-            </div>
-
-            <div class="booking-card-status status-${escapeHtml(
-              booking.status
-            )}">
-              ${getStatusLabel(booking.status)}
-            </div>
+            <span>
+              ${escapeHtml(serviceTitle)}
+            </span>
 
           </div>
 
-          <div class="booking-card-actions">
-
-            ${
-              booking.status === "pending"
-                ? `
-                  <button
-                    type="button"
-                    class="booking-action booking-confirm"
-                    data-action="confirm"
-                    data-id="${booking.id}"
-                  >
-                    Bestätigen
-                  </button>
-
-                  <button
-                    type="button"
-                    class="booking-action booking-cancel"
-                    data-action="cancel"
-                    data-id="${booking.id}"
-                  >
-                    Stornieren
-                  </button>
-                `
-                : ""
-            }
-
-            ${
-              booking.status === "confirmed"
-                ? `
-                  <button
-                    type="button"
-                    class="booking-action booking-complete"
-                    data-action="complete"
-                    data-id="${booking.id}"
-                  >
-                    Abschließen
-                  </button>
-
-                  <button
-                    type="button"
-                    class="booking-action booking-cancel"
-                    data-action="cancel"
-                    data-id="${booking.id}"
-                  >
-                    Stornieren
-                  </button>
-                `
-                : ""
-            }
-
-          </div>
+          <span class="booking-status booking-status-${booking.status}">
+            ${statusLabel}
+          </span>
 
         </article>
       `;
@@ -772,105 +573,85 @@ function renderBookings(bookings) {
 
 
 /* ========================================
-   STATUS ÄNDERN
+   BERATUNGSANGEBOTE LADEN
    ======================================== */
 
-async function updateBookingStatus(bookingId, newStatus) {
-  const { error } = await supabase
-    .from("bookings")
-    .update({
-      status: newStatus,
+async function loadServices() {
+  const { count, error } = await supabase
+    .from("services")
+    .select("id", {
+      count: "exact",
+      head: true,
     })
-    .eq("id", bookingId);
+    .eq("active", true);
 
   if (error) {
     console.error(
-      "Buchungsstatus konnte nicht geändert werden:",
+      "Beratungsangebote konnten nicht geladen werden:",
       error
     );
 
-    alert("Der Status konnte nicht geändert werden.");
-    return false;
+    throw error;
   }
 
-  return true;
+  if (totalServicesElement) {
+    totalServicesElement.textContent = count ?? 0;
+  }
 }
 
 
 /* ========================================
-   AKTIONEN
+   HTML SICHER EINFÜGEN
    ======================================== */
 
-bookingsList?.addEventListener("click", async (event) => {
-  const button = event.target.closest("[data-action]");
-
-  if (!button) return;
-
-  const bookingId = button.dataset.id;
-  const action = button.dataset.action;
-
-  if (!bookingId || !action) return;
-
-  let newStatus;
-  let confirmationMessage;
-
-  switch (action) {
-    case "confirm":
-      newStatus = "confirmed";
-      confirmationMessage = "Buchung wirklich bestätigen?";
-      break;
-
-    case "cancel":
-      newStatus = "cancelled";
-      confirmationMessage = "Buchung wirklich stornieren?";
-      break;
-
-    case "complete":
-      newStatus = "completed";
-      confirmationMessage = "Buchung als abgeschlossen markieren?";
-      break;
-
-    default:
-      return;
-  }
-
-  if (!confirm(confirmationMessage)) {
-    return;
-  }
-
-  button.disabled = true;
-
-  const success = await updateBookingStatus(
-    bookingId,
-    newStatus
-  );
-
-  if (success) {
-    await loadBookings();
-  } else {
-    button.disabled = false;
-  }
-});
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 
 /* ========================================
-   FILTER
+   DASHBOARD LADEN
    ======================================== */
 
-statusFilter?.addEventListener("change", () => {
-  loadBookings();
-});
+async function loadDashboard() {
+  try {
+    await Promise.all([
+      loadBookings(),
+      loadServices(),
+    ]);
+  } catch (error) {
+    console.error(
+      "Dashboard konnte nicht vollständig geladen werden:",
+      error
+    );
+
+    if (upcomingBookingsElement) {
+      upcomingBookingsElement.innerHTML = `
+        <div class="empty-state">
+          <p>
+            Die Dashboard-Daten konnten nicht geladen werden.
+          </p>
+        </div>
+      `;
+    }
+  }
+}
 
 
 /* ========================================
    START
    ======================================== */
 
-loadBookings();
+loadDashboard();
 
 
 ============================================================
-DATEI: admin\pages\bookings.html
+DATEI: admin\pages\dashboard.html
 ============================================================
 
 <!DOCTYPE html>
@@ -879,29 +660,37 @@ DATEI: admin\pages\bookings.html
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Buchungen | Aufwind Beratung</title>
+    <title>Dashboard | Aufwind Beratung</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
 
+    <!-- Gemeinsame Website-Styles -->
     <link rel="stylesheet" href="../../css/global.css" />
+
+    <!-- Admin-Styles -->
     <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/bookings.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
   </head>
 
   <body>
     <div class="admin-layout" id="adminLayout">
 
-      <!-- SIDEBAR -->
+      <!-- ========================================
+           SIDEBAR
+           ======================================== -->
 
       <aside class="admin-sidebar" id="adminSidebar">
 
         <div class="sidebar-header">
+
           <a href="dashboard.html" class="sidebar-logo">
             <span class="sidebar-logo-mark">A</span>
-            <span class="sidebar-logo-text">Aufwind</span>
+            <span class="sidebar-logo-text">
+              Aufwind
+            </span>
           </a>
 
           <button
@@ -914,42 +703,86 @@ DATEI: admin\pages\bookings.html
             <span></span>
             <span></span>
           </button>
+
         </div>
 
-        <nav class="sidebar-navigation" aria-label="Admin-Navigation">
 
-          <a href="dashboard.html" class="sidebar-link">
+        <!-- ========================================
+             NAVIGATION
+             ======================================== -->
+
+        <nav
+          class="sidebar-navigation"
+          aria-label="Admin-Navigation"
+        >
+
+          <a
+            href="dashboard.html"
+            class="sidebar-link active"
+          >
             <span class="sidebar-icon">⌂</span>
-            <span class="sidebar-link-text">Dashboard</span>
+            <span class="sidebar-link-text">
+              Dashboard
+            </span>
           </a>
 
-          <a href="bookings.html" class="sidebar-link active">
+          <a
+            href="bookings.html"
+            class="sidebar-link"
+          >
             <span class="sidebar-icon">▣</span>
-            <span class="sidebar-link-text">Termine</span>
+            <span class="sidebar-link-text">
+              Termine
+            </span>
           </a>
 
-          <a href="availability.html" class="sidebar-link">
+          <a
+            href="availability.html"
+            class="sidebar-link"
+          >
             <span class="sidebar-icon">◷</span>
-            <span class="sidebar-link-text">Verfügbarkeit</span>
+            <span class="sidebar-link-text">
+              Verfügbarkeit
+            </span>
           </a>
 
-          <a href="services.html" class="sidebar-link">
+          <a
+            href="services.html"
+            class="sidebar-link"
+          >
             <span class="sidebar-icon">◇</span>
-            <span class="sidebar-link-text">Beratungsangebote</span>
+            <span class="sidebar-link-text">
+              Beratungsangebote
+            </span>
           </a>
 
-          <a href="settings.html" class="sidebar-link">
+          <a
+            href="settings.html"
+            class="sidebar-link"
+          >
             <span class="sidebar-icon">⚙</span>
-            <span class="sidebar-link-text">Einstellungen</span>
+            <span class="sidebar-link-text">
+              Einstellungen
+            </span>
           </a>
 
         </nav>
 
+
+        <!-- ========================================
+             SIDEBAR UNTEN
+             ======================================== -->
+
         <div class="sidebar-bottom">
 
-          <a href="/" class="sidebar-link sidebar-public-link">
+          <a
+            href="/"
+            class="sidebar-link sidebar-public-link"
+          >
             <span class="sidebar-icon">↗</span>
-            <span class="sidebar-link-text">Zur Website</span>
+            <span class="sidebar-link-text">
+              Zur Website
+            </span>
           </a>
 
           <button
@@ -958,7 +791,9 @@ DATEI: admin\pages\bookings.html
             id="logoutButton"
           >
             <span class="sidebar-icon">↪</span>
-            <span class="sidebar-link-text">Abmelden</span>
+            <span class="sidebar-link-text">
+              Abmelden
+            </span>
           </button>
 
         </div>
@@ -966,7 +801,9 @@ DATEI: admin\pages\bookings.html
       </aside>
 
 
-      <!-- MOBILE OVERLAY -->
+      <!-- ========================================
+           MOBILE OVERLAY
+           ======================================== -->
 
       <div
         class="sidebar-overlay"
@@ -974,11 +811,15 @@ DATEI: admin\pages\bookings.html
       ></div>
 
 
-      <!-- MAIN -->
+      <!-- ========================================
+           MAIN
+           ======================================== -->
 
       <main class="admin-main">
 
-        <!-- TOPBAR -->
+        <!-- ========================================
+             TOPBAR
+             ======================================== -->
 
         <header class="admin-topbar">
 
@@ -997,11 +838,14 @@ DATEI: admin\pages\bookings.html
             </button>
 
             <div class="topbar-title">
-              <h1>Termine</h1>
-              <p>Alle Buchungen verwalten</p>
+              <h1>Dashboard</h1>
+              <p>
+                Willkommen im Admin-Bereich
+              </p>
             </div>
 
           </div>
+
 
           <div class="topbar-right">
 
@@ -1012,6 +856,7 @@ DATEI: admin\pages\bookings.html
               </div>
 
               <div class="admin-user-info">
+
                 <span
                   class="admin-user-name"
                   id="adminUserName"
@@ -1022,6 +867,7 @@ DATEI: admin\pages\bookings.html
                 <span class="admin-user-role">
                   Admin
                 </span>
+
               </div>
 
             </div>
@@ -1031,239 +877,163 @@ DATEI: admin\pages\bookings.html
         </header>
 
 
-        <!-- CONTENT -->
+        <!-- ========================================
+             DASHBOARD
+             ======================================== -->
 
-        <section class="bookings-content">
+        <section class="dashboard-content">
 
-          <!-- HEADER -->
+          <div class="dashboard-stats">
 
-          <div class="bookings-header">
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Heutige Termine
+              </span>
 
-            <div>
-              <h2>Buchungen</h2>
+              <strong id="today-bookings">
+                –
+              </strong>
+            </article>
 
-              <p>
-                Hier kannst du alle eingegangenen Termine verwalten.
-              </p>
-            </div>
+
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Offene Buchungen
+              </span>
+
+              <strong id="pending-bookings">
+                –
+              </strong>
+            </article>
+
+
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Beratungsangebote
+              </span>
+
+              <strong id="total-services">
+                –
+              </strong>
+            </article>
+
+
+            <article class="dashboard-stat">
+              <span class="stat-label">
+                Nächster Termin
+              </span>
+
+              <strong id="next-booking">
+                –
+              </strong>
+            </article>
 
           </div>
 
 
-          <!-- FILTER -->
+          <!-- NÄCHSTE TERMINE -->
 
-          <div class="bookings-toolbar">
+          <section class="dashboard-section">
 
-            <!-- SUCHE -->
+            <div class="section-header">
 
-            <div class="booking-search">
+              <div>
+                <h2>Nächste Termine</h2>
 
-              <label for="booking-search">
-                Suche
-              </label>
-
-              <input
-                type="search"
-                id="booking-search"
-                placeholder="Name oder E-Mail suchen..."
-                autocomplete="off"
-              />
-
-            </div>
-
-
-            <!-- STATUS -->
-
-            <div class="booking-filter">
-
-              <label for="status-filter">
-                Status
-              </label>
-
-              <select id="status-filter">
-
-                <option value="all">
-                  Alle
-                </option>
-
-                <option value="pending">
-                  Ausstehend
-                </option>
-
-                <option value="confirmed">
-                  Bestätigt
-                </option>
-
-                <option value="completed">
-                  Abgeschlossen
-                </option>
-
-                <option value="cancelled">
-                  Storniert
-                </option>
-
-                <option value="no_show">
-                  Nicht erschienen
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <!-- BERATUNGSART -->
-
-            <div class="booking-filter">
-
-              <label for="service-filter">
-                Beratungsart
-              </label>
-
-              <select id="service-filter">
-
-                <option value="all">
-                  Alle
-                </option>
-
-                <!-- Wird später dynamisch aus Supabase geladen -->
-
-              </select>
-
-            </div>
-
-
-            <!-- ZEITRAUM -->
-
-            <div class="booking-filter">
-
-              <label for="date-filter">
-                Zeitraum
-              </label>
-
-              <select id="date-filter">
-
-                <option value="all">
-                  Alle
-                </option>
-
-                <option value="today">
-                  Heute
-                </option>
-
-                <option value="tomorrow">
-                  Morgen
-                </option>
-
-                <option value="this_week">
-                  Diese Woche
-                </option>
-
-                <option value="next_week">
-                  Nächste Woche
-                </option>
-
-                <option value="this_month">
-                  Dieser Monat
-                </option>
-
-                <option value="custom">
-                  Benutzerdefiniert
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <!-- BENUTZERDEFINIERTER ZEITRAUM -->
-
-            <div
-              class="booking-custom-date-filter"
-              id="custom-date-filter"
-              hidden
-            >
-
-              <div class="booking-filter">
-
-                <label for="date-from">
-                  Von
-                </label>
-
-                <input
-                  type="date"
-                  id="date-from"
-                />
-
+                <p>
+                  Die nächsten gebuchten Beratungen.
+                </p>
               </div>
 
-              <div class="booking-filter">
+              <a
+                href="bookings.html"
+                class="dashboard-link"
+              >
+                Alle Buchungen
+              </a>
 
-                <label for="date-to">
-                  Bis
-                </label>
+            </div>
 
-                <input
-                  type="date"
-                  id="date-to"
-                />
 
+            <div
+              id="upcoming-bookings"
+              class="booking-list"
+            >
+
+              <div class="empty-state">
+                <p>
+                  Termine werden geladen...
+                </p>
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- SCHNELLZUGRIFF -->
+
+          <section class="dashboard-section">
+
+            <div class="section-header">
+
+              <div>
+                <h2>Schnellzugriff</h2>
+
+                <p>
+                  Häufig benötigte Bereiche.
+                </p>
               </div>
 
             </div>
 
 
-            <!-- AKTUALISIEREN -->
+            <div class="quick-actions">
 
-            <button
-              type="button"
-              class="bookings-refresh"
-              id="refresh-bookings"
-            >
-              Aktualisieren
-            </button>
+              <a
+                href="bookings.html"
+                class="quick-action"
+              >
+                <strong>
+                  Buchungen verwalten
+                </strong>
 
-          </div>
+                <span>
+                  Termine ansehen und bearbeiten
+                </span>
+              </a>
 
 
-          <!-- AKTIVE FILTER + TREFFERZAHL -->
+              <a
+                href="availability.html"
+                class="quick-action"
+              >
+                <strong>
+                  Verfügbarkeit bearbeiten
+                </strong>
 
-          <div class="bookings-meta">
+                <span>
+                  Arbeitszeiten und Ausnahmen verwalten
+                </span>
+              </a>
 
-            <div
-              class="active-booking-filters"
-              id="active-booking-filters"
-            >
+
+              <a
+                href="services.html"
+                class="quick-action"
+              >
+                <strong>
+                  Beratungsangebote
+                </strong>
+
+                <span>
+                  Preise, Dauer und Angebote verwalten
+                </span>
+              </a>
+
             </div>
 
-            <p class="booking-count">
-
-              <span id="booking-count">
-                0
-              </span>
-
-              <span id="booking-count-label">
-                Buchungen
-              </span>
-
-            </p>
-
-          </div>
-
-
-          <!-- LISTE -->
-
-          <div
-            id="bookings-list"
-            class="bookings-list"
-          >
-
-            <div class="empty-state">
-              <p>
-                Buchungen werden geladen...
-              </p>
-            </div>
-
-          </div>
+          </section>
 
         </section>
 
@@ -1272,11 +1042,13 @@ DATEI: admin\pages\bookings.html
     </div>
 
 
-    <!-- JAVASCRIPT -->
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
 
     <script type="module" src="../js/auth.js"></script>
     <script src="../js/admin-layout.js"></script>
-    <script type="module" src="../js/bookings.js"></script>
+    <script type="module" src="../js/dashboard.js"></script>
 
   </body>
 </html>

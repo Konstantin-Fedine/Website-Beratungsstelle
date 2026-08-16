@@ -222,70 +222,142 @@
 
 
         <!-- ========================================
-             DASHBOARD
-             ======================================== -->
+        DASHBOARD
+        ======================================== -->
 
         <section class="dashboard-content">
+
+          <!-- BEGRÜSSUNG -->
+
+          <div class="dashboard-header">
+
+            <h2>Guten Tag!</h2>
+
+            <p>
+              Aktueller Überblick:
+            </p>
+
+          </div>
+
+
+          <!-- KPI-KARTEN -->
 
           <div class="dashboard-stats">
 
             <article class="dashboard-stat">
-              <span class="stat-label">
-                Heutige Termine
-              </span>
 
-              <strong id="today-bookings">
-                –
-              </strong>
+              <div class="dashboard-stat-content">
+
+                <span class="stat-label">
+                  Termine heute
+                </span>
+
+                <strong id="today-bookings">
+                  –
+                </strong>
+
+              </div>
+
+              <a
+                href="bookings.html"
+                class="stat-action"
+              >
+                Termine ansehen
+              </a>
+
             </article>
 
 
             <article class="dashboard-stat">
-              <span class="stat-label">
-                Offene Buchungen
-              </span>
 
-              <strong id="pending-bookings">
-                –
-              </strong>
+              <div class="dashboard-stat-content">
+
+                <span class="stat-label">
+                  Diese Woche
+                </span>
+
+                <strong id="week-bookings">
+                  –
+                </strong>
+
+              </div>
+
+              <a
+                href="bookings.html"
+                class="stat-action"
+              >
+                Termine ansehen
+              </a>
+
             </article>
 
 
             <article class="dashboard-stat">
-              <span class="stat-label">
-                Beratungsangebote
-              </span>
 
-              <strong id="total-services">
-                –
-              </strong>
-            </article>
+              <div class="dashboard-stat-content">
 
+                <span class="stat-label">
+                  Offene Buchungen
+                </span>
 
-            <article class="dashboard-stat">
-              <span class="stat-label">
-                Nächster Termin
-              </span>
+                <strong id="pending-bookings">
+                  –
+                </strong>
 
-              <strong id="next-booking">
-                –
-              </strong>
+              </div>
+
+              <a
+                href="bookings.html?status=pending"
+                class="stat-action"
+              >
+                Buchungen
+              </a>
+
             </article>
 
           </div>
 
 
-          <!-- NÄCHSTE TERMINE -->
+          <!-- NÄCHSTER TERMIN -->
+
+          <section class="dashboard-section next-booking-section">
+
+            <div class="section-header">
+
+              <div>
+                <h2>Nächster Termin</h2>
+              </div>
+
+            </div>
+
+
+            <div
+              id="next-booking"
+              class="next-booking"
+            >
+
+              <div class="empty-state">
+                <p>
+                  Termine werden geladen...
+                </p>
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- HEUTIGE TERMINE -->
 
           <section class="dashboard-section">
 
             <div class="section-header">
 
               <div>
-                <h2>Nächste Termine</h2>
+                <h2>Heute</h2>
 
                 <p>
-                  Die nächsten gebuchten Beratungen.
+                  Die nächsten Termine des heutigen Tages.
                 </p>
               </div>
 
@@ -293,14 +365,14 @@
                 href="bookings.html"
                 class="dashboard-link"
               >
-                Alle Buchungen
+                Alle Termine heute
               </a>
 
             </div>
 
 
             <div
-              id="upcoming-bookings"
+              id="today-bookings-list"
               class="booking-list"
             >
 
@@ -313,6 +385,8 @@
             </div>
 
           </section>
+
+        </section>
 
 
           <!-- SCHNELLZUGRIFF -->

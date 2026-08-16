@@ -1,18 +1,24 @@
 import { supabase } from "../../js/supabase.js";
 
+
 /* ========================================
    ELEMENTE
    ======================================== */
 
-const todayBookingsElement = document.getElementById("today-bookings");
+const todayBookingsElement =
+  document.getElementById("today-bookings");
+
+const weekBookingsElement =
+  document.getElementById("week-bookings");
+
 const pendingBookingsElement =
   document.getElementById("pending-bookings");
-const totalServicesElement =
-  document.getElementById("total-services");
+
 const nextBookingElement =
   document.getElementById("next-booking");
-const upcomingBookingsElement =
-  document.getElementById("upcoming-bookings");
+
+const todayBookingsListElement =
+  document.getElementById("today-bookings-list");
 
 
 /* ========================================
@@ -30,20 +36,80 @@ function getToday() {
 }
 
 
+function getCurrentTime() {
+  const now = new Date();
+
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  return `${hours}:${minutes}`;
+}
+
+
+function getWeekStart() {
+  const now = new Date();
+
+  const day = now.getDay();
+
+  const difference = day === 0 ? -6 : 1 - day;
+
+  const monday = new Date(now);
+
+  monday.setDate(now.getDate() + difference);
+
+  monday.setHours(0, 0, 0, 0);
+
+  return formatDateForDatabase(monday);
+}
+
+
+function getWeekEnd() {
+  const now = new Date();
+
+  const day = now.getDay();
+
+  const difference = day === 0 ? 0 : 7 - day;
+
+  const sunday = new Date(now);
+
+  sunday.setDate(now.getDate() + difference);
+
+  sunday.setHours(0, 0, 0, 0);
+
+  return formatDateForDatabase(sunday);
+}
+
+
+function formatDateForDatabase(date) {
+  const year = date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+
 function formatDate(dateString) {
-  const date = new Date(`${dateString}T00:00:00`);
+  const date = new Date(
+    `${dateString}T00:00:00`
+  );
 
   return new Intl.DateTimeFormat("de-DE", {
-    weekday: "short",
+    weekday: "long",
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
   }).format(date);
 }
 
 
 function formatTime(timeString) {
-  return timeString.slice(0, 5);
+  return String(timeString).slice(0, 5);
 }
 
 
@@ -52,7 +118,6 @@ function formatTime(timeString) {
    ======================================== */
 
 async function loadBookings() {
-  const today = getToday();
 
   const { data, error } = await supabase
     .from("bookings")
@@ -68,28 +133,73 @@ async function loadBookings() {
         duration
       )
     `)
-    .in("status", ["pending", "confirmed"])
-    .order("booking_date", { ascending: true })
-    .order("booking_time", { ascending: true });
+    .in("status", [
+      "pending",
+      "confirmed"
+    ])
+    .order("booking_date", {
+      ascending: true
+    })
+    .order("booking_time", {
+      ascending: true
+    });
+
 
   if (error) {
-    console.error("Buchungen konnten nicht geladen werden:", error);
+    console.error(
+      "Buchungen konnten nicht geladen werden:",
+      error
+    );
+
     throw error;
   }
 
+
   const bookings = data ?? [];
+
+  const today = getToday();
+
+  const currentTime = getCurrentTime();
+
+  const weekStart = getWeekStart();
+
+  const weekEnd = getWeekEnd();
 
 
   /* ========================================
-     HEUTIGE TERMINE
+     HEUTE
      ======================================== */
 
   const todayBookings = bookings.filter(
-    (booking) => booking.booking_date === today
+    (booking) =>
+      booking.booking_date === today
   );
 
+
   if (todayBookingsElement) {
-    todayBookingsElement.textContent = todayBookings.length;
+
+    todayBookingsElement.textContent =
+      todayBookings.length;
+
+  }
+
+
+  /* ========================================
+     DIESE WOCHE
+     ======================================== */
+
+  const weekBookings = bookings.filter(
+    (booking) =>
+      booking.booking_date >= weekStart &&
+      booking.booking_date <= weekEnd
+  );
+
+
+  if (weekBookingsElement) {
+
+    weekBookingsElement.textContent =
+      weekBookings.length;
+
   }
 
 
@@ -98,11 +208,16 @@ async function loadBookings() {
      ======================================== */
 
   const pendingBookings = bookings.filter(
-    (booking) => booking.status === "pending"
+    (booking) =>
+      booking.status === "pending"
   );
 
+
   if (pendingBookingsElement) {
-    pendingBookingsElement.textContent = pendingBookings.length;
+
+    pendingBookingsElement.textContent =
+      pendingBookings.length;
+
   }
 
 
@@ -110,118 +225,202 @@ async function loadBookings() {
      NÄCHSTER TERMIN
      ======================================== */
 
-  if (nextBookingElement) {
-    const nextBooking = bookings.find(
-      (booking) => booking.booking_date >= today
-    );
+  const nextBooking = bookings.find(
+    (booking) => {
 
-    if (!nextBooking) {
-      nextBookingElement.textContent = "–";
-    } else {
-      nextBookingElement.textContent =
-        `${formatDate(nextBooking.booking_date)}, ${formatTime(
-          nextBooking.booking_time
-        )}`;
+      if (booking.booking_date > today) {
+        return true;
+      }
+
+      if (booking.booking_date === today) {
+
+        return (
+          formatTime(booking.booking_time) >=
+          currentTime
+        );
+
+      }
+
+      return false;
     }
-  }
+  );
+
+
+  renderNextBooking(nextBooking);
 
 
   /* ========================================
-     NÄCHSTE TERMINE
+     HEUTIGE TERMINE
      ======================================== */
 
-  renderUpcomingBookings(bookings.slice(0, 5));
+  renderTodayBookings(
+    todayBookings.slice(0, 5)
+  );
 }
 
 
 /* ========================================
-   NÄCHSTE TERMINE DARSTELLEN
+   NÄCHSTER TERMIN DARSTELLEN
    ======================================== */
 
-function renderUpcomingBookings(bookings) {
-  if (!upcomingBookingsElement) return;
+function renderNextBooking(booking) {
 
-  if (bookings.length === 0) {
-    upcomingBookingsElement.innerHTML = `
+  if (!nextBookingElement) return;
+
+
+  if (!booking) {
+
+    nextBookingElement.innerHTML = `
       <div class="empty-state">
-        <p>Keine kommenden Termine vorhanden.</p>
+        <p>
+          Heute stehen keine weiteren Termine an.
+        </p>
       </div>
     `;
 
     return;
   }
 
-  upcomingBookingsElement.innerHTML = bookings
-    .map((booking) => {
-      const serviceTitle =
-        booking.services?.title ?? "Beratung";
 
-      const statusLabel =
-        booking.status === "pending"
-          ? "Offen"
-          : "Bestätigt";
+  const serviceTitle =
+    booking.services?.title ??
+    "Beratung";
 
-      return `
-        <article class="booking-item">
 
-          <div class="booking-item-date">
-            <strong>
-              ${formatDate(booking.booking_date)}
-            </strong>
+  const duration =
+    booking.services?.duration ??
+    60;
 
-            <span>
-              ${formatTime(booking.booking_time)}
-            </span>
-          </div>
 
-          <div class="booking-item-info">
+  nextBookingElement.innerHTML = `
 
-            <strong>
-              ${escapeHtml(booking.customer_name)}
-            </strong>
+    <div class="next-booking-card">
 
-            <span>
-              ${escapeHtml(serviceTitle)}
-            </span>
+      <div class="next-booking-date">
 
-          </div>
+        <strong>
+          ${formatDate(booking.booking_date)}
+          · ${formatTime(booking.booking_time)} Uhr
+        </strong>
 
-          <span class="booking-status booking-status-${booking.status}">
-            ${statusLabel}
-          </span>
+        <span>
+          ${escapeHtml(serviceTitle)}
+          · ${duration} Minuten
+        </span>
 
-        </article>
-      `;
-    })
-    .join("");
+      </div>
+
+
+      <div class="next-booking-info">
+
+        <strong>
+          ${escapeHtml(
+            booking.customer_name
+          )}
+        </strong>
+
+        <span>
+          ${escapeHtml(
+            booking.customer_email
+          )}
+        </span>
+
+      </div>
+
+
+      <a
+        href="bookings.html"
+        class="next-booking-button"
+      >
+        Termin öffnen
+      </a>
+
+    </div>
+
+  `;
 }
 
 
 /* ========================================
-   BERATUNGSANGEBOTE LADEN
+   HEUTIGE TERMINE DARSTELLEN
    ======================================== */
 
-async function loadServices() {
-  const { count, error } = await supabase
-    .from("services")
-    .select("id", {
-      count: "exact",
-      head: true,
-    })
-    .eq("active", true);
+function renderTodayBookings(bookings) {
 
-  if (error) {
-    console.error(
-      "Beratungsangebote konnten nicht geladen werden:",
-      error
-    );
-
-    throw error;
+  if (!todayBookingsListElement) {
+    return;
   }
 
-  if (totalServicesElement) {
-    totalServicesElement.textContent = count ?? 0;
+
+  if (bookings.length === 0) {
+
+    todayBookingsListElement.innerHTML = `
+      <div class="empty-state">
+        <p>
+          Heute stehen keine Termine an.
+        </p>
+      </div>
+    `;
+
+    return;
   }
+
+
+  todayBookingsListElement.innerHTML =
+    bookings
+      .map((booking) => {
+
+        const serviceTitle =
+          booking.services?.title ??
+          "Beratung";
+
+
+        const statusLabel =
+          booking.status === "pending"
+            ? "Ausstehend"
+            : "Bestätigt";
+
+
+        return `
+
+          <article class="booking-item">
+
+            <span class="booking-item-time">
+              ${formatTime(
+                booking.booking_time
+              )}
+            </span>
+
+
+            <strong class="booking-item-name">
+              ${escapeHtml(
+                booking.customer_name
+              )}
+            </strong>
+
+
+            <span class="booking-item-service">
+              ${escapeHtml(
+                serviceTitle
+              )}
+            </span>
+
+
+            <span
+              class="
+                booking-status
+                booking-status-${booking.status}
+              "
+            >
+              ${statusLabel}
+            </span>
+
+          </article>
+
+        `;
+
+      })
+      .join("");
 }
 
 
@@ -230,12 +429,25 @@ async function loadServices() {
    ======================================== */
 
 function escapeHtml(value) {
+
   return String(value ?? "")
     .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }
 
 
@@ -244,26 +456,46 @@ function escapeHtml(value) {
    ======================================== */
 
 async function loadDashboard() {
+
   try {
-    await Promise.all([
-      loadBookings(),
-      loadServices(),
-    ]);
+
+    await loadBookings();
+
   } catch (error) {
+
     console.error(
-      "Dashboard konnte nicht vollständig geladen werden:",
+      "Dashboard konnte nicht geladen werden:",
       error
     );
 
-    if (upcomingBookingsElement) {
-      upcomingBookingsElement.innerHTML = `
+
+    if (todayBookingsListElement) {
+
+      todayBookingsListElement.innerHTML = `
         <div class="empty-state">
           <p>
-            Die Dashboard-Daten konnten nicht geladen werden.
+            Die Dashboard-Daten konnten
+            nicht geladen werden.
           </p>
         </div>
       `;
+
     }
+
+
+    if (nextBookingElement) {
+
+      nextBookingElement.innerHTML = `
+        <div class="empty-state">
+          <p>
+            Die Dashboard-Daten konnten
+            nicht geladen werden.
+          </p>
+        </div>
+      `;
+
+    }
+
   }
 }
 
