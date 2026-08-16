@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Verfügbarkeit | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/availability.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- ========================================
+           SIDEBAR
+           ======================================== -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+
+          <a
+            href="dashboard.html"
+            class="sidebar-logo"
+          >
+            <span class="sidebar-logo-mark">A</span>
+
+            <span class="sidebar-logo-text">
+              Aufwind
+            </span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
+
+        </div>
+
+
+        <!-- ========================================
+             NAVIGATION
+             ======================================== -->
+
+        <nav
+          class="sidebar-navigation"
+          aria-label="Admin-Navigation"
+        >
+
+          <a
+            href="dashboard.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⌂</span>
+
+            <span class="sidebar-link-text">
+              Dashboard
+            </span>
+          </a>
+
+
+          <a
+            href="bookings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">▣</span>
+
+            <span class="sidebar-link-text">
+              Termine
+            </span>
+          </a>
+
+
+          <a
+            href="availability.html"
+            class="sidebar-link active"
+          >
+            <span class="sidebar-icon">◷</span>
+
+            <span class="sidebar-link-text">
+              Verfügbarkeit
+            </span>
+          </a>
+
+
+          <a
+            href="services.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◇</span>
+
+            <span class="sidebar-link-text">
+              Beratungsangebote
+            </span>
+          </a>
+
+
+          <a
+            href="settings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⚙</span>
+
+            <span class="sidebar-link-text">
+              Einstellungen
+            </span>
+          </a>
+
+        </nav>
+
+
+        <!-- ========================================
+             SIDEBAR UNTEN
+             ======================================== -->
+
+        <div class="sidebar-bottom">
+
+          <a
+            href="/"
+            class="sidebar-link sidebar-public-link"
+          >
+            <span class="sidebar-icon">↗</span>
+
+            <span class="sidebar-link-text">
+              Zur Website
+            </span>
+          </a>
+
+
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
+
+            <span class="sidebar-link-text">
+              Abmelden
+            </span>
+          </button>
+
+        </div>
+
+      </aside>
+
+
+      <!-- ========================================
+           MOBILE SIDEBAR OVERLAY
+           ======================================== -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+
+      <!-- ========================================
+           MAIN
+           ======================================== -->
+
+      <main class="admin-main">
+
+        <!-- ========================================
+             TOPBAR
+             ======================================== -->
+
+        <header class="admin-topbar">
+
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+
+            <div class="topbar-title">
+
+              <h1>
+                Verfügbarkeit
+              </h1>
+
+              <p>
+                Reguläre Arbeitszeiten verwalten
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+
+              <div class="admin-user-info">
+
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        <!-- ========================================
+             CONTENT
+             ======================================== -->
+
+        <section class="availability-content">
+
+          <!-- ========================================
+               HEADER
+               ======================================== -->
+
+          <div class="availability-header">
+
+            <div>
+
+              <h2>
+                Reguläre Arbeitszeiten
+              </h2>
+
+              <p>
+                Lege fest, wann Termine regulär
+                gebucht werden können.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- ========================================
+               FEHLER / ERFOLG
+               ======================================== -->
+
+          <div
+            id="availability-message"
+            class="availability-message"
+            hidden
+            role="status"
+            aria-live="polite"
+          ></div>
+
+
+          <!-- ========================================
+               WOCHENTAGE
+               ======================================== -->
+
+          <div
+            id="availability-days"
+            class="availability-days"
+          >
+
+            <!-- Wird per JavaScript eingefügt -->
+
+          </div>
+
+
+          <!-- ========================================
+               SPEICHERN
+               ======================================== -->
+
+          <div class="availability-actions">
+
+            <button
+              type="button"
+              class="availability-save"
+              id="save-availability"
+            >
+              Änderungen speichern
+            </button>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
+
+    <script
+      type="module"
+      src="../js/auth.js"
+    ></script>
+
+    <script
+      src="../js/admin-layout.js"
+    ></script>
+
+    <script
+      type="module"
+      src="../js/availability.js"
+    ></script>
+
+  </body>
+</html>
