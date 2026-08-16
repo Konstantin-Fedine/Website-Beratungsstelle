@@ -182,19 +182,6 @@ function createWeekday(day, availabilityRows) {
   });
 
 
-  /*
-   * Wenn der Tag aktiviert ist,
-   * aber noch keinen Zeitraum besitzt,
-   * erstellen wir einen Standardblock.
-   */
-
-  if (isActive && activeRows.length === 0) {
-    blocksContainer.appendChild(
-      createTimeBlock()
-    );
-  }
-
-
   /* ========================================
      ZEITRAUM HINZUFÜGEN
      ======================================== */

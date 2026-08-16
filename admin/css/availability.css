@@ -5,9 +5,7 @@
 .availability-content {
   width: 100%;
   max-width: 1200px;
-
   margin: 0 auto;
-
   padding: 35px 40px;
 }
 
@@ -45,7 +43,6 @@
 .availability-days {
   display: flex;
   flex-direction: column;
-
   gap: 14px;
 }
 
@@ -57,9 +54,9 @@
 .availability-day {
   padding: 22px 24px;
 
-  background: var(--admin-surface);
+  background: var(--color-surface);
 
-  border: 1px solid var(--admin-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
 
   box-shadow:
@@ -81,7 +78,7 @@
   margin-bottom: 18px;
 }
 
-.availability-day-name {
+.availability-day-header h3 {
   margin: 0;
 
   color: var(--color-dark);
@@ -92,10 +89,10 @@
 
 
 /* ========================================
-   VERFÜGBAR CHECKBOX
+   VERFÜGBAR TOGGLE
    ======================================== */
 
-.availability-checkbox {
+.availability-toggle {
   display: inline-flex;
   align-items: center;
 
@@ -107,11 +104,10 @@
   font-weight: 600;
 
   cursor: pointer;
-
   user-select: none;
 }
 
-.availability-checkbox input {
+.availability-toggle input {
   width: 17px;
   height: 17px;
 
@@ -124,10 +120,10 @@
 
 
 /* ========================================
-   ZEITRÄUME
+   ZEITBLÖCKE
    ======================================== */
 
-.availability-slots {
+.availability-time-blocks {
   display: flex;
   flex-direction: column;
 
@@ -136,19 +132,30 @@
   margin-bottom: 14px;
 }
 
-.availability-slot {
+
+/* ========================================
+   EIN ZEITBLOCK
+   ======================================== */
+
+.availability-time-block {
   display: flex;
   align-items: center;
 
   gap: 10px;
 }
 
-.availability-time-input {
+
+/* ========================================
+   ZEIT INPUTS
+   ======================================== */
+
+.availability-time-start,
+.availability-time-end {
   min-height: 40px;
 
   padding: 8px 11px;
 
-  border: 1px solid var(--admin-border);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
   background: var(--color-surface);
@@ -164,12 +171,18 @@
     box-shadow var(--transition);
 }
 
-.availability-time-input:focus {
+.availability-time-start:focus,
+.availability-time-end:focus {
   border-color: var(--color-primary);
 
   box-shadow:
     0 0 0 3px rgba(212, 178, 149, 0.15);
 }
+
+
+/* ========================================
+   ZEIT TRENNER
+   ======================================== */
 
 .availability-time-separator {
   color: var(--color-text-muted);
@@ -222,9 +235,11 @@
    ZEITRAUM HINZUFÜGEN
    ======================================== */
 
-.availability-add-slot {
+.availability-add {
   display: inline-flex;
   align-items: center;
+
+  width: fit-content;
 
   gap: 6px;
 
@@ -246,7 +261,7 @@
     color var(--transition);
 }
 
-.availability-add-slot:hover {
+.availability-add:hover {
   color: var(--color-primary);
 }
 
@@ -255,51 +270,16 @@
    NICHT VERFÜGBAR
    ======================================== */
 
-.availability-day-unavailable
-  .availability-slots,
-.availability-day-unavailable
-  .availability-add-slot {
+.availability-day:not(:has(.availability-day-active:checked))
+  .availability-time-blocks,
+.availability-day:not(:has(.availability-day-active:checked))
+  .availability-add {
   opacity: 0.45;
 }
 
-.availability-day-unavailable
-  .availability-time-input,
-.availability-day-unavailable
-  .availability-delete,
-.availability-day-unavailable
-  .availability-add-slot {
-  pointer-events: none;
-}
-
 
 /* ========================================
-   VALIDIERUNGSFEHLER
-   ======================================== */
-
-.availability-slot-error {
-  border-color: rgba(180, 80, 80, 0.55);
-
-  background: rgba(180, 80, 80, 0.04);
-}
-
-.availability-validation-error {
-  margin-top: 10px;
-
-  padding: 10px 12px;
-
-  border: 1px solid rgba(180, 80, 80, 0.2);
-  border-radius: 8px;
-
-  background: rgba(180, 80, 80, 0.06);
-
-  color: #8a3d3d;
-
-  font-size: 0.82rem;
-}
-
-
-/* ========================================
-   MESSAGE
+   NACHRICHTEN
    ======================================== */
 
 .availability-message {
@@ -313,7 +293,7 @@
   font-weight: 600;
 }
 
-.availability-message.success {
+.availability-message-success {
   border: 1px solid rgba(80, 140, 100, 0.22);
 
   background: rgba(80, 140, 100, 0.08);
@@ -321,7 +301,7 @@
   color: #3d704d;
 }
 
-.availability-message.error {
+.availability-message-error {
   border: 1px solid rgba(180, 80, 80, 0.22);
 
   background: rgba(180, 80, 80, 0.08);
@@ -435,7 +415,7 @@
     gap: 12px;
   }
 
-  .availability-slot {
+  .availability-time-block {
     display: grid;
 
     grid-template-columns:
@@ -447,8 +427,10 @@
     gap: 7px;
   }
 
-  .availability-time-input {
+  .availability-time-start,
+  .availability-time-end {
     width: 100%;
+    min-width: 0;
   }
 
   .availability-time-separator {
@@ -481,7 +463,7 @@
     padding: 16px;
   }
 
-  .availability-slot {
+  .availability-time-block {
     grid-template-columns:
       minmax(0, 1fr)
       auto

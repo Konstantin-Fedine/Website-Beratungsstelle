@@ -1,15 +1,15 @@
 
 ============================================================
-DATEI: admin\css\dashboard.css
+DATEI: admin\css\availability.css
 ============================================================
 
 /* ========================================
-   DASHBOARD CONTENT
+   AVAILABILITY CONTENT
    ======================================== */
 
-.dashboard-content {
+.availability-content {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
 
   margin: 0 auto;
 
@@ -18,628 +18,1072 @@ DATEI: admin\css\dashboard.css
 
 
 /* ========================================
-   STATISTICS
+   HEADER
    ======================================== */
 
-.dashboard-stats {
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-
-  gap: 20px;
-
-  margin-bottom: 30px;
+.availability-header {
+  margin-bottom: 28px;
 }
 
-.dashboard-stat {
-  padding: 24px;
-
-  background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-
-  border-radius: var(--radius);
-
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.05);
-
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition);
-}
-
-.dashboard-stat:hover {
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-.stat-label {
-  display: block;
-
-  color: var(--color-text-muted);
-
-  font-size: 0.9rem;
-}
-
-.dashboard-stat strong {
-  display: block;
-
-  margin-top: 8px;
+.availability-header h2 {
+  margin: 0;
 
   color: var(--color-dark);
 
-  font-size: 1.8rem;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.availability-header p {
+  margin: 6px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.95rem;
 }
 
 
 /* ========================================
-   SECTIONS
+   WOCHENTAGE
    ======================================== */
 
-.dashboard-section {
-  margin-bottom: 30px;
+.availability-days {
+  display: flex;
+  flex-direction: column;
 
-  padding: 28px;
+  gap: 14px;
+}
 
-  background: var(--color-surface);
 
-  border: 1px solid var(--color-border);
+/* ========================================
+   WOCHENTAG-KARTE
+   ======================================== */
 
+.availability-day {
+  padding: 22px 24px;
+
+  background: var(--admin-surface);
+
+  border: 1px solid var(--admin-border);
   border-radius: var(--radius);
 
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.05);
+    0 4px 14px rgba(42, 36, 33, 0.04);
 }
 
 
 /* ========================================
-   SECTION HEADER
+   TAG HEADER
    ======================================== */
 
-.section-header {
+.availability-day-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 18px;
+}
+
+.availability-day-name {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+
+/* ========================================
+   VERFÜGBAR CHECKBOX
+   ======================================== */
+
+.availability-checkbox {
+  display: inline-flex;
   align-items: center;
 
-  gap: 20px;
+  gap: 9px;
 
-  margin-bottom: 22px;
-}
-
-.section-header h2 {
   color: var(--color-dark);
 
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  user-select: none;
 }
 
-.section-header p {
-  margin-top: 4px;
+.availability-checkbox input {
+  width: 17px;
+  height: 17px;
 
-  color: var(--color-text-muted);
+  margin: 0;
 
-  font-size: 0.9rem;
-}
+  accent-color: var(--color-primary);
 
-
-/* ========================================
-   LINKS
-   ======================================== */
-
-.dashboard-link {
-  color: var(--color-dark);
-
-  font-weight: 700;
-
-  text-decoration: none;
-
-  transition:
-    color var(--transition);
-}
-
-.dashboard-link:hover {
-  color: var(--color-primary);
+  cursor: pointer;
 }
 
 
 /* ========================================
-   EMPTY STATE
+   ZEITRÄUME
    ======================================== */
 
-.empty-state {
-  padding: 30px;
+.availability-slots {
+  display: flex;
+  flex-direction: column;
 
-  text-align: center;
+  gap: 9px;
 
-  color: var(--color-text-muted);
-
-  background: var(--color-primary-soft);
-
-  border-radius: var(--radius);
+  margin-bottom: 14px;
 }
 
+.availability-slot {
+  display: flex;
+  align-items: center;
 
-/* ========================================
-   QUICK ACTIONS
-   ======================================== */
-
-.quick-actions {
-  display: grid;
-
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
-
-  gap: 16px;
+  gap: 10px;
 }
 
-.quick-action {
-  display: block;
+.availability-time-input {
+  min-height: 40px;
 
-  padding: 20px;
+  padding: 8px 11px;
 
-  border: 1px solid var(--color-border);
-
-  border-radius: var(--radius);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
 
   background: var(--color-surface);
+  color: var(--color-dark);
 
-  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.88rem;
 
-  text-decoration: none;
+  outline: none;
 
   transition:
-    transform var(--transition),
     border-color var(--transition),
     box-shadow var(--transition);
 }
 
-.quick-action:hover {
-  transform: translateY(-2px);
-
+.availability-time-input:focus {
   border-color: var(--color-primary);
 
   box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.08);
+    0 0 0 3px rgba(212, 178, 149, 0.15);
 }
 
-.quick-action strong {
-  display: block;
-
-  margin-bottom: 6px;
-
-  color: var(--color-dark);
-}
-
-.quick-action span {
-  color: var(--color-text-muted);
-
-  font-size: 0.9rem;
-}
-
-
-/* ========================================
-   BOOKING LIST
-   ======================================== */
-
-.booking-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.booking-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  padding: 16px 18px;
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-
-  background: var(--color-surface);
-
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition);
-}
-
-.booking-item:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 5px 14px rgba(0, 0, 0, 0.06);
-}
-
-.booking-item-main {
-  min-width: 0;
-}
-
-.booking-item-name {
-  color: var(--color-dark);
-
-  font-weight: 700;
-}
-
-.booking-item-service {
-  margin-top: 3px;
-
-  color: var(--color-text-muted);
-
-  font-size: 0.9rem;
-}
-
-.booking-item-meta {
-  display: flex;
-  flex-direction: column;
-
-  align-items: flex-end;
-
-  flex-shrink: 0;
-
+.availability-time-separator {
   color: var(--color-text-muted);
 
   font-size: 0.85rem;
 }
 
-.booking-status {
+
+/* ========================================
+   ZEITRAUM LÖSCHEN
+   ======================================== */
+
+.availability-delete {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 
-  padding: 5px 10px;
+  width: 36px;
+  height: 36px;
 
-  margin-top: 5px;
+  flex-shrink: 0;
 
-  border-radius: 999px;
+  padding: 0;
 
-  font-size: 0.75rem;
-  font-weight: 700;
+  border: 1px solid rgba(180, 80, 80, 0.25);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #8a3d3d;
+
+  font-family: inherit;
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition);
 }
 
-.booking-status.pending {
-  background: rgba(212, 178, 149, 0.2);
-  color: var(--color-dark);
-}
+.availability-delete:hover {
+  background: rgba(180, 80, 80, 0.08);
 
-.booking-status.confirmed {
-  background: rgba(70, 130, 90, 0.12);
-  color: #356b47;
-}
-
-.booking-status.cancelled {
-  background: rgba(180, 70, 70, 0.12);
-  color: #8a3535;
+  border-color: rgba(180, 80, 80, 0.4);
 }
 
 
 /* ========================================
-   RESPONSIVE
+   ZEITRAUM HINZUFÜGEN
    ======================================== */
 
-@media (max-width: 1000px) {
+.availability-add-slot {
+  display: inline-flex;
+  align-items: center;
 
-  .dashboard-stats {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+  gap: 6px;
+
+  padding: 7px 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition);
+}
+
+.availability-add-slot:hover {
+  color: var(--color-primary);
+}
+
+
+/* ========================================
+   NICHT VERFÜGBAR
+   ======================================== */
+
+.availability-day-unavailable
+  .availability-slots,
+.availability-day-unavailable
+  .availability-add-slot {
+  opacity: 0.45;
+}
+
+.availability-day-unavailable
+  .availability-time-input,
+.availability-day-unavailable
+  .availability-delete,
+.availability-day-unavailable
+  .availability-add-slot {
+  pointer-events: none;
+}
+
+
+/* ========================================
+   VALIDIERUNGSFEHLER
+   ======================================== */
+
+.availability-slot-error {
+  border-color: rgba(180, 80, 80, 0.55);
+
+  background: rgba(180, 80, 80, 0.04);
+}
+
+.availability-validation-error {
+  margin-top: 10px;
+
+  padding: 10px 12px;
+
+  border: 1px solid rgba(180, 80, 80, 0.2);
+  border-radius: 8px;
+
+  background: rgba(180, 80, 80, 0.06);
+
+  color: #8a3d3d;
+
+  font-size: 0.82rem;
+}
+
+
+/* ========================================
+   MESSAGE
+   ======================================== */
+
+.availability-message {
+  margin-bottom: 20px;
+
+  padding: 13px 16px;
+
+  border-radius: var(--radius);
+
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.availability-message.success {
+  border: 1px solid rgba(80, 140, 100, 0.22);
+
+  background: rgba(80, 140, 100, 0.08);
+
+  color: #3d704d;
+}
+
+.availability-message.error {
+  border: 1px solid rgba(180, 80, 80, 0.22);
+
+  background: rgba(180, 80, 80, 0.08);
+
+  color: #8a3d3d;
+}
+
+
+/* ========================================
+   SPEICHERN
+   ======================================== */
+
+.availability-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 22px;
+
+  padding-bottom: 30px;
+}
+
+.availability-save {
+  min-height: 44px;
+
+  padding: 11px 20px;
+
+  border: none;
+  border-radius: var(--radius);
+
+  background: var(--color-primary);
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    opacity var(--transition);
+}
+
+.availability-save:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 12px rgba(212, 178, 149, 0.25);
+}
+
+.availability-save:active {
+  transform: translateY(0);
+}
+
+.availability-save:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+
+/* ========================================
+   TABLET
+   ======================================== */
+
+@media (max-width: 800px) {
+
+  .availability-content {
+    padding: 28px 24px;
   }
 
-  .quick-actions {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+  .availability-day {
+    padding: 20px;
   }
 }
 
 
-@media (max-width: 700px) {
+/* ========================================
+   MOBILE
+   ======================================== */
 
-  .dashboard-content {
-    padding: 25px 20px;
+@media (max-width: 600px) {
+
+  .availability-content {
+    padding: 24px 18px;
   }
 
-  .dashboard-stats {
-    grid-template-columns: 1fr;
+  .availability-header {
+    margin-bottom: 22px;
   }
 
-  .quick-actions {
-    grid-template-columns: 1fr;
+  .availability-header h2 {
+    font-size: 1.45rem;
   }
 
-  .dashboard-section {
-    padding: 20px;
+  .availability-day {
+    padding: 18px;
   }
 
-  .section-header {
+  .availability-day-header {
     align-items: flex-start;
+
     flex-direction: column;
+
+    gap: 12px;
   }
 
-  .booking-item {
-    align-items: flex-start;
-    flex-direction: column;
+  .availability-slot {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto
+      minmax(0, 1fr)
+      36px;
+
+    gap: 7px;
   }
 
-  .booking-item-meta {
-    align-items: flex-start;
+  .availability-time-input {
+    width: 100%;
+  }
+
+  .availability-time-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .availability-actions {
+    justify-content: stretch;
+  }
+
+  .availability-save {
+    width: 100%;
+  }
+}
+
+
+/* ========================================
+   SEHR KLEINE HANDYS
+   ======================================== */
+
+@media (max-width: 400px) {
+
+  .availability-content {
+    padding: 20px 14px;
+  }
+
+  .availability-day {
+    padding: 16px;
+  }
+
+  .availability-slot {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto
+      minmax(0, 1fr);
+
+    gap: 6px;
+  }
+
+  .availability-delete {
+    grid-column: 1 / -1;
+
+    width: 100%;
   }
 }
 
 
 ============================================================
-DATEI: admin\js\dashboard.js
+DATEI: admin\js\availability.js
 ============================================================
 
 import { supabase } from "../../js/supabase.js";
 
 /* ========================================
+   KONFIGURATION
+   ======================================== */
+
+const weekdays = [
+  { id: 1, name: "Montag" },
+  { id: 2, name: "Dienstag" },
+  { id: 3, name: "Mittwoch" },
+  { id: 4, name: "Donnerstag" },
+  { id: 5, name: "Freitag" },
+  { id: 6, name: "Samstag" },
+  { id: 7, name: "Sonntag" },
+];
+
+
+/* ========================================
    ELEMENTE
    ======================================== */
 
-const todayBookingsElement = document.getElementById("today-bookings");
-const pendingBookingsElement =
-  document.getElementById("pending-bookings");
-const totalServicesElement =
-  document.getElementById("total-services");
-const nextBookingElement =
-  document.getElementById("next-booking");
-const upcomingBookingsElement =
-  document.getElementById("upcoming-bookings");
+const daysContainer =
+  document.getElementById("availability-days");
+
+const messageElement =
+  document.getElementById("availability-message");
+
+const saveButton =
+  document.getElementById("save-availability");
 
 
 /* ========================================
-   DATUM / ZEIT
+   NACHRICHTEN
    ======================================== */
 
-function getToday() {
-  const now = new Date();
+function showMessage(message, type) {
+  if (!messageElement) return;
 
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+  messageElement.textContent = message;
 
-  return `${year}-${month}-${day}`;
+  messageElement.className =
+    `availability-message availability-message-${type}`;
+
+  messageElement.hidden = false;
 }
 
 
-function formatDate(dateString) {
-  const date = new Date(`${dateString}T00:00:00`);
+function hideMessage() {
+  if (!messageElement) return;
 
-  return new Intl.DateTimeFormat("de-DE", {
-    weekday: "short",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(date);
-}
-
-
-function formatTime(timeString) {
-  return timeString.slice(0, 5);
+  messageElement.hidden = true;
+  messageElement.textContent = "";
 }
 
 
 /* ========================================
-   BUCHUNGEN LADEN
+   ZEITBLOCK HTML
    ======================================== */
 
-async function loadBookings() {
-  const today = getToday();
+function createTimeBlock(start = "09:00", end = "17:00") {
+  const block = document.createElement("div");
 
-  const { data, error } = await supabase
-    .from("bookings")
-    .select(`
-      id,
-      customer_name,
-      customer_email,
-      booking_date,
-      booking_time,
-      status,
-      services (
-        title,
-        duration
-      )
-    `)
-    .in("status", ["pending", "confirmed"])
-    .order("booking_date", { ascending: true })
-    .order("booking_time", { ascending: true });
+  block.className = "availability-time-block";
 
-  if (error) {
-    console.error("Buchungen konnten nicht geladen werden:", error);
-    throw error;
-  }
+  block.innerHTML = `
+    <input
+      type="time"
+      class="availability-time-start"
+      value="${start}"
+      aria-label="Startzeit"
+    />
 
-  const bookings = data ?? [];
+    <span class="availability-time-separator">
+      –
+    </span>
+
+    <input
+      type="time"
+      class="availability-time-end"
+      value="${end}"
+      aria-label="Endzeit"
+    />
+
+    <button
+      type="button"
+      class="availability-delete"
+      aria-label="Zeitraum löschen"
+      title="Zeitraum löschen"
+    >
+      🗑
+    </button>
+  `;
+
+  const deleteButton =
+    block.querySelector(".availability-delete");
+
+  deleteButton.addEventListener("click", () => {
+    block.remove();
+  });
+
+  return block;
+}
 
 
-  /* ========================================
-     HEUTIGE TERMINE
-     ======================================== */
+/* ========================================
+   WOCHENTAG HTML
+   ======================================== */
 
-  const todayBookings = bookings.filter(
-    (booking) => booking.booking_date === today
+function createWeekday(day, availabilityRows) {
+  const dayElement = document.createElement("article");
+
+  dayElement.className = "availability-day";
+
+  const activeRows = availabilityRows.filter(
+    (row) =>
+      row.weekday === day.id &&
+      row.active === true
   );
 
-  if (todayBookingsElement) {
-    todayBookingsElement.textContent = todayBookings.length;
-  }
+  const isActive = activeRows.length > 0;
 
+  dayElement.innerHTML = `
+    <div class="availability-day-header">
 
-  /* ========================================
-     OFFENE BUCHUNGEN
-     ======================================== */
+      <div>
+        <h3>${day.name}</h3>
+      </div>
 
-  const pendingBookings = bookings.filter(
-    (booking) => booking.status === "pending"
-  );
+      <label class="availability-toggle">
 
-  if (pendingBookingsElement) {
-    pendingBookingsElement.textContent = pendingBookings.length;
-  }
+        <input
+          type="checkbox"
+          class="availability-day-active"
+          ${isActive ? "checked" : ""}
+        />
 
+        <span>
+          Verfügbar
+        </span>
 
-  /* ========================================
-     NÄCHSTER TERMIN
-     ======================================== */
+      </label>
 
-  if (nextBookingElement) {
-    const nextBooking = bookings.find(
-      (booking) => booking.booking_date >= today
+    </div>
+
+    <div class="availability-time-blocks"></div>
+
+    <button
+      type="button"
+      class="availability-add"
+    >
+      + Zeitraum hinzufügen
+    </button>
+  `;
+
+  const blocksContainer =
+    dayElement.querySelector(
+      ".availability-time-blocks"
     );
 
-    if (!nextBooking) {
-      nextBookingElement.textContent = "–";
-    } else {
-      nextBookingElement.textContent =
-        `${formatDate(nextBooking.booking_date)}, ${formatTime(
-          nextBooking.booking_time
-        )}`;
-    }
+  const activeCheckbox =
+    dayElement.querySelector(
+      ".availability-day-active"
+    );
+
+  const addButton =
+    dayElement.querySelector(
+      ".availability-add"
+    );
+
+
+  /* ========================================
+     VORHANDENE ZEITBLÖCKE
+     ======================================== */
+
+  activeRows.forEach((row) => {
+    blocksContainer.appendChild(
+      createTimeBlock(
+        row.start_time.slice(0, 5),
+        row.end_time.slice(0, 5)
+      )
+    );
+  });
+
+
+  /*
+   * Wenn der Tag aktiviert ist,
+   * aber noch keinen Zeitraum besitzt,
+   * erstellen wir einen Standardblock.
+   */
+
+  if (isActive && activeRows.length === 0) {
+    blocksContainer.appendChild(
+      createTimeBlock()
+    );
   }
 
 
   /* ========================================
-     NÄCHSTE TERMINE
+     ZEITRAUM HINZUFÜGEN
      ======================================== */
 
-  renderUpcomingBookings(bookings.slice(0, 5));
+  addButton.addEventListener("click", () => {
+    blocksContainer.appendChild(
+      createTimeBlock()
+    );
+  });
+
+
+  /* ========================================
+     AKTIV / INAKTIV
+     ======================================== */
+
+  activeCheckbox.addEventListener("change", () => {
+    const blocks =
+      blocksContainer.querySelectorAll(
+        ".availability-time-block"
+      );
+
+    if (activeCheckbox.checked && blocks.length === 0) {
+      blocksContainer.appendChild(
+        createTimeBlock()
+      );
+    }
+  });
+
+
+  return dayElement;
 }
 
 
 /* ========================================
-   NÄCHSTE TERMINE DARSTELLEN
+   VERFÜGBARKEIT LADEN
    ======================================== */
 
-function renderUpcomingBookings(bookings) {
-  if (!upcomingBookingsElement) return;
+async function loadAvailability() {
+  hideMessage();
 
-  if (bookings.length === 0) {
-    upcomingBookingsElement.innerHTML = `
-      <div class="empty-state">
-        <p>Keine kommenden Termine vorhanden.</p>
-      </div>
-    `;
+  const { data, error } = await supabase
+    .from("availability")
+    .select(`
+      id,
+      weekday,
+      start_time,
+      end_time,
+      active
+    `)
+    .order("weekday", { ascending: true })
+    .order("start_time", { ascending: true });
+
+
+  if (error) {
+    console.error(
+      "Verfügbarkeit konnte nicht geladen werden:",
+      error
+    );
+
+    showMessage(
+      "Die Verfügbarkeit konnte nicht geladen werden.",
+      "error"
+    );
 
     return;
   }
 
-  upcomingBookingsElement.innerHTML = bookings
-    .map((booking) => {
-      const serviceTitle =
-        booking.services?.title ?? "Beratung";
 
-      const statusLabel =
-        booking.status === "pending"
-          ? "Offen"
-          : "Bestätigt";
+  const availabilityRows = data ?? [];
 
-      return `
-        <article class="booking-item">
+  daysContainer.innerHTML = "";
 
-          <div class="booking-item-date">
-            <strong>
-              ${formatDate(booking.booking_date)}
-            </strong>
 
-            <span>
-              ${formatTime(booking.booking_time)}
-            </span>
-          </div>
-
-          <div class="booking-item-info">
-
-            <strong>
-              ${escapeHtml(booking.customer_name)}
-            </strong>
-
-            <span>
-              ${escapeHtml(serviceTitle)}
-            </span>
-
-          </div>
-
-          <span class="booking-status booking-status-${booking.status}">
-            ${statusLabel}
-          </span>
-
-        </article>
-      `;
-    })
-    .join("");
+  weekdays.forEach((day) => {
+    daysContainer.appendChild(
+      createWeekday(
+        day,
+        availabilityRows
+      )
+    );
+  });
 }
 
 
 /* ========================================
-   BERATUNGSANGEBOTE LADEN
+   ZEIT IN MINUTEN UMWANDELN
    ======================================== */
 
-async function loadServices() {
-  const { count, error } = await supabase
-    .from("services")
-    .select("id", {
-      count: "exact",
-      head: true,
-    })
-    .eq("active", true);
+function timeToMinutes(time) {
+  const [hours, minutes] =
+    time.split(":").map(Number);
 
-  if (error) {
-    console.error(
-      "Beratungsangebote konnten nicht geladen werden:",
-      error
+  return hours * 60 + minutes;
+}
+
+
+/* ========================================
+   FORMULAR AUSLESEN
+   ======================================== */
+
+function collectAvailability() {
+  const result = [];
+
+  const dayElements =
+    daysContainer.querySelectorAll(
+      ".availability-day"
     );
 
-    throw error;
-  }
 
-  if (totalServicesElement) {
-    totalServicesElement.textContent = count ?? 0;
-  }
+  dayElements.forEach((dayElement, index) => {
+    const weekday = index + 1;
+
+    const activeCheckbox =
+      dayElement.querySelector(
+        ".availability-day-active"
+      );
+
+    const active =
+      activeCheckbox.checked;
+
+    const blocks =
+      dayElement.querySelectorAll(
+        ".availability-time-block"
+      );
+
+
+    blocks.forEach((block) => {
+      const startInput =
+        block.querySelector(
+          ".availability-time-start"
+        );
+
+      const endInput =
+        block.querySelector(
+          ".availability-time-end"
+        );
+
+      result.push({
+        weekday,
+        start_time: startInput.value,
+        end_time: endInput.value,
+        active,
+      });
+    });
+  });
+
+
+  return result;
 }
 
 
 /* ========================================
-   HTML SICHER EINFÜGEN
+   VALIDIERUNG
    ======================================== */
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+function validateAvailability(rows) {
+
+  /*
+   * Jeden einzelnen Zeitraum prüfen
+   */
+
+  for (const row of rows) {
+
+    if (!row.active) {
+      continue;
+    }
+
+    if (!row.start_time || !row.end_time) {
+      return {
+        valid: false,
+        message:
+          "Bitte fülle alle Zeiträume vollständig aus.",
+      };
+    }
 
 
-/* ========================================
-   DASHBOARD LADEN
-   ======================================== */
+    const start =
+      timeToMinutes(row.start_time);
 
-async function loadDashboard() {
-  try {
-    await Promise.all([
-      loadBookings(),
-      loadServices(),
-    ]);
-  } catch (error) {
-    console.error(
-      "Dashboard konnte nicht vollständig geladen werden:",
-      error
-    );
+    const end =
+      timeToMinutes(row.end_time);
 
-    if (upcomingBookingsElement) {
-      upcomingBookingsElement.innerHTML = `
-        <div class="empty-state">
-          <p>
-            Die Dashboard-Daten konnten nicht geladen werden.
-          </p>
-        </div>
-      `;
+
+    if (start >= end) {
+      return {
+        valid: false,
+        message:
+          "Die Startzeit muss vor der Endzeit liegen.",
+      };
     }
   }
+
+
+  /*
+   * Überschneidungen pro Wochentag prüfen
+   */
+
+  for (const day of weekdays) {
+
+    const dayRows = rows
+      .filter(
+        (row) =>
+          row.weekday === day.id &&
+          row.active
+      )
+      .sort(
+        (a, b) =>
+          timeToMinutes(a.start_time) -
+          timeToMinutes(b.start_time)
+      );
+
+
+    for (let i = 0; i < dayRows.length - 1; i++) {
+
+      const current =
+        dayRows[i];
+
+      const next =
+        dayRows[i + 1];
+
+
+      const currentEnd =
+        timeToMinutes(
+          current.end_time
+        );
+
+      const nextStart =
+        timeToMinutes(
+          next.start_time
+        );
+
+
+      if (currentEnd > nextStart) {
+        return {
+          valid: false,
+          message:
+            "Die Zeiträume überschneiden sich.",
+        };
+      }
+    }
+  }
+
+
+  return {
+    valid: true,
+  };
+}
+
+
+/* ========================================
+   SPEICHERN
+   ======================================== */
+
+async function saveAvailability() {
+
+  hideMessage();
+
+  const rows =
+    collectAvailability();
+
+
+  /*
+   * Eingaben prüfen
+   */
+
+  const validation =
+    validateAvailability(rows);
+
+
+  if (!validation.valid) {
+    showMessage(
+      validation.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  /*
+   * Button sperren
+   */
+
+  saveButton.disabled = true;
+  saveButton.textContent =
+    "Wird gespeichert...";
+
+
+  try {
+
+    /*
+     * Alte Verfügbarkeit löschen
+     */
+
+    const { error: deleteError } =
+      await supabase
+        .from("availability")
+        .delete()
+        .neq(
+          "id",
+          "00000000-0000-0000-0000-000000000000"
+        );
+
+
+    if (deleteError) {
+      throw deleteError;
+    }
+
+
+    /*
+     * Nur aktive Zeiträume speichern
+     */
+
+    const activeRows =
+      rows.filter(
+        (row) => row.active
+      );
+
+
+    if (activeRows.length > 0) {
+
+      const { error: insertError } =
+        await supabase
+          .from("availability")
+          .insert(
+            activeRows.map((row) => ({
+              weekday: row.weekday,
+              start_time: row.start_time,
+              end_time: row.end_time,
+              active: true,
+            }))
+          );
+
+
+      if (insertError) {
+        throw insertError;
+      }
+    }
+
+
+    /*
+     * Erfolg
+     */
+
+    showMessage(
+      "✓ Verfügbarkeit gespeichert.",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Verfügbarkeit konnte nicht gespeichert werden:",
+      error
+    );
+
+    showMessage(
+      "Die Änderungen konnten nicht gespeichert werden.",
+      "error"
+    );
+
+  } finally {
+
+    saveButton.disabled = false;
+
+    saveButton.textContent =
+      "Änderungen speichern";
+  }
+}
+
+
+/* ========================================
+   EVENTS
+   ======================================== */
+
+if (saveButton) {
+  saveButton.addEventListener(
+    "click",
+    saveAvailability
+  );
 }
 
 
@@ -647,32 +1091,32 @@ async function loadDashboard() {
    START
    ======================================== */
 
-loadDashboard();
+loadAvailability();
 
 
 ============================================================
-DATEI: admin\pages\dashboard.html
+DATEI: admin\pages\availability.html
 ============================================================
 
 <!DOCTYPE html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
 
-    <title>Dashboard | Aufwind Beratung</title>
+    <title>Verfügbarkeit | Aufwind Beratung</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Gemeinsame Website-Styles -->
     <link rel="stylesheet" href="../../css/global.css" />
-
-    <!-- Admin-Styles -->
     <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/dashboard.css" />
+    <link rel="stylesheet" href="../css/availability.css" />
   </head>
 
   <body>
@@ -686,8 +1130,12 @@ DATEI: admin\pages\dashboard.html
 
         <div class="sidebar-header">
 
-          <a href="dashboard.html" class="sidebar-logo">
+          <a
+            href="dashboard.html"
+            class="sidebar-logo"
+          >
             <span class="sidebar-logo-mark">A</span>
+
             <span class="sidebar-logo-text">
               Aufwind
             </span>
@@ -718,49 +1166,58 @@ DATEI: admin\pages\dashboard.html
 
           <a
             href="dashboard.html"
-            class="sidebar-link active"
+            class="sidebar-link"
           >
             <span class="sidebar-icon">⌂</span>
+
             <span class="sidebar-link-text">
               Dashboard
             </span>
           </a>
+
 
           <a
             href="bookings.html"
             class="sidebar-link"
           >
             <span class="sidebar-icon">▣</span>
+
             <span class="sidebar-link-text">
               Termine
             </span>
           </a>
 
+
           <a
             href="availability.html"
-            class="sidebar-link"
+            class="sidebar-link active"
           >
             <span class="sidebar-icon">◷</span>
+
             <span class="sidebar-link-text">
               Verfügbarkeit
             </span>
           </a>
+
 
           <a
             href="services.html"
             class="sidebar-link"
           >
             <span class="sidebar-icon">◇</span>
+
             <span class="sidebar-link-text">
               Beratungsangebote
             </span>
           </a>
+
 
           <a
             href="settings.html"
             class="sidebar-link"
           >
             <span class="sidebar-icon">⚙</span>
+
             <span class="sidebar-link-text">
               Einstellungen
             </span>
@@ -780,10 +1237,12 @@ DATEI: admin\pages\dashboard.html
             class="sidebar-link sidebar-public-link"
           >
             <span class="sidebar-icon">↗</span>
+
             <span class="sidebar-link-text">
               Zur Website
             </span>
           </a>
+
 
           <button
             type="button"
@@ -791,6 +1250,7 @@ DATEI: admin\pages\dashboard.html
             id="logoutButton"
           >
             <span class="sidebar-icon">↪</span>
+
             <span class="sidebar-link-text">
               Abmelden
             </span>
@@ -802,7 +1262,7 @@ DATEI: admin\pages\dashboard.html
 
 
       <!-- ========================================
-           MOBILE OVERLAY
+           MOBILE SIDEBAR OVERLAY
            ======================================== -->
 
       <div
@@ -837,11 +1297,17 @@ DATEI: admin\pages\dashboard.html
               <span></span>
             </button>
 
+
             <div class="topbar-title">
-              <h1>Dashboard</h1>
+
+              <h1>
+                Verfügbarkeit
+              </h1>
+
               <p>
-                Willkommen im Admin-Bereich
+                Reguläre Arbeitszeiten verwalten
               </p>
+
             </div>
 
           </div>
@@ -854,6 +1320,7 @@ DATEI: admin\pages\dashboard.html
               <div class="admin-user-avatar">
                 A
               </div>
+
 
               <div class="admin-user-info">
 
@@ -878,162 +1345,75 @@ DATEI: admin\pages\dashboard.html
 
 
         <!-- ========================================
-             DASHBOARD
+             CONTENT
              ======================================== -->
 
-        <section class="dashboard-content">
+        <section class="availability-content">
 
-          <div class="dashboard-stats">
+          <!-- ========================================
+               HEADER
+               ======================================== -->
 
-            <article class="dashboard-stat">
-              <span class="stat-label">
-                Heutige Termine
-              </span>
+          <div class="availability-header">
 
-              <strong id="today-bookings">
-                –
-              </strong>
-            </article>
+            <div>
 
+              <h2>
+                Reguläre Arbeitszeiten
+              </h2>
 
-            <article class="dashboard-stat">
-              <span class="stat-label">
-                Offene Buchungen
-              </span>
+              <p>
+                Lege fest, wann Termine regulär
+                gebucht werden können.
+              </p>
 
-              <strong id="pending-bookings">
-                –
-              </strong>
-            </article>
-
-
-            <article class="dashboard-stat">
-              <span class="stat-label">
-                Beratungsangebote
-              </span>
-
-              <strong id="total-services">
-                –
-              </strong>
-            </article>
-
-
-            <article class="dashboard-stat">
-              <span class="stat-label">
-                Nächster Termin
-              </span>
-
-              <strong id="next-booking">
-                –
-              </strong>
-            </article>
+            </div>
 
           </div>
 
 
-          <!-- NÄCHSTE TERMINE -->
+          <!-- ========================================
+               FEHLER / ERFOLG
+               ======================================== -->
 
-          <section class="dashboard-section">
-
-            <div class="section-header">
-
-              <div>
-                <h2>Nächste Termine</h2>
-
-                <p>
-                  Die nächsten gebuchten Beratungen.
-                </p>
-              </div>
-
-              <a
-                href="bookings.html"
-                class="dashboard-link"
-              >
-                Alle Buchungen
-              </a>
-
-            </div>
+          <div
+            id="availability-message"
+            class="availability-message"
+            hidden
+            role="status"
+            aria-live="polite"
+          ></div>
 
 
-            <div
-              id="upcoming-bookings"
-              class="booking-list"
+          <!-- ========================================
+               WOCHENTAGE
+               ======================================== -->
+
+          <div
+            id="availability-days"
+            class="availability-days"
+          >
+
+            <!-- Wird per JavaScript eingefügt -->
+
+          </div>
+
+
+          <!-- ========================================
+               SPEICHERN
+               ======================================== -->
+
+          <div class="availability-actions">
+
+            <button
+              type="button"
+              class="availability-save"
+              id="save-availability"
             >
+              Änderungen speichern
+            </button>
 
-              <div class="empty-state">
-                <p>
-                  Termine werden geladen...
-                </p>
-              </div>
-
-            </div>
-
-          </section>
-
-
-          <!-- SCHNELLZUGRIFF -->
-
-          <section class="dashboard-section">
-
-            <div class="section-header">
-
-              <div>
-                <h2>Schnellzugriff</h2>
-
-                <p>
-                  Häufig benötigte Bereiche.
-                </p>
-              </div>
-
-            </div>
-
-
-            <div class="quick-actions">
-
-              <a
-                href="bookings.html"
-                class="quick-action"
-              >
-                <strong>
-                  Buchungen verwalten
-                </strong>
-
-                <span>
-                  Termine ansehen und bearbeiten
-                </span>
-              </a>
-
-
-              <a
-                href="availability.html"
-                class="quick-action"
-              >
-                <strong>
-                  Verfügbarkeit bearbeiten
-                </strong>
-
-                <span>
-                  Arbeitszeiten und Ausnahmen verwalten
-                </span>
-              </a>
-
-
-              <a
-                href="services.html"
-                class="quick-action"
-              >
-                <strong>
-                  Beratungsangebote
-                </strong>
-
-                <span>
-                  Preise, Dauer und Angebote verwalten
-                </span>
-              </a>
-
-            </div>
-
-          </section>
+          </div>
 
         </section>
 
@@ -1046,9 +1426,19 @@ DATEI: admin\pages\dashboard.html
          JAVASCRIPT
          ======================================== -->
 
-    <script type="module" src="../js/auth.js"></script>
-    <script src="../js/admin-layout.js"></script>
-    <script type="module" src="../js/dashboard.js"></script>
+    <script
+      type="module"
+      src="../js/auth.js"
+    ></script>
+
+    <script
+      src="../js/admin-layout.js"
+    ></script>
+
+    <script
+      type="module"
+      src="../js/availability.js"
+    ></script>
 
   </body>
 </html>
