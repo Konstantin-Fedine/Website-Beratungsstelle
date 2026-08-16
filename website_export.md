@@ -532,7 +532,7 @@ function showMessage(message, type) {
   messageElement.textContent = message;
 
   messageElement.className =
-    `availability-message ${type}`;
+    `availability-message availability-message-${type}`;
 
   messageElement.hidden = false;
 }
@@ -550,7 +550,7 @@ function hideMessage() {
 
 
 /* ========================================
-   ZEITBLOCK HTML
+   ZEITBLOCK ERSTELLEN
    ======================================== */
 
 function createTimeBlock(
@@ -560,17 +560,14 @@ function createTimeBlock(
   const block = document.createElement("div");
 
   /*
-   * WICHTIG:
-   * Diese Klasse entspricht dem CSS:
-   * .availability-slot
+   * Diese Klasse entspricht dem CSS.
    */
-
-  block.className = "availability-slot";
+  block.className = "availability-time-block";
 
   block.innerHTML = `
     <input
       type="time"
-      class="availability-time-input availability-time-start"
+      class="availability-time-start"
       value="${start}"
       aria-label="Startzeit"
     />
@@ -581,7 +578,7 @@ function createTimeBlock(
 
     <input
       type="time"
-      class="availability-time-input availability-time-end"
+      class="availability-time-end"
       value="${end}"
       aria-label="Endzeit"
     />
@@ -608,7 +605,7 @@ function createTimeBlock(
 
 
 /* ========================================
-   WOCHENTAG HTML
+   WOCHENTAG ERSTELLEN
    ======================================== */
 
 function createWeekday(day, availabilityRows) {
@@ -619,16 +616,23 @@ function createWeekday(day, availabilityRows) {
 
 
   /*
-   * Nur aktive Zeiträume des jeweiligen
-   * Wochentags laden.
+   * Alle aktiven Zeiträume dieses
+   * Wochentages finden.
    */
 
   const activeRows =
-    availabilityRows.filter(
-      (row) =>
-        row.weekday === day.id &&
-        row.active === true
-    );
+    availabilityRows
+      .filter(
+        (row) =>
+          row.weekday === day.id &&
+          row.active === true
+      )
+      .sort(
+        (a, b) =>
+          a.start_time.localeCompare(
+            b.start_time
+          )
+      );
 
 
   const isActive =
@@ -638,11 +642,13 @@ function createWeekday(day, availabilityRows) {
   dayElement.innerHTML = `
     <div class="availability-day-header">
 
-      <h3 class="availability-day-name">
-        ${day.name}
-      </h3>
+      <div>
+        <h3>
+          ${day.name}
+        </h3>
+      </div>
 
-      <label class="availability-checkbox">
+      <label class="availability-toggle">
 
         <input
           type="checkbox"
@@ -658,20 +664,20 @@ function createWeekday(day, availabilityRows) {
 
     </div>
 
-    <div class="availability-slots"></div>
+    <div class="availability-time-blocks"></div>
 
     <button
       type="button"
-      class="availability-add-slot"
+      class="availability-add"
     >
       + Zeitraum hinzufügen
     </button>
   `;
 
 
-  const slotsContainer =
+  const blocksContainer =
     dayElement.querySelector(
-      ".availability-slots"
+      ".availability-time-blocks"
     );
 
 
@@ -683,7 +689,7 @@ function createWeekday(day, availabilityRows) {
 
   const addButton =
     dayElement.querySelector(
-      ".availability-add-slot"
+      ".availability-add"
     );
 
 
@@ -692,14 +698,12 @@ function createWeekday(day, availabilityRows) {
      ======================================== */
 
   activeRows.forEach((row) => {
-
-    slotsContainer.appendChild(
+    blocksContainer.appendChild(
       createTimeBlock(
         row.start_time.slice(0, 5),
         row.end_time.slice(0, 5)
       )
     );
-
   });
 
 
@@ -707,16 +711,11 @@ function createWeekday(day, availabilityRows) {
      ZEITRAUM HINZUFÜGEN
      ======================================== */
 
-  addButton.addEventListener(
-    "click",
-    () => {
-
-      slotsContainer.appendChild(
-        createTimeBlock()
-      );
-
-    }
-  );
+  addButton.addEventListener("click", () => {
+    blocksContainer.appendChild(
+      createTimeBlock()
+    );
+  });
 
 
   /* ========================================
@@ -724,29 +723,27 @@ function createWeekday(day, availabilityRows) {
      ======================================== */
 
   function updateDayState() {
-
     if (activeCheckbox.checked) {
 
       dayElement.classList.remove(
         "availability-day-unavailable"
       );
 
-      const slots =
-        slotsContainer.querySelectorAll(
-          ".availability-slot"
-        );
-
       /*
-       * Wenn aktiviert und kein Zeitraum
-       * vorhanden ist, Standardzeitraum hinzufügen.
+       * Wenn der Tag aktiviert wird und
+       * noch kein Zeitraum existiert,
+       * automatisch 09:00–17:00 hinzufügen.
        */
 
-      if (slots.length === 0) {
-
-        slotsContainer.appendChild(
-          createTimeBlock()
+      const blocks =
+        blocksContainer.querySelectorAll(
+          ".availability-time-block"
         );
 
+      if (blocks.length === 0) {
+        blocksContainer.appendChild(
+          createTimeBlock()
+        );
       }
 
     } else {
@@ -754,9 +751,7 @@ function createWeekday(day, availabilityRows) {
       dayElement.classList.add(
         "availability-day-unavailable"
       );
-
     }
-
   }
 
 
@@ -782,8 +777,15 @@ function createWeekday(day, availabilityRows) {
    ======================================== */
 
 async function loadAvailability() {
-
   hideMessage();
+
+  if (!daysContainer) {
+    console.error(
+      "Element #availability-days wurde nicht gefunden."
+    );
+
+    return;
+  }
 
 
   const {
@@ -828,6 +830,12 @@ async function loadAvailability() {
   }
 
 
+  console.log(
+    "Verfügbarkeit geladen:",
+    data
+  );
+
+
   const availabilityRows =
     data ?? [];
 
@@ -845,7 +853,6 @@ async function loadAvailability() {
     );
 
   });
-
 }
 
 
@@ -854,7 +861,6 @@ async function loadAvailability() {
    ======================================== */
 
 function timeToMinutes(time) {
-
   const [
     hours,
     minutes
@@ -866,7 +872,6 @@ function timeToMinutes(time) {
     hours * 60 +
     minutes
   );
-
 }
 
 
@@ -875,7 +880,6 @@ function timeToMinutes(time) {
    ======================================== */
 
 function collectAvailability() {
-
   const result = [];
 
 
@@ -902,30 +906,32 @@ function collectAvailability() {
         activeCheckbox.checked;
 
 
-      const slots =
+      const blocks =
         dayElement.querySelectorAll(
-          ".availability-slot"
+          ".availability-time-block"
         );
 
 
-      slots.forEach((slot) => {
+      blocks.forEach((block) => {
 
         const startInput =
-          slot.querySelector(
+          block.querySelector(
             ".availability-time-start"
           );
 
 
         const endInput =
-          slot.querySelector(
+          block.querySelector(
             ".availability-time-end"
           );
 
 
         result.push({
           weekday,
-          start_time: startInput.value,
-          end_time: endInput.value,
+          start_time:
+            startInput.value,
+          end_time:
+            endInput.value,
           active,
         });
 
@@ -946,14 +952,13 @@ function collectAvailability() {
 function validateAvailability(rows) {
 
   /*
-   * Jeden einzelnen Zeitraum prüfen.
+   * 1. Jeden einzelnen Zeitraum prüfen.
    */
 
   for (const row of rows) {
 
     /*
-     * Inaktive Tage werden nicht gespeichert
-     * und müssen daher nicht validiert werden.
+     * Inaktive Tage werden nicht gespeichert.
      */
 
     if (!row.active) {
@@ -987,6 +992,10 @@ function validateAvailability(rows) {
       );
 
 
+    /*
+     * Start muss vor Ende liegen.
+     */
+
     if (start >= end) {
 
       return {
@@ -1001,7 +1010,7 @@ function validateAvailability(rows) {
 
 
   /*
-   * Überschneidungen pro Wochentag prüfen.
+   * 2. Überschneidungen prüfen.
    */
 
   for (const day of weekdays) {
@@ -1056,7 +1065,7 @@ function validateAvailability(rows) {
         return {
           valid: false,
           message:
-            "Die Zeiträume überschneiden sich.",
+            `Die Zeiträume am ${day.name} überschneiden sich.`,
         };
 
       }
@@ -1066,10 +1075,13 @@ function validateAvailability(rows) {
   }
 
 
+  /*
+   * Alles korrekt.
+   */
+
   return {
     valid: true,
   };
-
 }
 
 
@@ -1082,12 +1094,17 @@ async function saveAvailability() {
   hideMessage();
 
 
+  if (!saveButton) {
+    return;
+  }
+
+
   const rows =
     collectAvailability();
 
 
   /*
-   * Eingaben prüfen.
+   * Eingaben validieren.
    */
 
   const validation =
@@ -1144,13 +1161,11 @@ async function saveAvailability() {
     const activeRows =
       rows.filter(
         (row) =>
-          row.active
+          row.active === true
       );
 
 
-    if (
-      activeRows.length > 0
-    ) {
+    if (activeRows.length > 0) {
 
       const {
         error: insertError
@@ -1159,9 +1174,15 @@ async function saveAvailability() {
         .insert(
           activeRows.map(
             (row) => ({
-              weekday: row.weekday,
-              start_time: row.start_time,
-              end_time: row.end_time,
+              weekday:
+                row.weekday,
+
+              start_time:
+                row.start_time,
+
+              end_time:
+                row.end_time,
+
               active: true,
             })
           )
@@ -1171,7 +1192,6 @@ async function saveAvailability() {
       if (insertError) {
         throw insertError;
       }
-
     }
 
 
@@ -1184,6 +1204,12 @@ async function saveAvailability() {
       "success"
     );
 
+
+    console.log(
+      "Gespeicherte Verfügbarkeit:",
+      activeRows
+    );
+
   } catch (error) {
 
     console.error(
@@ -1192,10 +1218,25 @@ async function saveAvailability() {
     );
 
 
-    showMessage(
-      "Die Änderungen konnten nicht gespeichert werden.",
-      "error"
-    );
+    /*
+     * RLS-Fehler verständlicher anzeigen.
+     */
+
+    if (error?.code === "42501") {
+
+      showMessage(
+        "Keine Berechtigung zum Speichern der Verfügbarkeit.",
+        "error"
+      );
+
+    } else {
+
+      showMessage(
+        "Die Änderungen konnten nicht gespeichert werden.",
+        "error"
+      );
+
+    }
 
   } finally {
 
@@ -1205,7 +1246,6 @@ async function saveAvailability() {
       "Änderungen speichern";
 
   }
-
 }
 
 

@@ -270,27 +270,30 @@
    NICHT VERFÜGBAR
    ======================================== */
 
-.availability-day:not(:has(.availability-day-active:checked))
+.availability-day-unavailable
   .availability-time-blocks,
-.availability-day:not(:has(.availability-day-active:checked))
+.availability-day-unavailable
   .availability-add {
   opacity: 0.45;
 }
 
+/* ========================================
+   NACHRICHTEN
+   ======================================== */
 
 /* ========================================
    NACHRICHTEN
    ======================================== */
 
 .availability-message {
-  margin-bottom: 20px;
-
-  padding: 13px 16px;
+  padding: 10px 14px;
 
   border-radius: var(--radius);
 
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
+
+  white-space: nowrap;
 }
 
 .availability-message-success {
@@ -314,13 +317,19 @@
    SPEICHERN
    ======================================== */
 
-.availability-actions {
-  display: flex;
-  justify-content: flex-end;
+/* ========================================
+   NACHRICHTEN
+   ======================================== */
 
-  margin-top: 22px;
+.availability-message {
+  padding: 10px 14px;
 
-  padding-bottom: 30px;
+  border-radius: var(--radius);
+
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  white-space: nowrap;
 }
 
 .availability-save {
@@ -440,7 +449,16 @@
   }
 
   .availability-actions {
-    justify-content: stretch;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .availability-message {
+    width: 100%;
+
+    white-space: normal;
+
+    text-align: center;
   }
 
   .availability-save {
