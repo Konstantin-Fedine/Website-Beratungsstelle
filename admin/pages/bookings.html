@@ -179,6 +179,26 @@
 
           <div class="bookings-toolbar">
 
+            <!-- SUCHE -->
+
+            <div class="booking-search">
+
+              <label for="booking-search">
+                Suche
+              </label>
+
+              <input
+                type="search"
+                id="booking-search"
+                placeholder="Name oder E-Mail suchen..."
+                autocomplete="off"
+              />
+
+            </div>
+
+
+            <!-- STATUS -->
+
             <div class="booking-filter">
 
               <label for="status-filter">
@@ -186,12 +206,13 @@
               </label>
 
               <select id="status-filter">
+
                 <option value="all">
                   Alle
                 </option>
 
                 <option value="pending">
-                  Offen
+                  Ausstehend
                 </option>
 
                 <option value="confirmed">
@@ -209,9 +230,114 @@
                 <option value="no_show">
                   Nicht erschienen
                 </option>
+
               </select>
 
             </div>
+
+
+            <!-- BERATUNGSART -->
+
+            <div class="booking-filter">
+
+              <label for="service-filter">
+                Beratungsart
+              </label>
+
+              <select id="service-filter">
+
+                <option value="all">
+                  Alle
+                </option>
+
+                <!-- Wird später dynamisch aus Supabase geladen -->
+
+              </select>
+
+            </div>
+
+
+            <!-- ZEITRAUM -->
+
+            <div class="booking-filter">
+
+              <label for="date-filter">
+                Zeitraum
+              </label>
+
+              <select id="date-filter">
+
+                <option value="all">
+                  Alle
+                </option>
+
+                <option value="today">
+                  Heute
+                </option>
+
+                <option value="tomorrow">
+                  Morgen
+                </option>
+
+                <option value="this_week">
+                  Diese Woche
+                </option>
+
+                <option value="next_week">
+                  Nächste Woche
+                </option>
+
+                <option value="this_month">
+                  Dieser Monat
+                </option>
+
+                <option value="custom">
+                  Benutzerdefiniert
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- BENUTZERDEFINIERTER ZEITRAUM -->
+
+            <div
+              class="booking-custom-date-filter"
+              id="custom-date-filter"
+              hidden
+            >
+
+              <div class="booking-filter">
+
+                <label for="date-from">
+                  Von
+                </label>
+
+                <input
+                  type="date"
+                  id="date-from"
+                />
+
+              </div>
+
+              <div class="booking-filter">
+
+                <label for="date-to">
+                  Bis
+                </label>
+
+                <input
+                  type="date"
+                  id="date-to"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- AKTUALISIEREN -->
 
             <button
               type="button"
@@ -220,6 +346,31 @@
             >
               Aktualisieren
             </button>
+
+          </div>
+
+
+          <!-- AKTIVE FILTER + TREFFERZAHL -->
+
+          <div class="bookings-meta">
+
+            <div
+              class="active-booking-filters"
+              id="active-booking-filters"
+            >
+            </div>
+
+            <p class="booking-count">
+
+              <span id="booking-count">
+                0
+              </span>
+
+              <span id="booking-count-label">
+                Buchungen
+              </span>
+
+            </p>
 
           </div>
 
