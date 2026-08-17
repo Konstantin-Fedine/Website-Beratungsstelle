@@ -1,0 +1,763 @@
+/* ========================================
+   SERVICES CONTENT
+   ======================================== */
+
+.services-content {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 35px 40px;
+}
+
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.services-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.services-header h2 {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.services-header p {
+  max-width: 680px;
+
+  margin: 6px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   ADD BUTTON
+   ======================================== */
+
+.services-add-button {
+  min-height: 44px;
+
+  padding: 11px 18px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: var(--radius);
+
+  background: var(--color-primary);
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.services-add-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 12px rgba(212, 178, 149, 0.25);
+}
+
+.services-add-button:active {
+  transform: translateY(0);
+}
+
+
+/* ========================================
+   MESSAGE
+   ======================================== */
+
+.services-message {
+  margin-bottom: 20px;
+
+  padding: 13px 16px;
+
+  border-radius: var(--radius);
+
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.services-message.success {
+  border: 1px solid rgba(80, 140, 100, 0.22);
+
+  background: rgba(80, 140, 100, 0.08);
+
+  color: #3d704d;
+}
+
+.services-message.error {
+  border: 1px solid rgba(180, 80, 80, 0.22);
+
+  background: rgba(180, 80, 80, 0.08);
+
+  color: #8a3d3d;
+}
+
+
+/* ========================================
+   STATES
+   ======================================== */
+
+.services-state {
+  padding: 46px 20px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius);
+
+  background: var(--admin-surface);
+
+  text-align: center;
+
+  color: var(--color-text-muted);
+}
+
+.services-state p {
+  margin: 0;
+}
+
+.services-state-error {
+  border-color: rgba(180, 80, 80, 0.2);
+
+  background: rgba(180, 80, 80, 0.05);
+
+  color: #8a3d3d;
+}
+
+.services-empty-button {
+  margin-top: 14px;
+
+  padding: 9px 14px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ========================================
+   LIST
+   ======================================== */
+
+.services-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+/* ========================================
+   CARD
+   ======================================== */
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+
+  padding: 22px;
+
+  background: var(--admin-surface);
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 4px 14px rgba(42, 36, 33, 0.04);
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.service-card:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(42, 36, 33, 0.12);
+
+  box-shadow:
+    0 7px 20px rgba(42, 36, 33, 0.07);
+}
+
+.service-card.inactive {
+  opacity: 0.76;
+}
+
+.service-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+}
+
+.service-card-title {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.service-card-description {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.service-card-info {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 10px 18px;
+
+  margin-top: auto;
+
+  padding-top: 4px;
+
+  color: var(--color-dark);
+
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.service-card-info span {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.service-card-footer {
+  display: flex;
+  justify-content: flex-end;
+
+  padding-top: 6px;
+
+  border-top: 1px solid var(--admin-border);
+}
+
+
+/* ========================================
+   STATUS
+   ======================================== */
+
+.service-status {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.service-status::before {
+  content: "";
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+}
+
+.service-status-active {
+  background: rgba(80, 140, 100, 0.1);
+
+  color: #3d704d;
+}
+
+.service-status-inactive {
+  background: rgba(100, 100, 100, 0.1);
+
+  color: #666;
+}
+
+
+/* ========================================
+   EDIT BUTTON
+   ======================================== */
+
+.service-edit-button {
+  min-height: 36px;
+
+  padding: 8px 12px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition);
+}
+
+.service-edit-button:hover {
+  background: rgba(42, 36, 33, 0.04);
+}
+
+
+/* ========================================
+   MODAL
+   ======================================== */
+
+.service-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.service-modal[hidden] {
+  display: none;
+}
+
+.service-modal-backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  background: rgba(42, 36, 33, 0.42);
+
+  backdrop-filter: blur(3px);
+}
+
+.service-modal-dialog {
+  position: relative;
+
+  z-index: 1;
+
+  width: min(620px, 100%);
+
+  max-height: calc(100vh - 48px);
+
+  overflow-y: auto;
+
+  background: var(--admin-surface);
+
+  border: 1px solid var(--admin-border);
+
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 24px 70px rgba(42, 36, 33, 0.2);
+}
+
+
+/* ========================================
+   MODAL HEADER
+   ======================================== */
+
+.service-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 24px 26px;
+
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.service-modal-header h2 {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.service-modal-header p {
+  margin: 5px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.84rem;
+}
+
+.service-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 1.3rem;
+
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.service-modal-close:hover {
+  background: rgba(42, 36, 33, 0.05);
+}
+
+
+/* ========================================
+   FORM
+   ======================================== */
+
+.service-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+
+  padding: 26px;
+}
+
+.service-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.service-field label {
+  color: var(--color-dark);
+
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.service-field input,
+.service-field textarea,
+.service-field select {
+  width: 100%;
+
+  min-height: 42px;
+
+  padding: 10px 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: var(--color-surface);
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.88rem;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.service-field textarea {
+  min-height: 120px;
+
+  resize: vertical;
+}
+
+.service-field input:focus,
+.service-field textarea:focus,
+.service-field select:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px rgba(212, 178, 149, 0.15);
+}
+
+.service-field-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.service-input-with-unit {
+  display: grid;
+
+  grid-template-columns: 1fr auto;
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.service-input-with-unit span {
+  color: var(--color-text-muted);
+
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+
+/* ========================================
+   FORM ERROR
+   ======================================== */
+
+.service-form-error {
+  margin: 0;
+
+  padding: 11px 13px;
+
+  border: 1px solid rgba(180, 80, 80, 0.2);
+  border-radius: 8px;
+
+  background: rgba(180, 80, 80, 0.06);
+
+  color: #8a3d3d;
+
+  font-size: 0.82rem;
+
+  line-height: 1.45;
+}
+
+
+/* ========================================
+   MODAL ACTIONS
+   ======================================== */
+
+.service-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  padding-top: 4px;
+}
+
+.service-secondary-button,
+.service-primary-button {
+  min-height: 42px;
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.service-secondary-button {
+  border: 1px solid var(--admin-border);
+
+  background: transparent;
+
+  color: var(--color-dark);
+}
+
+.service-secondary-button:hover {
+  background: rgba(42, 36, 33, 0.04);
+}
+
+.service-primary-button {
+  border: none;
+
+  background: var(--color-primary);
+
+  color: var(--color-dark);
+}
+
+.service-primary-button:hover {
+  box-shadow:
+    0 5px 12px rgba(212, 178, 149, 0.2);
+}
+
+.service-primary-button:disabled,
+.service-secondary-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+body.service-modal-open {
+  overflow: hidden;
+}
+
+
+/* ========================================
+   TABLET
+   ======================================== */
+
+@media (max-width: 900px) {
+  .services-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+
+  .services-content {
+    padding: 28px 24px;
+  }
+
+  .services-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .services-add-button {
+    width: fit-content;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 600px) {
+
+  .services-content {
+    padding: 24px 18px;
+  }
+
+  .services-header h2 {
+    font-size: 1.45rem;
+  }
+
+  .services-add-button {
+    width: 100%;
+  }
+
+  .service-card {
+    padding: 18px;
+  }
+
+  .service-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .service-field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .service-modal {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+  .service-modal-dialog {
+    width: 100%;
+
+    max-height: 92vh;
+
+    border-radius: 18px 18px 0 0;
+  }
+
+  .service-modal-header,
+  .service-form {
+    padding: 20px;
+  }
+
+  .service-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .service-primary-button,
+  .service-secondary-button {
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 400px) {
+
+  .services-content {
+    padding: 20px 14px;
+  }
+
+  .service-modal-header,
+  .service-form {
+    padding: 16px;
+  }
+
+  .service-card {
+    padding: 16px;
+  }
+}
