@@ -3,8 +3,11 @@
    ======================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const layout = document.getElementById("adminLayout");
-  const sidebar = document.getElementById("adminSidebar");
+  const layout =
+    document.getElementById("adminLayout");
+
+  const sidebar =
+    document.getElementById("adminSidebar");
 
   const sidebarToggle =
     document.getElementById("sidebarToggle");
@@ -15,8 +18,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlay =
     document.getElementById("sidebarOverlay");
 
+  const pageTitleElement =
+    document.getElementById("pageTitle");
+
+  const pageSubtitleElement =
+    document.getElementById("pageSubtitle");
+
   if (!layout || !sidebar) {
     return;
+  }
+
+
+  /* ========================================
+     SEITENTITEL / TOPBAR
+     ======================================== */
+
+  const pageTitle =
+    document.body.dataset.pageTitle;
+
+  const pageSubtitle =
+    document.body.dataset.pageSubtitle;
+
+  if (pageTitleElement && pageTitle) {
+    pageTitleElement.textContent =
+      pageTitle;
+  }
+
+  if (pageSubtitleElement && pageSubtitle) {
+    pageSubtitleElement.textContent =
+      pageSubtitle;
   }
 
 
@@ -25,23 +55,30 @@ document.addEventListener("DOMContentLoaded", () => {
      ======================================== */
 
   if (sidebarToggle) {
-    sidebarToggle.addEventListener("click", () => {
+    sidebarToggle.addEventListener(
+      "click",
+      () => {
 
-      layout.classList.toggle("sidebar-collapsed");
+        layout.classList.toggle(
+          "sidebar-collapsed"
+        );
 
-      const collapsed =
-        layout.classList.contains("sidebar-collapsed");
+        const collapsed =
+          layout.classList.contains(
+            "sidebar-collapsed"
+          );
 
-      sidebarToggle.setAttribute(
-        "aria-expanded",
-        String(!collapsed)
-      );
+        sidebarToggle.setAttribute(
+          "aria-expanded",
+          String(!collapsed)
+        );
 
-      localStorage.setItem(
-        "admin-sidebar-collapsed",
-        String(collapsed)
-      );
-    });
+        localStorage.setItem(
+          "admin-sidebar-collapsed",
+          String(collapsed)
+        );
+      }
+    );
   }
 
 
@@ -58,7 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
     savedState === "true" &&
     window.innerWidth > 800
   ) {
-    layout.classList.add("sidebar-collapsed");
+    layout.classList.add(
+      "sidebar-collapsed"
+    );
 
     if (sidebarToggle) {
       sidebarToggle.setAttribute(
@@ -75,10 +114,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function openMobileSidebar() {
 
-    sidebar.classList.add("mobile-open");
+    sidebar.classList.add(
+      "mobile-open"
+    );
 
     if (overlay) {
-      overlay.classList.add("is-visible");
+      overlay.classList.add(
+        "is-visible"
+      );
     }
 
     if (mobileMenuButton) {
@@ -96,10 +139,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function closeMobileSidebar() {
 
-    sidebar.classList.remove("mobile-open");
+    sidebar.classList.remove(
+      "mobile-open"
+    );
 
     if (overlay) {
-      overlay.classList.remove("is-visible");
+      overlay.classList.remove(
+        "is-visible"
+      );
     }
 
     if (mobileMenuButton) {
@@ -159,13 +206,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   navigationLinks.forEach((link) => {
 
-    link.addEventListener("click", () => {
+    link.addEventListener(
+      "click",
+      () => {
 
-      if (window.innerWidth <= 800) {
-        closeMobileSidebar();
+        if (window.innerWidth <= 800) {
+          closeMobileSidebar();
+        }
+
       }
-
-    });
+    );
 
   });
 
@@ -195,11 +245,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (linkPath === currentPath) {
 
-      navigationLinks.forEach((item) => {
-        item.classList.remove("active");
-      });
+      navigationLinks.forEach(
+        (item) => {
+          item.classList.remove(
+            "active"
+          );
+        }
+      );
 
-      link.classList.add("active");
+      link.classList.add(
+        "active"
+      );
     }
 
   });
