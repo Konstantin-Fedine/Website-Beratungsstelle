@@ -648,6 +648,16 @@ DATEI: admin\css\blocked-times.css
   color: var(--color-text-muted);
 }
 
+.blocked-time-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.blocked-time-fields[hidden] {
+  display: none !important;
+}
+
 
 /* ========================================
    EINHEITLICHE DATUMSFELDER
@@ -1338,6 +1348,471 @@ function closeModal() {
 
 
 /* ========================================
+   KONFLIKTPRÜFUNG
+   ======================================== */
+
+function dateRangesOverlap(
+  startA,
+  endA,
+  startB,
+  endB
+) {
+  return startA <= endB && endA >= startB;
+}
+
+
+function timeRangesOverlap(
+  startA,
+  endA,
+  startB,
+  endB
+) {
+  return startA < endB && endA > startB;
+}
+
+
+function timeToMinutes(timeString) {
+  if (!timeString) {
+    return null;
+  }
+
+  const [hours, minutes] =
+    timeString
+      .slice(0, 5)
+      .split(":")
+      .map(Number);
+
+  if (
+    Number.isNaN(hours) ||
+    Number.isNaN(minutes)
+  ) {
+    return null;
+  }
+
+  return hours * 60 + minutes;
+}
+
+
+/* ========================================
+   BESTÄTIGTE BUCHUNGEN LADEN
+   ======================================== */
+
+async function loadConfirmedBookings(
+  startDate,
+  endDate
+) {
+  const {
+    data,
+    error
+  } = await supabase
+    .from("bookings")
+    .select(`
+      id,
+      booking_date,
+      booking_time,
+      service_id
+    `)
+    .eq("status", "confirmed")
+    .gte("booking_date", startDate)
+    .lte("booking_date", endDate);
+
+
+  if (error) {
+    console.error(
+      "Bestätigte Buchungen konnten nicht geladen werden:",
+      error
+    );
+
+    throw new Error(
+      "Die bestehenden Termine konnten nicht geprüft werden."
+    );
+  }
+
+
+  const bookings =
+    data ?? [];
+
+
+  if (bookings.length === 0) {
+    return [];
+  }
+
+
+  const serviceIds = [
+    ...new Set(
+      bookings
+        .map(
+          (booking) =>
+            booking.service_id
+        )
+        .filter(Boolean)
+    )
+  ];
+
+
+  if (serviceIds.length === 0) {
+    return bookings.map(
+      (booking) => ({
+        ...booking,
+        duration: 0,
+      })
+    );
+  }
+
+
+  const {
+    data: services,
+    error: servicesError
+  } = await supabase
+    .from("services")
+    .select("id, duration")
+    .in("id", serviceIds);
+
+
+  if (servicesError) {
+    console.error(
+      "Service-Dauern konnten nicht geladen werden:",
+      servicesError
+    );
+
+    throw new Error(
+      "Die bestehenden Termine konnten nicht vollständig geprüft werden."
+    );
+  }
+
+
+  const durationMap =
+    new Map(
+      (services ?? []).map(
+        (service) => [
+          service.id,
+          Number(service.duration) || 0,
+        ]
+      )
+    );
+
+
+  return bookings.map(
+    (booking) => ({
+      ...booking,
+      duration:
+        durationMap.get(
+          booking.service_id
+        ) ?? 0,
+    })
+  );
+}
+
+
+/* ========================================
+   GANZTÄGIGE SPERRZEIT PRÜFEN
+   ======================================== */
+
+async function validateDayConflicts(
+  startDate,
+  endDate,
+  editId = ""
+) {
+
+  /*
+   * 1. Gegen andere Ganztagssperren prüfen
+   */
+
+  const {
+    data: existingDays,
+    error: existingDaysError
+  } = await supabase
+    .from("blocked_days")
+    .select(
+      "id, start_date, end_date"
+    );
+
+
+  if (existingDaysError) {
+    console.error(
+      "Ganztägige Sperrzeiten konnten nicht geprüft werden:",
+      existingDaysError
+    );
+
+    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
+  }
+
+
+  const conflictingDay =
+    (existingDays ?? []).find(
+      (entry) => {
+
+        if (entry.id === editId) {
+          return false;
+        }
+
+        return dateRangesOverlap(
+          startDate,
+          endDate,
+          entry.start_date,
+          entry.end_date
+        );
+      }
+    );
+
+
+  if (conflictingDay) {
+    return "Der gewählte Zeitraum überschneidet sich mit einer bestehenden Sperrzeit.";
+  }
+
+
+  /*
+   * 2. Gegen einzelne gesperrte Zeiten prüfen
+   */
+
+  const {
+    data: existingTimes,
+    error: existingTimesError
+  } = await supabase
+    .from("blocked_times")
+    .select(
+      "id, date"
+    )
+    .gte(
+      "date",
+      startDate
+    )
+    .lte(
+      "date",
+      endDate
+    );
+
+
+  if (existingTimesError) {
+    console.error(
+      "Gesperrte Zeiten konnten nicht geprüft werden:",
+      existingTimesError
+    );
+
+    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
+  }
+
+
+  const conflictingTime =
+    (existingTimes ?? []).find(
+      (entry) =>
+        entry.date >= startDate &&
+        entry.date <= endDate
+    );
+
+
+  if (conflictingTime) {
+    return "Der gewählte Zeitraum überschneidet sich mit einer bestehenden Sperrzeit.";
+  }
+
+
+  /*
+   * 3. Gegen bestätigte Buchungen prüfen
+   */
+
+  try {
+
+    const confirmedBookings =
+      await loadConfirmedBookings(
+        startDate,
+        endDate
+      );
+
+
+    if (confirmedBookings.length > 0) {
+      return "In diesem Zeitraum besteht bereits ein bestätigter Termin.";
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Bestätigte Buchungen konnten nicht geprüft werden:",
+      error
+    );
+
+    return error.message;
+  }
+
+
+  return null;
+}
+
+
+/* ========================================
+   ZEITSPERRZEIT PRÜFEN
+   ======================================== */
+
+async function validateTimeConflicts(
+  date,
+  startTime,
+  endTime,
+  editId = ""
+) {
+
+  const startMinutes =
+    timeToMinutes(startTime);
+
+  const endMinutes =
+    timeToMinutes(endTime);
+
+
+  /*
+   * 1. Gegen Ganztagssperren prüfen
+   */
+
+  const {
+    data: blockedDaysForDate,
+    error: blockedDaysError
+  } = await supabase
+    .from("blocked_days")
+    .select(
+      "id, start_date, end_date"
+    )
+    .lte(
+      "start_date",
+      date
+    )
+    .gte(
+      "end_date",
+      date
+    );
+
+
+  if (blockedDaysError) {
+    console.error(
+      "Ganztägige Sperrzeiten konnten nicht geprüft werden:",
+      blockedDaysError
+    );
+
+    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
+  }
+
+
+  if (
+    (blockedDaysForDate ?? []).length > 0
+  ) {
+    return "Der gewählte Zeitpunkt liegt bereits in einer bestehenden ganztägigen Sperrzeit.";
+  }
+
+
+  /*
+   * 2. Gegen andere Uhrzeit-Sperren prüfen
+   */
+
+  const {
+    data: existingTimes,
+    error: existingTimesError
+  } = await supabase
+    .from("blocked_times")
+    .select(
+      "id, start_time, end_time"
+    )
+    .eq(
+      "date",
+      date
+    );
+
+
+  if (existingTimesError) {
+    console.error(
+      "Gesperrte Zeiten konnten nicht geprüft werden:",
+      existingTimesError
+    );
+
+    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
+  }
+
+
+  const conflictingTime =
+    (existingTimes ?? []).find(
+      (entry) => {
+
+        if (entry.id === editId) {
+          return false;
+        }
+
+        const existingStart =
+          timeToMinutes(
+            entry.start_time
+          );
+
+        const existingEnd =
+          timeToMinutes(
+            entry.end_time
+          );
+
+        return timeRangesOverlap(
+          startMinutes,
+          endMinutes,
+          existingStart,
+          existingEnd
+        );
+      }
+    );
+
+
+  if (conflictingTime) {
+    return "Die gewählte Zeit überschneidet sich mit einer bestehenden Sperrzeit.";
+  }
+
+
+  /*
+   * 3. Gegen bestätigte Buchungen prüfen
+   */
+
+  try {
+
+    const confirmedBookings =
+      await loadConfirmedBookings(
+        date,
+        date
+      );
+
+
+    const conflictingBooking =
+      confirmedBookings.find(
+        (booking) => {
+
+          const bookingStart =
+            timeToMinutes(
+              booking.booking_time
+            );
+
+          const bookingEnd =
+            bookingStart +
+            booking.duration;
+
+
+          return timeRangesOverlap(
+            startMinutes,
+            endMinutes,
+            bookingStart,
+            bookingEnd
+          );
+        }
+      );
+
+
+    if (conflictingBooking) {
+      return "Die gewählte Zeit überschneidet sich mit einem bereits bestätigten Termin.";
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Bestätigte Buchungen konnten nicht geprüft werden:",
+      error
+    );
+
+    return error.message;
+  }
+
+
+  return null;
+}
+
+
+/* ========================================
    VALIDIERUNG
    ======================================== */
 
@@ -1727,9 +2202,32 @@ async function handleFormSubmit(event) {
       : validateTimeForm();
 
 
-  if (validationError) {
+  /*
+   * Konflikte mit bestehenden Sperrzeiten
+   * und bestätigten Buchungen prüfen.
+   */
+
+  const editId =
+    editIdInput.value;
+
+  const conflictError =
+    type === "day"
+      ? await validateDayConflicts(
+          dayFromInput.value,
+          dayToInput.value,
+          editId
+        )
+      : await validateTimeConflicts(
+          timeDateInput.value,
+          timeStartInput.value,
+          timeEndInput.value,
+          editId
+        );
+
+
+  if (conflictError) {
     showFormError(
-      validationError
+      conflictError
     );
 
     return;

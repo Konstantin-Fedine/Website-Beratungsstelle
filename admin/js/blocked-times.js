@@ -484,11 +484,13 @@ function timeToMinutes(timeString) {
     return null;
   }
 
-  const [hours, minutes] =
-    timeString
-      .slice(0, 5)
-      .split(":")
-      .map(Number);
+  const [
+    hours,
+    minutes
+  ] = timeString
+    .slice(0, 5)
+    .split(":")
+    .map(Number);
 
   if (
     Number.isNaN(hours) ||
@@ -502,7 +504,7 @@ function timeToMinutes(timeString) {
 
 
 /* ========================================
-   BESTÄTIGTE BUCHUNGEN LADEN
+   BESTÄTIGTE BUCHUNGEN
    ======================================== */
 
 async function loadConfirmedBookings(
@@ -623,31 +625,11 @@ async function validateDayConflicts(
 ) {
 
   /*
-   * 1. Gegen andere Ganztagssperren prüfen
+   * 1. Andere Ganztagssperren
    */
 
-  const {
-    data: existingDays,
-    error: existingDaysError
-  } = await supabase
-    .from("blocked_days")
-    .select(
-      "id, start_date, end_date"
-    );
-
-
-  if (existingDaysError) {
-    console.error(
-      "Ganztägige Sperrzeiten konnten nicht geprüft werden:",
-      existingDaysError
-    );
-
-    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
-  }
-
-
   const conflictingDay =
-    (existingDays ?? []).find(
+    blockedDays.find(
       (entry) => {
 
         if (entry.id === editId) {
@@ -670,39 +652,11 @@ async function validateDayConflicts(
 
 
   /*
-   * 2. Gegen einzelne gesperrte Zeiten prüfen
+   * 2. Einzelne gesperrte Zeiten
    */
 
-  const {
-    data: existingTimes,
-    error: existingTimesError
-  } = await supabase
-    .from("blocked_times")
-    .select(
-      "id, date"
-    )
-    .gte(
-      "date",
-      startDate
-    )
-    .lte(
-      "date",
-      endDate
-    );
-
-
-  if (existingTimesError) {
-    console.error(
-      "Gesperrte Zeiten konnten nicht geprüft werden:",
-      existingTimesError
-    );
-
-    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
-  }
-
-
   const conflictingTime =
-    (existingTimes ?? []).find(
+    blockedTimes.find(
       (entry) =>
         entry.date >= startDate &&
         entry.date <= endDate
@@ -715,7 +669,7 @@ async function validateDayConflicts(
 
 
   /*
-   * 3. Gegen bestätigte Buchungen prüfen
+   * 3. Bestätigte Termine
    */
 
   try {
@@ -765,77 +719,35 @@ async function validateTimeConflicts(
 
 
   /*
-   * 1. Gegen Ganztagssperren prüfen
+   * 1. Ganztägige Sperre
    */
 
-  const {
-    data: blockedDaysForDate,
-    error: blockedDaysError
-  } = await supabase
-    .from("blocked_days")
-    .select(
-      "id, start_date, end_date"
-    )
-    .lte(
-      "start_date",
-      date
-    )
-    .gte(
-      "end_date",
-      date
+  const conflictingDay =
+    blockedDays.find(
+      (entry) =>
+        date >= entry.start_date &&
+        date <= entry.end_date
     );
 
 
-  if (blockedDaysError) {
-    console.error(
-      "Ganztägige Sperrzeiten konnten nicht geprüft werden:",
-      blockedDaysError
-    );
-
-    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
-  }
-
-
-  if (
-    (blockedDaysForDate ?? []).length > 0
-  ) {
+  if (conflictingDay) {
     return "Der gewählte Zeitpunkt liegt bereits in einer bestehenden ganztägigen Sperrzeit.";
   }
 
 
   /*
-   * 2. Gegen andere Uhrzeit-Sperren prüfen
+   * 2. Andere Uhrzeit-Sperren
    */
 
-  const {
-    data: existingTimes,
-    error: existingTimesError
-  } = await supabase
-    .from("blocked_times")
-    .select(
-      "id, start_time, end_time"
-    )
-    .eq(
-      "date",
-      date
-    );
-
-
-  if (existingTimesError) {
-    console.error(
-      "Gesperrte Zeiten konnten nicht geprüft werden:",
-      existingTimesError
-    );
-
-    return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
-  }
-
-
   const conflictingTime =
-    (existingTimes ?? []).find(
+    blockedTimes.find(
       (entry) => {
 
         if (entry.id === editId) {
+          return false;
+        }
+
+        if (entry.date !== date) {
           return false;
         }
 
@@ -865,7 +777,7 @@ async function validateTimeConflicts(
 
 
   /*
-   * 3. Gegen bestätigte Buchungen prüfen
+   * 3. Bestätigte Termine
    */
 
   try {
@@ -1304,19 +1216,32 @@ async function handleFormSubmit(event) {
     reasonInput.value.trim();
 
 
+  /* ========================================
+     1. NORMALE VALIDIERUNG
+     ======================================== */
+
   const validationError =
     type === "day"
       ? validateDayForm()
       : validateTimeForm();
 
 
-  /*
-   * Konflikte mit bestehenden Sperrzeiten
-   * und bestätigten Buchungen prüfen.
-   */
+  if (validationError) {
+    showFormError(
+      validationError
+    );
+
+    return;
+  }
+
+
+  /* ========================================
+     2. KONFLIKTPRÜFUNG
+     ======================================== */
 
   const editId =
     editIdInput.value;
+
 
   const conflictError =
     type === "day"
@@ -1342,22 +1267,27 @@ async function handleFormSubmit(event) {
   }
 
 
+  /* ========================================
+     3. SPEICHERN
+     ======================================== */
+
   saveButton.disabled = true;
 
   saveButton.textContent =
-    editIdInput.value
+    editId
       ? "Änderungen speichern..."
       : "Wird gespeichert...";
 
 
   try {
 
-    const editId =
-      editIdInput.value;
-
     const editType =
       editTypeInput.value;
 
+
+    /* ========================================
+       GANZER TAG
+       ======================================== */
 
     if (type === "day") {
 
@@ -1384,6 +1314,7 @@ async function handleFormSubmit(event) {
               editId
             );
 
+
         if (error) {
           throw error;
         }
@@ -1395,7 +1326,13 @@ async function handleFormSubmit(event) {
           dayToInput.value,
           reason
         );
+
       }
+
+
+    /* ========================================
+       BESTIMMTE UHRZEIT
+       ======================================== */
 
     } else {
 
@@ -1425,6 +1362,7 @@ async function handleFormSubmit(event) {
               editId
             );
 
+
         if (error) {
           throw error;
         }
@@ -1437,9 +1375,15 @@ async function handleFormSubmit(event) {
           timeEndInput.value,
           reason
         );
+
       }
+
     }
 
+
+    /* ========================================
+       ERFOLG
+       ======================================== */
 
     closeModal();
 
@@ -1449,6 +1393,7 @@ async function handleFormSubmit(event) {
       "Sperrzeit gespeichert.",
       "success"
     );
+
 
   } catch (error) {
 
@@ -1461,14 +1406,16 @@ async function handleFormSubmit(event) {
       "Die Sperrzeit konnte nicht gespeichert werden."
     );
 
+
   } finally {
 
     saveButton.disabled = false;
 
     saveButton.textContent =
-      editIdInput.value
+      editId
         ? "Änderungen speichern"
         : "Speichern";
+
   }
 }
 
