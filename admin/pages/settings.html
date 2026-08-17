@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Einstellungen | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/settings.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- SIDEBAR -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+          <a href="dashboard.html" class="sidebar-logo">
+            <span class="sidebar-logo-mark">A</span>
+            <span class="sidebar-logo-text">Aufwind</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <nav
+          class="sidebar-navigation"
+          aria-label="Admin-Navigation"
+        >
+          <a
+            href="dashboard.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⌂</span>
+            <span class="sidebar-link-text">Dashboard</span>
+          </a>
+
+          <a
+            href="bookings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">▣</span>
+            <span class="sidebar-link-text">Termine</span>
+          </a>
+
+          <a
+            href="availability.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◷</span>
+            <span class="sidebar-link-text">Verfügbarkeit</span>
+          </a>
+
+          <a
+            href="blocked-times.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⊘</span>
+            <span class="sidebar-link-text">Sperrzeiten</span>
+          </a>
+
+          <a
+            href="services.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◇</span>
+            <span class="sidebar-link-text">
+              Beratungsangebote
+            </span>
+          </a>
+
+          <a
+            href="settings.html"
+            class="sidebar-link active"
+          >
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-link-text">Einstellungen</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a
+            href="/"
+            class="sidebar-link sidebar-public-link"
+          >
+            <span class="sidebar-icon">↗</span>
+            <span class="sidebar-link-text">Zur Website</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-link-text">Abmelden</span>
+          </button>
+        </div>
+
+      </aside>
+
+      <!-- MOBILE OVERLAY -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+      <!-- MAIN -->
+
+      <main class="admin-main">
+
+        <!-- TOPBAR -->
+
+        <header class="admin-topbar">
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <div class="topbar-title">
+              <h1>Einstellungen</h1>
+              <p>Buchungssystem und allgemeine Informationen</p>
+            </div>
+
+          </div>
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+              <div class="admin-user-info">
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </header>
+
+        <!-- CONTENT -->
+
+        <section class="settings-content">
+
+          <!-- MESSAGE -->
+
+          <div
+            id="settings-message"
+            class="settings-message"
+            hidden
+            role="status"
+            aria-live="polite"
+          ></div>
+
+          <!-- LOADING -->
+
+          <div
+            id="settings-loading"
+            class="settings-state"
+          >
+            <p>Einstellungen werden geladen...</p>
+          </div>
+
+          <!-- FORM -->
+
+          <form
+            id="settings-form"
+            class="settings-form"
+            hidden
+          >
+
+            <!-- BUCHUNGSEINSTELLUNGEN -->
+
+            <section class="settings-section">
+
+              <div class="settings-section-header">
+                <div>
+                  <h2>Buchungseinstellungen</h2>
+                  <p>
+                    Regeln für mögliche Buchungstermine.
+                  </p>
+                </div>
+              </div>
+
+              <div class="settings-grid">
+
+                <div class="settings-field">
+                  <label for="booking-interval">
+                    Zeitraster
+                  </label>
+
+                  <select id="booking-interval">
+                    <option value="30">30 Minuten</option>
+                    <option value="60">60 Minuten</option>
+                  </select>
+
+                  <p class="settings-help">
+                    Bestimmt, in welchen Abständen mögliche
+                    Startzeiten angeboten werden.
+                  </p>
+                </div>
+
+                <div class="settings-field">
+                  <label for="minimum-notice-hours">
+                    Mindestvorlauf
+                  </label>
+
+                  <div class="settings-input-with-suffix">
+                    <input
+                      type="number"
+                      id="minimum-notice-hours"
+                      min="0"
+                      step="1"
+                      required
+                    />
+                    <span>Stunden</span>
+                  </div>
+
+                  <p class="settings-help">
+                    Wie viel Zeit mindestens zwischen Buchung
+                    und Termin liegen muss.
+                  </p>
+                </div>
+
+                <div class="settings-field">
+                  <label for="booking-advance-days">
+                    Maximale Vorausbuchung
+                  </label>
+
+                  <div class="settings-input-with-suffix">
+                    <input
+                      type="number"
+                      id="booking-advance-days"
+                      min="1"
+                      step="1"
+                      required
+                    />
+                    <span>Tage</span>
+                  </div>
+
+                  <p class="settings-help">
+                    Wie weit im Voraus Termine gebucht werden
+                    können.
+                  </p>
+                </div>
+
+              </div>
+
+            </section>
+
+            <!-- BENACHRICHTIGUNGEN -->
+
+            <section class="settings-section">
+
+              <div class="settings-section-header">
+                <div>
+                  <h2>Benachrichtigungen</h2>
+                  <p>
+                    Lege fest, welche E-Mail-Benachrichtigungen
+                    später versendet werden sollen.
+                  </p>
+                </div>
+              </div>
+
+              <div class="settings-notification-groups">
+
+                <div class="settings-notification-group">
+
+                  <h3>E-Mails an Beratungsstelle</h3>
+
+                  <label class="settings-toggle-row">
+                    <span>
+                      <strong>Neue Buchung</strong>
+                      <small>
+                        Benachrichtigung bei einer neuen Buchung
+                      </small>
+                    </span>
+
+                    <input
+                      type="checkbox"
+                      id="notify-provider-new-booking"
+                    />
+                  </label>
+
+                  <label class="settings-toggle-row">
+                    <span>
+                      <strong>Stornierung</strong>
+                      <small>
+                        Benachrichtigung bei einer Stornierung
+                      </small>
+                    </span>
+
+                    <input
+                      type="checkbox"
+                      id="notify-provider-cancellation"
+                    />
+                  </label>
+
+                  <label class="settings-toggle-row">
+                    <span>
+                      <strong>Terminänderung</strong>
+                      <small>
+                        Benachrichtigung bei einer Änderung
+                      </small>
+                    </span>
+
+                    <input
+                      type="checkbox"
+                      id="notify-provider-reschedule"
+                    />
+                  </label>
+
+                </div>
+
+                <div class="settings-notification-group">
+
+                  <h3>E-Mails an Kunden</h3>
+
+                  <label class="settings-toggle-row">
+                    <span>
+                      <strong>Buchungsbestätigung</strong>
+                      <small>
+                        Bestätigung nach erfolgreicher Buchung
+                      </small>
+                    </span>
+
+                    <input
+                      type="checkbox"
+                      id="notify-customer-confirmation"
+                    />
+                  </label>
+
+                  <label class="settings-toggle-row">
+                    <span>
+                      <strong>Stornierungsbestätigung</strong>
+                      <small>
+                        Nachricht nach einer Stornierung
+                      </small>
+                    </span>
+
+                    <input
+                      type="checkbox"
+                      id="notify-customer-cancellation"
+                    />
+                  </label>
+
+                  <label class="settings-toggle-row">
+                    <span>
+                      <strong>Terminänderung</strong>
+                      <small>
+                        Nachricht bei einer Terminänderung
+                      </small>
+                    </span>
+
+                    <input
+                      type="checkbox"
+                      id="notify-customer-reschedule"
+                    />
+                  </label>
+
+                  <label class="settings-toggle-row">
+                    <span>
+                      <strong>Erinnerung vor Termin</strong>
+                      <small>
+                        Automatische Erinnerung vor dem Termin
+                      </small>
+                    </span>
+
+                    <input
+                      type="checkbox"
+                      id="notify-customer-reminder"
+                    />
+                  </label>
+
+                  <div class="settings-field settings-reminder-field">
+                    <label for="reminder-hours">
+                      Erinnerung
+                    </label>
+
+                    <div class="settings-input-with-suffix">
+                      <input
+                        type="number"
+                        id="reminder-hours"
+                        min="1"
+                        step="1"
+                        required
+                      />
+                      <span>Stunden vorher</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+            <!-- ALLGEMEINE INFORMATIONEN -->
+
+            <section class="settings-section">
+
+              <div class="settings-section-header">
+                <div>
+                  <h2>Allgemeine Informationen</h2>
+                  <p>
+                    Diese Informationen werden vom System
+                    verwendet.
+                  </p>
+                </div>
+              </div>
+
+              <div class="settings-grid">
+
+                <div class="settings-field">
+                  <label for="organization-name">
+                    Name der Beratungsstelle
+                  </label>
+
+                  <input
+                    type="text"
+                    id="organization-name"
+                    maxlength="200"
+                    required
+                  />
+                </div>
+
+                <div class="settings-field">
+                  <label for="contact-email">
+                    Kontakt-E-Mail
+                  </label>
+
+                  <input
+                    type="email"
+                    id="contact-email"
+                    maxlength="320"
+                    placeholder="name@beispiel.de"
+                  />
+                </div>
+
+                <div class="settings-field">
+                  <label for="timezone">
+                    Zeitzone
+                  </label>
+
+                  <input
+                    type="text"
+                    id="timezone"
+                    value="Europe/Berlin"
+                    required
+                  />
+
+                  <p class="settings-help">
+                    Die Zeitzone muss eindeutig sein.
+                  </p>
+                </div>
+
+              </div>
+
+            </section>
+
+            <!-- SPEICHERN -->
+
+            <div class="settings-actions">
+
+              <button
+                type="submit"
+                class="settings-save-button"
+                id="settings-save"
+              >
+                Änderungen speichern
+              </button>
+
+            </div>
+
+          </form>
+
+          <!-- ADMIN-KONTO -->
+
+          <section
+            class="settings-section settings-account-section"
+            id="admin-account-section"
+            hidden
+          >
+
+            <div class="settings-section-header">
+              <div>
+                <h2>Admin-Konto</h2>
+                <p>
+                  Verwalte dein angemeldetes Supabase-Konto.
+                </p>
+              </div>
+            </div>
+
+            <div class="settings-account">
+
+              <div class="settings-account-info">
+                <span class="settings-account-label">
+                  Angemeldet als
+                </span>
+
+                <strong id="admin-email">
+                  –
+                </strong>
+              </div>
+
+              <div class="settings-account-password">
+
+                <label for="new-password">
+                  Neues Passwort
+                </label>
+
+                <div class="settings-password-row">
+
+                  <input
+                    type="password"
+                    id="new-password"
+                    minlength="8"
+                    placeholder="Mindestens 8 Zeichen"
+                    autocomplete="new-password"
+                  />
+
+                  <button
+                    type="button"
+                    class="settings-secondary-button"
+                    id="change-password"
+                  >
+                    Passwort ändern
+                  </button>
+
+                </div>
+
+                <p
+                  id="password-message"
+                  class="settings-help"
+                  hidden
+                ></p>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </section>
+
+      </main>
+    </div>
+
+    <script
+      type="module"
+      src="../js/auth.js"
+    ></script>
+
+    <script src="../js/admin-layout.js"></script>
+
+    <script
+      type="module"
+      src="../js/settings.js"
+    ></script>
+  </body>
+</html>

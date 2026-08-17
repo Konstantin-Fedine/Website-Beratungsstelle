@@ -1,0 +1,546 @@
+/* ========================================
+   SETTINGS CONTENT
+   ======================================== */
+
+.settings-content {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 35px 40px;
+}
+
+
+/* ========================================
+   STATES
+   ======================================== */
+
+.settings-state {
+  padding: 46px 20px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius);
+
+  background: var(--admin-surface);
+
+  text-align: center;
+
+  color: var(--color-text-muted);
+}
+
+
+/* ========================================
+   MESSAGE
+   ======================================== */
+
+.settings-message {
+  margin-bottom: 20px;
+
+  padding: 13px 16px;
+
+  border-radius: var(--radius);
+
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.settings-message.success {
+  border: 1px solid rgba(80, 140, 100, 0.22);
+
+  background: rgba(80, 140, 100, 0.08);
+
+  color: #3d704d;
+}
+
+.settings-message.error {
+  border: 1px solid rgba(180, 80, 80, 0.22);
+
+  background: rgba(180, 80, 80, 0.08);
+
+  color: #8a3d3d;
+}
+
+
+/* ========================================
+   FORM
+   ======================================== */
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+
+/* ========================================
+   SECTIONS
+   ======================================== */
+
+.settings-section {
+  padding: 26px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius);
+
+  background: var(--admin-surface);
+
+  box-shadow:
+    0 4px 14px rgba(42, 36, 33, 0.04);
+}
+
+.settings-section-header {
+  margin-bottom: 22px;
+}
+
+.settings-section-header h2 {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.settings-section-header p {
+  margin: 6px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   GRID
+   ======================================== */
+
+.settings-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+/* ========================================
+   FIELDS
+   ======================================== */
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.settings-field label,
+.settings-account-password label {
+  color: var(--color-dark);
+
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.settings-field input,
+.settings-field select,
+.settings-account-password input {
+  width: 100%;
+
+  min-height: 42px;
+
+  padding: 10px 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: var(--color-surface);
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.88rem;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.settings-field input:focus,
+.settings-field select:focus,
+.settings-account-password input:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px rgba(212, 178, 149, 0.15);
+}
+
+.settings-help {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.78rem;
+
+  line-height: 1.45;
+}
+
+.settings-input-with-suffix {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) auto;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.settings-input-with-suffix span {
+  color: var(--color-text-muted);
+
+  font-size: 0.82rem;
+}
+
+
+/* ========================================
+   NOTIFICATIONS
+   ======================================== */
+
+.settings-notification-groups {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 26px;
+}
+
+.settings-notification-group {
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.settings-notification-group h3 {
+  margin: 0;
+
+  padding: 15px 16px;
+
+  border-bottom: 1px solid var(--admin-border);
+
+  color: var(--color-dark);
+
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 14px 16px;
+
+  border-bottom: 1px solid var(--admin-border);
+
+  cursor: pointer;
+}
+
+.settings-toggle-row:last-of-type {
+  border-bottom: none;
+}
+
+.settings-toggle-row span {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.settings-toggle-row strong {
+  color: var(--color-dark);
+
+  font-size: 0.84rem;
+}
+
+.settings-toggle-row small {
+  color: var(--color-text-muted);
+
+  font-size: 0.76rem;
+
+  line-height: 1.4;
+}
+
+
+/* ========================================
+   TOGGLE
+   ======================================== */
+
+.settings-toggle-row input[type="checkbox"] {
+  position: relative;
+
+  width: 42px;
+  height: 24px;
+
+  flex-shrink: 0;
+
+  margin: 0;
+
+  appearance: none;
+
+  border-radius: 999px;
+
+  border: 1px solid var(--admin-border);
+
+  background: rgba(42, 36, 33, 0.08);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition);
+}
+
+.settings-toggle-row input[type="checkbox"]::after {
+  content: "";
+
+  position: absolute;
+
+  top: 3px;
+  left: 3px;
+
+  width: 16px;
+  height: 16px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.15);
+
+  transition: transform var(--transition);
+}
+
+.settings-toggle-row input[type="checkbox"]:checked {
+  background: var(--color-primary);
+
+  border-color: var(--color-primary);
+}
+
+.settings-toggle-row input[type="checkbox"]:checked::after {
+  transform: translateX(18px);
+}
+
+
+/* ========================================
+   REMINDER
+   ======================================== */
+
+.settings-reminder-field {
+  margin: 14px 16px 16px;
+}
+
+
+/* ========================================
+   ACTIONS
+   ======================================== */
+
+.settings-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  padding-top: 2px;
+}
+
+.settings-save-button,
+.settings-secondary-button {
+  min-height: 42px;
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+
+  font-size: 0.84rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.settings-save-button {
+  border: none;
+
+  background: var(--color-primary);
+
+  color: var(--color-dark);
+}
+
+.settings-save-button:hover {
+  box-shadow:
+    0 5px 12px rgba(212, 178, 149, 0.2);
+}
+
+.settings-save-button:disabled,
+.settings-secondary-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+.settings-secondary-button {
+  border: 1px solid var(--admin-border);
+
+  background: transparent;
+
+  color: var(--color-dark);
+}
+
+.settings-secondary-button:hover {
+  background: rgba(42, 36, 33, 0.04);
+}
+
+
+/* ========================================
+   ACCOUNT
+   ======================================== */
+
+.settings-account-section {
+  margin-top: 18px;
+}
+
+.settings-account {
+  display: flex;
+  flex-direction: column;
+
+  gap: 24px;
+}
+
+.settings-account-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.settings-account-label {
+  color: var(--color-text-muted);
+
+  font-size: 0.78rem;
+}
+
+.settings-account-info strong {
+  color: var(--color-dark);
+
+  font-size: 0.92rem;
+}
+
+.settings-account-password {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.settings-password-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr) auto;
+
+  gap: 10px;
+}
+
+#password-message.success {
+  color: #3d704d;
+}
+
+#password-message.error {
+  color: #8a3d3d;
+}
+
+
+/* ========================================
+   TABLET
+   ======================================== */
+
+@media (max-width: 800px) {
+  .settings-content {
+    padding: 28px 24px;
+  }
+
+  .settings-grid,
+  .settings-notification-groups {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 600px) {
+  .settings-content {
+    padding: 24px 18px;
+  }
+
+  .settings-section {
+    padding: 20px;
+  }
+
+  .settings-section-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .settings-input-with-suffix,
+  .settings-password-row {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-input-with-suffix span {
+    margin-top: -3px;
+  }
+
+  .settings-actions {
+    justify-content: stretch;
+  }
+
+  .settings-save-button,
+  .settings-secondary-button {
+    width: 100%;
+  }
+}
+
+
+/* ========================================
+   VERY SMALL PHONES
+   ======================================== */
+
+@media (max-width: 400px) {
+  .settings-content {
+    padding: 20px 14px;
+  }
+
+  .settings-section {
+    padding: 16px;
+  }
+}
