@@ -1,39 +1,42 @@
 import { supabase } from "./supabase.js";
 
-// Geladene Buchungsdaten (einmal beim Start, blocked_days pro Monat)
+// Geladene Buchungsdaten
 let bookingSettings = null;
 let availabilityRules = [];
 const blockedDaysSet = new Set();
 
 const DEFAULT_SETTINGS = {
   booking_interval: 60,
-  booking_buffer_before: 0,
-  booking_buffer_after: 0,
   booking_advance_days: 180,
   minimum_notice_hours: 24,
+  cancellation_notice_hours: 24,
 };
 
 export function formatDateISO(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
+
   return `${year}-${month}-${day}`;
 }
 
-// Datenbank: 1=Montag … 7=Sonntag
+// Datenbank: 1 = Montag … 7 = Sonntag
 export function getWeekdayDb(date) {
   const jsDay = date.getDay();
+
   return jsDay === 0 ? 7 : jsDay;
 }
 
 function timeToMinutes(timeStr) {
   const parts = timeStr.split(":");
+
   return Number(parts[0]) * 60 + Number(parts[1]);
 }
 
 function minutesToTime(minutes) {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
+
   return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
 }
 
@@ -41,16 +44,31 @@ function rangesOverlap(startA, endA, startB, endB) {
   return startA < endB && endA > startB;
 }
 
+/* ========================================
+   SETTINGS
+   ======================================== */
+
 async function loadSettings() {
-  const { data, error } = await supabase.from("settings").select("*").limit(1);
+  const { data, error } = await supabase
+    .from("settings")
+    .select("*")
+    .limit(1);
 
   if (error) {
-    console.error("Fehler beim Laden der Einstellungen:", error);
+    console.error(
+      "Fehler beim Laden der Einstellungen:",
+      error
+    );
+
     return DEFAULT_SETTINGS;
   }
 
   return data?.[0] ?? DEFAULT_SETTINGS;
 }
+
+/* ========================================
+   VERFÜGBARKEIT
+   ======================================== */
 
 async function loadAvailability() {
   const { data, error } = await supabase
@@ -59,35 +77,74 @@ async function loadAvailability() {
     .eq("active", true);
 
   if (error) {
-    console.error("Fehler beim Laden der Verfügbarkeiten:", error);
+    console.error(
+      "Fehler beim Laden der Verfügbarkeiten:",
+      error
+    );
+
     return [];
   }
 
   return data ?? [];
 }
 
+/* ========================================
+   GESPERRTE TAGE
+   ======================================== */
+
 export async function loadBlockedDaysForMonth(year, month) {
-  const monthStart = formatDateISO(new Date(year, month, 1));
-  const lastDay = new Date(year, month + 1, 0).getDate();
-  const monthEnd = formatDateISO(new Date(year, month, lastDay));
+  const monthStartDate = new Date(year, month, 1);
+  const monthEndDate = new Date(year, month + 1, 0);
+
+  const monthStart = formatDateISO(monthStartDate);
+  const monthEnd = formatDateISO(monthEndDate);
 
   const { data, error } = await supabase
     .from("blocked_days")
-    .select("date")
-    .gte("date", monthStart)
-    .lte("date", monthEnd);
+    .select("start_date, end_date")
+    .lte("start_date", monthEnd)
+    .gte("end_date", monthStart);
 
   if (error) {
-    console.error("Fehler beim Laden gesperrter Tage:", error);
+    console.error(
+      "Fehler beim Laden gesperrter Tage:",
+      error
+    );
+
     return;
   }
 
   blockedDaysSet.clear();
 
-  data?.forEach((row) => {
-    blockedDaysSet.add(row.date);
-  });
+  for (const row of data ?? []) {
+    const start = new Date(`${row.start_date}T00:00:00`);
+    const end = new Date(`${row.end_date}T00:00:00`);
+
+    const current = new Date(
+      Math.max(
+        start.getTime(),
+        monthStartDate.getTime()
+      )
+    );
+
+    const last = new Date(
+      Math.min(
+        end.getTime(),
+        monthEndDate.getTime()
+      )
+    );
+
+    while (current <= last) {
+      blockedDaysSet.add(formatDateISO(current));
+
+      current.setDate(current.getDate() + 1);
+    }
+  }
 }
+
+/* ========================================
+   INITIALISIERUNG
+   ======================================== */
 
 export async function initBookingData() {
   const [settings, availability] = await Promise.all([
@@ -100,21 +157,54 @@ export async function initBookingData() {
 
   if (!availabilityRules.length) {
     console.warn(
-      "Keine aktiven Verfügbarkeiten gefunden. Verwende Platzhalter Mo–Fr 09:00–17:00.",
+      "Keine aktiven Verfügbarkeiten gefunden. Verwende Platzhalter Mo–Fr 09:00–17:00."
     );
 
     availabilityRules = [
-      { weekday: 1, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 2, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 3, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 4, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 5, start_time: "09:00", end_time: "17:00", active: true },
+      {
+        weekday: 1,
+        start_time: "09:00",
+        end_time: "17:00",
+        active: true,
+      },
+      {
+        weekday: 2,
+        start_time: "09:00",
+        end_time: "17:00",
+        active: true,
+      },
+      {
+        weekday: 3,
+        start_time: "09:00",
+        end_time: "17:00",
+        active: true,
+      },
+      {
+        weekday: 4,
+        start_time: "09:00",
+        end_time: "17:00",
+        active: true,
+      },
+      {
+        weekday: 5,
+        start_time: "09:00",
+        end_time: "17:00",
+        active: true,
+      },
     ];
   }
 
   const now = new Date();
-  await loadBlockedDaysForMonth(now.getFullYear(), now.getMonth());
+
+  await loadBlockedDaysForMonth(
+    now.getFullYear(),
+    now.getMonth()
+  );
 }
+
+/* ========================================
+   DATUM AUSWÄHLBAR?
+   ======================================== */
 
 export function isDateSelectable(date, today) {
   if (!bookingSettings) {
@@ -130,26 +220,42 @@ export function isDateSelectable(date, today) {
   }
 
   const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + bookingSettings.booking_advance_days);
+
+  maxDate.setDate(
+    maxDate.getDate() +
+      Number(bookingSettings.booking_advance_days)
+  );
 
   if (date > maxDate) {
     return false;
   }
 
   const weekday = getWeekdayDb(date);
-  const hasAvailability = availabilityRules.some(
-    (rule) => rule.weekday === weekday,
-  );
 
-  return hasAvailability;
+  return availabilityRules.some(
+    (rule) => rule.weekday === weekday
+  );
 }
 
-function generateRawSlots(windows, durationMinutes, interval) {
+/* ========================================
+   ZEITSLOTS GENERIEREN
+   ======================================== */
+
+function generateRawSlots(
+  windows,
+  durationMinutes,
+  interval
+) {
   const slots = [];
 
   windows.forEach((window) => {
-    const windowStart = timeToMinutes(window.start_time);
-    const windowEnd = timeToMinutes(window.end_time);
+    const windowStart = timeToMinutes(
+      window.start_time
+    );
+
+    const windowEnd = timeToMinutes(
+      window.end_time
+    );
 
     for (
       let slot = windowStart;
@@ -160,115 +266,209 @@ function generateRawSlots(windows, durationMinutes, interval) {
     }
   });
 
-  return [...new Set(slots)].sort((a, b) => a - b);
+  return [...new Set(slots)].sort(
+    (a, b) => a - b
+  );
 }
 
-function filterSlotsByBlockedTimes(slots, durationMinutes, blockedTimes) {
+/* ========================================
+   SPERRZEITEN FILTERN
+   ======================================== */
+
+function filterSlotsByBlockedTimes(
+  slots,
+  durationMinutes,
+  blockedTimes
+) {
   return slots.filter((slot) => {
-    const slotEnd = slot + durationMinutes;
+    const slotEnd =
+      slot + durationMinutes;
 
     return !blockedTimes.some((block) => {
-      const blockStart = timeToMinutes(block.start_time);
-      const blockEnd = timeToMinutes(block.end_time);
-      return rangesOverlap(slot, slotEnd, blockStart, blockEnd);
+      const blockStart = timeToMinutes(
+        block.start_time
+      );
+
+      const blockEnd = timeToMinutes(
+        block.end_time
+      );
+
+      return rangesOverlap(
+        slot,
+        slotEnd,
+        blockStart,
+        blockEnd
+      );
     });
   });
 }
+
+/* ========================================
+   BUCHUNGEN FILTERN
+   ======================================== */
 
 function filterSlotsByBookings(
   slots,
   durationMinutes,
-  bookings,
-  bufferBefore,
-  bufferAfter,
+  bookings
 ) {
   return slots.filter((slot) => {
-    const slotEnd = slot + durationMinutes;
+    const slotEnd =
+      slot + durationMinutes;
 
     return !bookings.some((booking) => {
-      const bookStart = timeToMinutes(booking.booking_time) - bufferBefore;
-      const bookEnd =
-        timeToMinutes(booking.booking_time) + booking.duration + bufferAfter;
+      const bookingStart =
+        timeToMinutes(
+          booking.booking_time
+        );
 
-      return rangesOverlap(slot, slotEnd, bookStart, bookEnd);
+      const bookingEnd =
+        bookingStart +
+        Number(booking.duration);
+
+      return rangesOverlap(
+        slot,
+        slotEnd,
+        bookingStart,
+        bookingEnd
+      );
     });
   });
 }
 
-function filterSlotsByMinimumNotice(slots, date, today, minimumNoticeHours) {
-  if (date.getTime() !== today.getTime()) {
-    return slots;
-  }
+/* ========================================
+   MINDESTVORLAUF
+   ======================================== */
 
+function filterSlotsByMinimumNotice(
+  slots,
+  date,
+  minimumNoticeHours
+) {
   const now = new Date();
-  const earliestMinutes =
-    now.getHours() * 60 + now.getMinutes() + minimumNoticeHours * 60;
 
-  return slots.filter((slot) => slot >= earliestMinutes);
+  const earliestAllowed = new Date(
+    now.getTime() +
+      Number(minimumNoticeHours) * 60 * 60 * 1000
+  );
+
+  return slots.filter((slot) => {
+    const hours = Math.floor(slot / 60);
+    const minutes = slot % 60;
+
+    const slotDateTime = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hours,
+      minutes,
+      0,
+      0
+    );
+
+    return slotDateTime >= earliestAllowed;
+  });
 }
 
-export async function getAvailableSlots(date, durationMinutes) {
+/* ========================================
+   FREIE ZEITEN
+   ======================================== */
+
+export async function getAvailableSlots(
+  date,
+  durationMinutes
+) {
   if (!bookingSettings || !durationMinutes) {
     return [];
   }
 
-  const weekday = getWeekdayDb(date);
-  const windows = availabilityRules.filter((rule) => rule.weekday === weekday);
+  const weekday =
+    getWeekdayDb(date);
+
+  const windows =
+    availabilityRules.filter(
+      (rule) =>
+        rule.weekday === weekday
+    );
 
   if (windows.length === 0) {
     return [];
   }
 
-  const dateISO = formatDateISO(date);
+  const dateISO =
+    formatDateISO(date);
 
-  const [blockedTimesResult, bookingsResult] = await Promise.all([
+  const [
+    blockedTimesResult,
+    bookingsResult,
+  ] = await Promise.all([
     supabase
       .from("blocked_times")
-      .select("start_time, end_time")
-      .eq("date", dateISO),
+      .select(
+        "start_time, end_time"
+      )
+      .eq(
+        "date",
+        dateISO
+      ),
+
     supabase
       .from("booking_blocks")
-      .select("booking_time, duration")
-      .eq("booking_date", dateISO),
+      .select(
+        "booking_time, duration"
+      )
+      .eq(
+        "booking_date",
+        dateISO
+      ),
   ]);
 
   if (blockedTimesResult.error) {
     console.error(
       "Fehler beim Laden gesperrter Zeiten:",
-      blockedTimesResult.error,
+      blockedTimesResult.error
     );
   }
 
   if (bookingsResult.error) {
-    console.error("Fehler beim Laden belegter Termine:", bookingsResult.error);
+    console.error(
+      "Fehler beim Laden belegter Termine:",
+      bookingsResult.error
+    );
   }
 
-  const blockedTimes = blockedTimesResult.data ?? [];
-  const bookings = bookingsResult.data ?? [];
+  const blockedTimes =
+    blockedTimesResult.data ?? [];
+
+  const bookings =
+    bookingsResult.data ?? [];
 
   let slots = generateRawSlots(
     windows,
     durationMinutes,
-    bookingSettings.booking_interval,
+    Number(
+      bookingSettings.booking_interval
+    )
   );
 
-  slots = filterSlotsByBlockedTimes(slots, durationMinutes, blockedTimes);
+  slots = filterSlotsByBlockedTimes(
+    slots,
+    durationMinutes,
+    blockedTimes
+  );
+
   slots = filterSlotsByBookings(
     slots,
     durationMinutes,
-    bookings,
-    bookingSettings.booking_buffer_before,
-    bookingSettings.booking_buffer_after,
+    bookings
   );
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   slots = filterSlotsByMinimumNotice(
     slots,
     date,
-    today,
-    bookingSettings.minimum_notice_hours,
+    Number(
+      bookingSettings.minimum_notice_hours
+    )
   );
 
   return slots.map(minutesToTime);
