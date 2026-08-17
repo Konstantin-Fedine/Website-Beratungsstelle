@@ -1,6 +1,9 @@
 <aside class="admin-sidebar" id="adminSidebar">
   <div class="sidebar-header">
-    <a href="/admin/pages/dashboard.html" class="sidebar-logo">
+    <a
+      href="/admin/pages/dashboard.html"
+      class="sidebar-logo"
+    >
       <span class="sidebar-logo-mark">A</span>
       <span class="sidebar-logo-text">Aufwind</span>
     </a>
@@ -17,50 +20,142 @@
     </button>
   </div>
 
-  <nav class="sidebar-navigation" aria-label="Admin-Navigation">
-    <a href="/admin/pages/dashboard.html" class="sidebar-link active">
-      <span class="sidebar-icon">⌂</span>
-      <span class="sidebar-link-text">Dashboard</span>
+  <nav
+    class="sidebar-navigation"
+    aria-label="Admin-Navigation"
+  >
+    <a
+      href="/admin/pages/dashboard.html"
+      class="sidebar-link"
+      data-page="dashboard"
+    >
+      <span
+        class="sidebar-icon"
+        data-icon="home"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Dashboard
+      </span>
     </a>
 
-    <a href="/admin/pages/bookings.html" class="sidebar-link">
-      <span class="sidebar-icon">▣</span>
-      <span class="sidebar-link-text">Termine</span>
+    <a
+      href="/admin/pages/bookings.html"
+      class="sidebar-link"
+      data-page="bookings"
+    >
+      <span
+        class="sidebar-icon"
+        data-icon="calendar"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Termine
+      </span>
     </a>
 
-    <a href="/admin/pages/availability.html" class="sidebar-link">
-      <span class="sidebar-icon">◷</span>
-      <span class="sidebar-link-text">Verfügbarkeit</span>
+    <a
+      href="/admin/pages/availability.html"
+      class="sidebar-link"
+      data-page="availability"
+    >
+      <span
+        class="sidebar-icon"
+        data-icon="clock"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Verfügbarkeit
+      </span>
     </a>
 
     <a
       href="/admin/pages/blocked-times.html"
       class="sidebar-link"
+      data-page="blocked-times"
     >
-      <span class="sidebar-icon">⊘</span>
-      <span class="sidebar-link-text">Sperrzeiten</span>
+      <span
+        class="sidebar-icon"
+        data-icon="calendar-off"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Sperrzeiten
+      </span>
     </a>
 
-    <a href="/admin/pages/services.html" class="sidebar-link">
-      <span class="sidebar-icon">◇</span>
-      <span class="sidebar-link-text">Beratungsangebote</span>
+    <a
+      href="/admin/pages/services.html"
+      class="sidebar-link"
+      data-page="services"
+    >
+      <span
+        class="sidebar-icon"
+        data-icon="briefcase-business"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Beratungsangebote
+      </span>
     </a>
 
-    <a href="/admin/pages/settings.html" class="sidebar-link">
-      <span class="sidebar-icon">⚙</span>
-      <span class="sidebar-link-text">Einstellungen</span>
+    <a
+      href="/admin/pages/settings.html"
+      class="sidebar-link"
+      data-page="settings"
+    >
+      <span
+        class="sidebar-icon"
+        data-icon="settings"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Einstellungen
+      </span>
     </a>
   </nav>
 
   <div class="sidebar-bottom">
-    <a href="/" class="sidebar-link sidebar-public-link">
-      <span class="sidebar-icon">↗</span>
-      <span class="sidebar-link-text">Zur Website</span>
+    <a
+      href="/"
+      class="sidebar-link sidebar-public-link"
+    >
+      <span
+        class="sidebar-icon"
+        data-icon="external-link"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Zur Website
+      </span>
     </a>
 
-    <button type="button" class="sidebar-link sidebar-logout" id="logoutButton">
-      <span class="sidebar-icon">↪</span>
-      <span class="sidebar-link-text">Abmelden</span>
+    <button
+      type="button"
+      class="sidebar-link sidebar-logout"
+      id="logoutButton"
+    >
+      <span
+        class="sidebar-icon"
+        data-icon="log-out"
+        aria-hidden="true"
+      ></span>
+
+      <span class="sidebar-link-text">
+        Abmelden
+      </span>
     </button>
   </div>
 </aside>
+
+<div
+  class="sidebar-overlay"
+  id="sidebarOverlay"
+></div>

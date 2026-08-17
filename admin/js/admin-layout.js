@@ -1,8 +1,91 @@
+import { icons } from "../../js/icons.js";
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadSidebar();
+  initializeAdminLayout();
+});
+
+
+/* ========================================
+   SIDEBAR LADEN
+   ======================================== */
+
+async function loadSidebar() {
+  const container =
+    document.getElementById("adminSidebarContainer");
+
+  if (!container) {
+    console.error(
+      "Sidebar-Container wurde nicht gefunden.",
+    );
+
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "/admin/sidebar.html",
+      {
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Sidebar konnte nicht geladen werden (${response.status}).`,
+      );
+    }
+
+    const html = await response.text();
+
+    container.innerHTML = html;
+
+    initializeIcons();
+
+  } catch (error) {
+    console.error(
+      "Fehler beim Laden der Sidebar:",
+      error,
+    );
+  }
+}
+
+
+/* ========================================
+   ICONS
+   ======================================== */
+
+function initializeIcons() {
+  const iconElements =
+    document.querySelectorAll(
+      "[data-icon]",
+    );
+
+  iconElements.forEach((element) => {
+    const iconName =
+      element.dataset.icon;
+
+    const iconSvg =
+      icons[iconName];
+
+    if (!iconSvg) {
+      console.warn(
+        `Icon "${iconName}" wurde nicht gefunden.`,
+      );
+
+      return;
+    }
+
+    element.innerHTML = iconSvg;
+  });
+}
+
+
 /* ========================================
    ADMIN LAYOUT
    ======================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+function initializeAdminLayout() {
   const layout =
     document.getElementById("adminLayout");
 
@@ -18,35 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlay =
     document.getElementById("sidebarOverlay");
 
-  const pageTitleElement =
-    document.getElementById("pageTitle");
-
-  const pageSubtitleElement =
-    document.getElementById("pageSubtitle");
-
   if (!layout || !sidebar) {
+    console.error(
+      "Admin-Layout oder Sidebar wurde nicht gefunden.",
+    );
+
     return;
-  }
-
-
-  /* ========================================
-     SEITENTITEL / TOPBAR
-     ======================================== */
-
-  const pageTitle =
-    document.body.dataset.pageTitle;
-
-  const pageSubtitle =
-    document.body.dataset.pageSubtitle;
-
-  if (pageTitleElement && pageTitle) {
-    pageTitleElement.textContent =
-      pageTitle;
-  }
-
-  if (pageSubtitleElement && pageSubtitle) {
-    pageSubtitleElement.textContent =
-      pageSubtitle;
   }
 
 
@@ -58,26 +118,25 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebarToggle.addEventListener(
       "click",
       () => {
-
         layout.classList.toggle(
-          "sidebar-collapsed"
+          "sidebar-collapsed",
         );
 
         const collapsed =
           layout.classList.contains(
-            "sidebar-collapsed"
+            "sidebar-collapsed",
           );
 
         sidebarToggle.setAttribute(
           "aria-expanded",
-          String(!collapsed)
+          String(!collapsed),
         );
 
         localStorage.setItem(
           "admin-sidebar-collapsed",
-          String(collapsed)
+          String(collapsed),
         );
-      }
+      },
     );
   }
 
@@ -88,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const savedState =
     localStorage.getItem(
-      "admin-sidebar-collapsed"
+      "admin-sidebar-collapsed",
     );
 
   if (
@@ -96,81 +155,69 @@ document.addEventListener("DOMContentLoaded", () => {
     window.innerWidth > 800
   ) {
     layout.classList.add(
-      "sidebar-collapsed"
+      "sidebar-collapsed",
     );
 
     if (sidebarToggle) {
       sidebarToggle.setAttribute(
         "aria-expanded",
-        "false"
+        "false",
       );
     }
   }
 
 
   /* ========================================
-     MOBILE SIDEBAR ÖFFNEN
+     MOBILE SIDEBAR
      ======================================== */
 
   function openMobileSidebar() {
-
     sidebar.classList.add(
-      "mobile-open"
+      "mobile-open",
     );
 
     if (overlay) {
       overlay.classList.add(
-        "is-visible"
+        "is-visible",
       );
     }
 
     if (mobileMenuButton) {
       mobileMenuButton.setAttribute(
         "aria-expanded",
-        "true"
+        "true",
       );
     }
   }
 
 
-  /* ========================================
-     MOBILE SIDEBAR SCHLIESSEN
-     ======================================== */
-
   function closeMobileSidebar() {
-
     sidebar.classList.remove(
-      "mobile-open"
+      "mobile-open",
     );
 
     if (overlay) {
       overlay.classList.remove(
-        "is-visible"
+        "is-visible",
       );
     }
 
     if (mobileMenuButton) {
       mobileMenuButton.setAttribute(
         "aria-expanded",
-        "false"
+        "false",
       );
     }
   }
 
 
-  /* ========================================
-     MOBILE BUTTON
-     ======================================== */
-
   if (mobileMenuButton) {
-
     mobileMenuButton.addEventListener(
       "click",
       () => {
-
         const isOpen =
           sidebar.classList.contains(
-            "mobile-open"
+            "mobile-open",
           );
 
         if (isOpen) {
@@ -178,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           openMobileSidebar();
         }
-      }
+      },
     );
   }
 
@@ -190,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (overlay) {
     overlay.addEventListener(
       "click",
-      closeMobileSidebar
+      closeMobileSidebar,
     );
   }
 
@@ -201,22 +248,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navigationLinks =
     document.querySelectorAll(
-      ".sidebar-link[href]"
+      ".sidebar-link[href]",
     );
 
   navigationLinks.forEach((link) => {
-
     link.addEventListener(
       "click",
       () => {
-
         if (window.innerWidth <= 800) {
           closeMobileSidebar();
         }
-
-      }
+      },
     );
-
   });
 
 
@@ -229,10 +272,9 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/\/+$/, "");
 
   navigationLinks.forEach((link) => {
-
     if (
       link.classList.contains(
-        "sidebar-public-link"
+        "sidebar-public-link",
       )
     ) {
       return;
@@ -244,20 +286,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .replace(/\/+$/, "");
 
     if (linkPath === currentPath) {
-
-      navigationLinks.forEach(
-        (item) => {
-          item.classList.remove(
-            "active"
-          );
-        }
-      );
-
-      link.classList.add(
-        "active"
-      );
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
     }
-
   });
 
 
@@ -268,12 +300,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener(
     "keydown",
     (event) => {
-
       if (event.key === "Escape") {
         closeMobileSidebar();
       }
-
-    }
+    },
   );
 
 
@@ -284,12 +314,9 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener(
     "resize",
     () => {
-
       if (window.innerWidth > 800) {
         closeMobileSidebar();
       }
-
-    }
+    },
   );
-
-});
+}
