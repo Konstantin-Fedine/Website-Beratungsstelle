@@ -1,0 +1,789 @@
+/* ========================================
+   BLOCKED TIMES CONTENT
+   ======================================== */
+
+.blocked-times-content {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 35px 40px;
+}
+
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.blocked-times-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.blocked-times-header h2 {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.blocked-times-header p {
+  max-width: 680px;
+
+  margin: 6px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+
+/* ========================================
+   ADD BUTTON
+   ======================================== */
+
+.blocked-times-add-button {
+  min-height: 44px;
+
+  padding: 11px 18px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: var(--radius);
+
+  background: var(--color-primary);
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.blocked-times-add-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 12px rgba(212, 178, 149, 0.25);
+}
+
+.blocked-times-add-button:active {
+  transform: translateY(0);
+}
+
+
+/* ========================================
+   MESSAGE
+   ======================================== */
+
+.blocked-times-message {
+  margin-bottom: 20px;
+
+  padding: 13px 16px;
+
+  border-radius: var(--radius);
+
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.blocked-times-message.success {
+  border: 1px solid rgba(80, 140, 100, 0.22);
+
+  background: rgba(80, 140, 100, 0.08);
+
+  color: #3d704d;
+}
+
+.blocked-times-message.error {
+  border: 1px solid rgba(180, 80, 80, 0.22);
+
+  background: rgba(180, 80, 80, 0.08);
+
+  color: #8a3d3d;
+}
+
+
+/* ========================================
+   STATES
+   ======================================== */
+
+.blocked-times-state {
+  padding: 46px 20px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius);
+
+  background: var(--admin-surface);
+
+  text-align: center;
+
+  color: var(--color-text-muted);
+}
+
+.blocked-times-state p {
+  margin: 0;
+}
+
+.blocked-times-state-error {
+  border-color: rgba(180, 80, 80, 0.2);
+
+  background: rgba(180, 80, 80, 0.05);
+
+  color: #8a3d3d;
+}
+
+.blocked-times-empty-button {
+  margin-top: 14px;
+
+  padding: 9px 14px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ========================================
+   LIST
+   ======================================== */
+
+.blocked-times-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+/* ========================================
+   CARD
+   ======================================== */
+
+.blocked-time-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding: 20px 22px;
+
+  background: var(--admin-surface);
+
+  border: 1px solid var(--admin-border);
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 4px 14px rgba(42, 36, 33, 0.04);
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.blocked-time-card:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(42, 36, 33, 0.12);
+
+  box-shadow:
+    0 7px 20px rgba(42, 36, 33, 0.07);
+}
+
+.blocked-time-card-main {
+  min-width: 0;
+}
+
+.blocked-time-card-title {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.blocked-time-card-date {
+  margin-top: 5px;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.86rem;
+}
+
+.blocked-time-card-meta {
+  margin-top: 7px;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.8rem;
+}
+
+.blocked-time-card-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+
+/* ========================================
+   TYPE BADGE
+   ======================================== */
+
+.blocked-time-type {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  margin-bottom: 8px;
+
+  border-radius: 999px;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.blocked-time-type-day {
+  background: rgba(212, 178, 149, 0.18);
+
+  color: var(--color-dark);
+}
+
+.blocked-time-type-time {
+  background: rgba(80, 110, 150, 0.12);
+
+  color: #3d5e82;
+}
+
+
+/* ========================================
+   CARD BUTTONS
+   ======================================== */
+
+.blocked-time-action {
+  min-height: 36px;
+
+  padding: 8px 12px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition);
+}
+
+.blocked-time-action:hover {
+  background: rgba(42, 36, 33, 0.04);
+}
+
+.blocked-time-action-danger {
+  border-color: rgba(180, 80, 80, 0.25);
+
+  color: #8a3d3d;
+}
+
+.blocked-time-action-danger:hover {
+  background: rgba(180, 80, 80, 0.08);
+
+  border-color: rgba(180, 80, 80, 0.4);
+}
+
+
+/* ========================================
+   MODAL
+   ======================================== */
+
+.blocked-time-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.blocked-time-modal[hidden] {
+  display: none;
+}
+
+.blocked-time-modal-backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  background: rgba(42, 36, 33, 0.42);
+
+  backdrop-filter: blur(3px);
+}
+
+.blocked-time-modal-dialog {
+  position: relative;
+
+  z-index: 1;
+
+  width: min(620px, 100%);
+
+  max-height: calc(100vh - 48px);
+
+  overflow-y: auto;
+
+  background: var(--admin-surface);
+
+  border: 1px solid var(--admin-border);
+
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 24px 70px rgba(42, 36, 33, 0.2);
+}
+
+
+/* ========================================
+   MODAL HEADER
+   ======================================== */
+
+.blocked-time-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 24px 26px;
+
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.blocked-time-modal-header h2 {
+  margin: 0;
+
+  color: var(--color-dark);
+
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.blocked-time-modal-header p {
+  margin: 5px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.84rem;
+}
+
+.blocked-time-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 1.3rem;
+
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.blocked-time-modal-close:hover {
+  background: rgba(42, 36, 33, 0.05);
+}
+
+
+/* ========================================
+   FORM
+   ======================================== */
+
+.blocked-time-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+
+  padding: 26px;
+}
+
+.blocked-time-fieldset {
+  margin: 0;
+
+  padding: 0;
+
+  border: none;
+}
+
+.blocked-time-fieldset legend {
+  margin-bottom: 12px;
+
+  color: var(--color-dark);
+
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.blocked-time-type-options {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
+.blocked-time-radio {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  color: var(--color-dark);
+
+  font-size: 0.84rem;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.blocked-time-radio input {
+  margin: 0;
+
+  accent-color: var(--color-primary);
+
+  cursor: pointer;
+}
+
+
+/* ========================================
+   FIELDS
+   ======================================== */
+
+.blocked-time-fields {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.blocked-time-field-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.blocked-time-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.blocked-time-field label {
+  color: var(--color-dark);
+
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.blocked-time-field input {
+  width: 100%;
+
+  min-height: 42px;
+
+  padding: 10px 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: var(--color-surface);
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.88rem;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.blocked-time-field input:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px rgba(212, 178, 149, 0.15);
+}
+
+.blocked-time-field input::placeholder {
+  color: var(--color-text-muted);
+}
+
+
+/* ========================================
+   FORM ERROR
+   ======================================== */
+
+.blocked-time-form-error {
+  margin: 0;
+
+  padding: 11px 13px;
+
+  border: 1px solid rgba(180, 80, 80, 0.2);
+  border-radius: 8px;
+
+  background: rgba(180, 80, 80, 0.06);
+
+  color: #8a3d3d;
+
+  font-size: 0.82rem;
+
+  line-height: 1.45;
+}
+
+
+/* ========================================
+   MODAL ACTIONS
+   ======================================== */
+
+.blocked-time-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  padding-top: 4px;
+}
+
+.blocked-time-secondary-button,
+.blocked-time-primary-button {
+  min-height: 42px;
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.blocked-time-secondary-button {
+  border: 1px solid var(--admin-border);
+
+  background: transparent;
+
+  color: var(--color-dark);
+}
+
+.blocked-time-secondary-button:hover {
+  background: rgba(42, 36, 33, 0.04);
+}
+
+.blocked-time-primary-button {
+  border: none;
+
+  background: var(--color-primary);
+
+  color: var(--color-dark);
+}
+
+.blocked-time-primary-button:hover {
+  box-shadow:
+    0 5px 12px rgba(212, 178, 149, 0.2);
+}
+
+.blocked-time-primary-button:disabled,
+.blocked-time-secondary-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* ========================================
+   SCROLLSPERRE
+   ======================================== */
+
+body.blocked-time-modal-open {
+  overflow: hidden;
+}
+
+
+/* ========================================
+   TABLET
+   ======================================== */
+
+@media (max-width: 800px) {
+
+  .blocked-times-content {
+    padding: 28px 24px;
+  }
+
+  .blocked-times-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .blocked-times-add-button {
+    width: fit-content;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 600px) {
+
+  .blocked-times-content {
+    padding: 24px 18px;
+  }
+
+  .blocked-times-header h2 {
+    font-size: 1.45rem;
+  }
+
+  .blocked-times-add-button {
+    width: 100%;
+  }
+
+  .blocked-time-card {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+    padding: 18px;
+  }
+
+  .blocked-time-card-actions {
+    width: 100%;
+  }
+
+  .blocked-time-action {
+    flex: 1;
+  }
+
+  .blocked-time-modal {
+    align-items: flex-end;
+
+    padding: 0;
+  }
+
+  .blocked-time-modal-dialog {
+    width: 100%;
+
+    max-height: 92vh;
+
+    border-radius: 18px 18px 0 0;
+  }
+
+  .blocked-time-modal-header,
+  .blocked-time-form {
+    padding: 20px;
+  }
+
+  .blocked-time-field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .blocked-time-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .blocked-time-primary-button,
+  .blocked-time-secondary-button {
+    width: 100%;
+  }
+}
+
+
+/* ========================================
+   VERY SMALL PHONES
+   ======================================== */
+
+@media (max-width: 400px) {
+
+  .blocked-times-content {
+    padding: 20px 14px;
+  }
+
+  .blocked-time-modal-header,
+  .blocked-time-form {
+    padding: 16px;
+  }
+
+  .blocked-time-card {
+    padding: 16px;
+  }
+}

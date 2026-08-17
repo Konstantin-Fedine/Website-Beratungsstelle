@@ -1,1621 +1,1267 @@
 
 ============================================================
-DATEI: admin\css\availability.css
+DATEI: js\booking-api.js
 ============================================================
 
-/* ========================================
-   AVAILABILITY CONTENT
-   ======================================== */
+import { supabase } from "./supabase.js";
 
-.availability-content {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 35px 40px;
+// Geladene Buchungsdaten (einmal beim Start, blocked_days pro Monat)
+let bookingSettings = null;
+let availabilityRules = [];
+const blockedDaysSet = new Set();
+
+const DEFAULT_SETTINGS = {
+  booking_interval: 60,
+  booking_buffer_before: 0,
+  booking_buffer_after: 0,
+  booking_advance_days: 180,
+  minimum_notice_hours: 24,
+};
+
+export function formatDateISO(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
-
-/* ========================================
-   HEADER
-   ======================================== */
-
-.availability-header {
-  margin-bottom: 28px;
+// Datenbank: 1=Montag … 7=Sonntag
+export function getWeekdayDb(date) {
+  const jsDay = date.getDay();
+  return jsDay === 0 ? 7 : jsDay;
 }
 
-.availability-header h2 {
-  margin: 0;
-
-  color: var(--color-dark);
-
-  font-size: 1.7rem;
-  font-weight: 700;
+function timeToMinutes(timeStr) {
+  const parts = timeStr.split(":");
+  return Number(parts[0]) * 60 + Number(parts[1]);
 }
 
-.availability-header p {
-  margin: 6px 0 0;
-
-  color: var(--color-text-muted);
-
-  font-size: 0.95rem;
+function minutesToTime(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
 }
 
-
-/* ========================================
-   WOCHENTAGE
-   ======================================== */
-
-.availability-days {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+function rangesOverlap(startA, endA, startB, endB) {
+  return startA < endB && endA > startB;
 }
 
-
-/* ========================================
-   WOCHENTAG-KARTE
-   ======================================== */
-
-.availability-day {
-  padding: 22px 24px;
-
-  background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-
-  box-shadow:
-    0 4px 14px rgba(42, 36, 33, 0.04);
-}
-
-
-/* ========================================
-   TAG HEADER
-   ======================================== */
-
-.availability-day-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  margin-bottom: 18px;
-}
-
-.availability-day-header h3 {
-  margin: 0;
-
-  color: var(--color-dark);
-
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-
-/* ========================================
-   VERFÜGBAR TOGGLE
-   ======================================== */
-
-.availability-toggle {
-  display: inline-flex;
-  align-items: center;
-
-  gap: 9px;
-
-  color: var(--color-dark);
-
-  font-size: 0.85rem;
-  font-weight: 600;
-
-  cursor: pointer;
-  user-select: none;
-}
-
-.availability-toggle input {
-  width: 17px;
-  height: 17px;
-
-  margin: 0;
-
-  accent-color: var(--color-primary);
-
-  cursor: pointer;
-}
-
-
-/* ========================================
-   ZEITBLÖCKE
-   ======================================== */
-
-.availability-time-blocks {
-  display: flex;
-  flex-direction: column;
-
-  gap: 9px;
-
-  margin-bottom: 14px;
-}
-
-
-/* ========================================
-   EIN ZEITBLOCK
-   ======================================== */
-
-.availability-time-block {
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-}
-
-
-/* ========================================
-   ZEIT INPUTS
-   ======================================== */
-
-.availability-time-start,
-.availability-time-end {
-  min-height: 40px;
-
-  padding: 8px 11px;
-
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-
-  background: var(--color-surface);
-  color: var(--color-dark);
-
-  font-family: inherit;
-  font-size: 0.88rem;
-
-  outline: none;
-
-  transition:
-    border-color var(--transition),
-    box-shadow var(--transition);
-}
-
-.availability-time-start:focus,
-.availability-time-end:focus {
-  border-color: var(--color-primary);
-
-  box-shadow:
-    0 0 0 3px rgba(212, 178, 149, 0.15);
-}
-
-
-/* ========================================
-   ZEIT TRENNER
-   ======================================== */
-
-.availability-time-separator {
-  color: var(--color-text-muted);
-
-  font-size: 0.85rem;
-}
-
-
-/* ========================================
-   ZEITRAUM LÖSCHEN
-   ======================================== */
-
-.availability-delete {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 36px;
-  height: 36px;
-
-  flex-shrink: 0;
-
-  padding: 0;
-
-  border: 1px solid rgba(180, 80, 80, 0.25);
-  border-radius: 8px;
-
-  background: transparent;
-
-  color: #8a3d3d;
-
-  font-family: inherit;
-  font-size: 1rem;
-
-  cursor: pointer;
-
-  transition:
-    background var(--transition),
-    border-color var(--transition);
-}
-
-.availability-delete:hover {
-  background: rgba(180, 80, 80, 0.08);
-
-  border-color: rgba(180, 80, 80, 0.4);
-}
-
-
-/* ========================================
-   ZEITRAUM HINZUFÜGEN
-   ======================================== */
-
-.availability-add {
-  display: inline-flex;
-  align-items: center;
-
-  width: fit-content;
-
-  gap: 6px;
-
-  padding: 7px 0;
-
-  border: none;
-
-  background: transparent;
-
-  color: var(--color-dark);
-
-  font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition:
-    color var(--transition);
-}
-
-.availability-add:hover {
-  color: var(--color-primary);
-}
-
-
-/* ========================================
-   NICHT VERFÜGBAR
-   ======================================== */
-
-.availability-day:not(:has(.availability-day-active:checked))
-  .availability-time-blocks,
-.availability-day:not(:has(.availability-day-active:checked))
-  .availability-add {
-  opacity: 0.45;
-}
-
-
-/* ========================================
-   NACHRICHTEN
-   ======================================== */
-
-.availability-message {
-  margin-bottom: 20px;
-
-  padding: 13px 16px;
-
-  border-radius: var(--radius);
-
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-.availability-message-success {
-  border: 1px solid rgba(80, 140, 100, 0.22);
-
-  background: rgba(80, 140, 100, 0.08);
-
-  color: #3d704d;
-}
-
-.availability-message-error {
-  border: 1px solid rgba(180, 80, 80, 0.22);
-
-  background: rgba(180, 80, 80, 0.08);
-
-  color: #8a3d3d;
-}
-
-
-/* ========================================
-   SPEICHERN
-   ======================================== */
-
-.availability-actions {
-  display: flex;
-  justify-content: flex-end;
-
-  margin-top: 22px;
-
-  padding-bottom: 30px;
-}
-
-.availability-save {
-  min-height: 44px;
-
-  padding: 11px 20px;
-
-  border: none;
-  border-radius: var(--radius);
-
-  background: var(--color-primary);
-
-  color: var(--color-dark);
-
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition),
-    opacity var(--transition);
-}
-
-.availability-save:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 5px 12px rgba(212, 178, 149, 0.25);
-}
-
-.availability-save:active {
-  transform: translateY(0);
-}
-
-.availability-save:disabled {
-  opacity: 0.6;
-
-  cursor: not-allowed;
-
-  transform: none;
-
-  box-shadow: none;
-}
-
-
-/* ========================================
-   TABLET
-   ======================================== */
-
-@media (max-width: 800px) {
-
-  .availability-content {
-    padding: 28px 24px;
-  }
-
-  .availability-day {
-    padding: 20px;
-  }
-}
-
-
-/* ========================================
-   MOBILE
-   ======================================== */
-
-@media (max-width: 600px) {
-
-  .availability-content {
-    padding: 24px 18px;
-  }
-
-  .availability-header {
-    margin-bottom: 22px;
-  }
-
-  .availability-header h2 {
-    font-size: 1.45rem;
-  }
-
-  .availability-day {
-    padding: 18px;
-  }
-
-  .availability-day-header {
-    align-items: flex-start;
-
-    flex-direction: column;
-
-    gap: 12px;
-  }
-
-  .availability-time-block {
-    display: grid;
-
-    grid-template-columns:
-      minmax(0, 1fr)
-      auto
-      minmax(0, 1fr)
-      36px;
-
-    gap: 7px;
-  }
-
-  .availability-time-start,
-  .availability-time-end {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .availability-time-separator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .availability-actions {
-    justify-content: stretch;
-  }
-
-  .availability-save {
-    width: 100%;
-  }
-}
-
-
-/* ========================================
-   SEHR KLEINE HANDYS
-   ======================================== */
-
-@media (max-width: 400px) {
-
-  .availability-content {
-    padding: 20px 14px;
-  }
-
-  .availability-day {
-    padding: 16px;
-  }
-
-  .availability-time-block {
-    grid-template-columns:
-      minmax(0, 1fr)
-      auto
-      minmax(0, 1fr);
-
-    gap: 6px;
-  }
-
-  .availability-delete {
-    grid-column: 1 / -1;
-
-    width: 100%;
-  }
-}
-
-
-============================================================
-DATEI: admin\js\availability.js
-============================================================
-
-import { supabase } from "../../js/supabase.js";
-
-/* ========================================
-   KONFIGURATION
-   ======================================== */
-
-const weekdays = [
-  { id: 1, name: "Montag" },
-  { id: 2, name: "Dienstag" },
-  { id: 3, name: "Mittwoch" },
-  { id: 4, name: "Donnerstag" },
-  { id: 5, name: "Freitag" },
-  { id: 6, name: "Samstag" },
-  { id: 7, name: "Sonntag" },
-];
-
-
-/* ========================================
-   ELEMENTE
-   ======================================== */
-
-const daysContainer =
-  document.getElementById("availability-days");
-
-const messageElement =
-  document.getElementById("availability-message");
-
-const saveButton =
-  document.getElementById("save-availability");
-
-
-/* ========================================
-   NACHRICHTEN
-   ======================================== */
-
-function showMessage(message, type) {
-  if (!messageElement) {
-    return;
-  }
-
-  messageElement.textContent = message;
-
-  messageElement.className =
-    `availability-message availability-message-${type}`;
-
-  messageElement.hidden = false;
-}
-
-
-function hideMessage() {
-  if (!messageElement) {
-    return;
-  }
-
-  messageElement.hidden = true;
-  messageElement.textContent = "";
-  messageElement.className = "availability-message";
-}
-
-
-/* ========================================
-   ZEITBLOCK ERSTELLEN
-   ======================================== */
-
-function createTimeBlock(
-  start = "09:00",
-  end = "17:00"
-) {
-  const block = document.createElement("div");
-
-  /*
-   * Diese Klasse entspricht dem CSS.
-   */
-  block.className = "availability-time-block";
-
-  block.innerHTML = `
-    <input
-      type="time"
-      class="availability-time-start"
-      value="${start}"
-      aria-label="Startzeit"
-    />
-
-    <span class="availability-time-separator">
-      –
-    </span>
-
-    <input
-      type="time"
-      class="availability-time-end"
-      value="${end}"
-      aria-label="Endzeit"
-    />
-
-    <button
-      type="button"
-      class="availability-delete"
-      aria-label="Zeitraum löschen"
-      title="Zeitraum löschen"
-    >
-      🗑
-    </button>
-  `;
-
-  const deleteButton =
-    block.querySelector(".availability-delete");
-
-  deleteButton.addEventListener("click", () => {
-    block.remove();
-  });
-
-  return block;
-}
-
-
-/* ========================================
-   WOCHENTAG ERSTELLEN
-   ======================================== */
-
-function createWeekday(day, availabilityRows) {
-  const dayElement =
-    document.createElement("article");
-
-  dayElement.className = "availability-day";
-
-
-  /*
-   * Alle aktiven Zeiträume dieses
-   * Wochentages finden.
-   */
-
-  const activeRows =
-    availabilityRows
-      .filter(
-        (row) =>
-          row.weekday === day.id &&
-          row.active === true
-      )
-      .sort(
-        (a, b) =>
-          a.start_time.localeCompare(
-            b.start_time
-          )
-      );
-
-
-  const isActive =
-    activeRows.length > 0;
-
-
-  dayElement.innerHTML = `
-    <div class="availability-day-header">
-
-      <div>
-        <h3>
-          ${day.name}
-        </h3>
-      </div>
-
-      <label class="availability-toggle">
-
-        <input
-          type="checkbox"
-          class="availability-day-active"
-          ${isActive ? "checked" : ""}
-        />
-
-        <span>
-          Verfügbar
-        </span>
-
-      </label>
-
-    </div>
-
-    <div class="availability-time-blocks"></div>
-
-    <button
-      type="button"
-      class="availability-add"
-    >
-      + Zeitraum hinzufügen
-    </button>
-  `;
-
-
-  const blocksContainer =
-    dayElement.querySelector(
-      ".availability-time-blocks"
-    );
-
-
-  const activeCheckbox =
-    dayElement.querySelector(
-      ".availability-day-active"
-    );
-
-
-  const addButton =
-    dayElement.querySelector(
-      ".availability-add"
-    );
-
-
-  /* ========================================
-     VORHANDENE ZEITBLÖCKE
-     ======================================== */
-
-  activeRows.forEach((row) => {
-    blocksContainer.appendChild(
-      createTimeBlock(
-        row.start_time.slice(0, 5),
-        row.end_time.slice(0, 5)
-      )
-    );
-  });
-
-
-  /* ========================================
-     ZEITRAUM HINZUFÜGEN
-     ======================================== */
-
-  addButton.addEventListener("click", () => {
-    blocksContainer.appendChild(
-      createTimeBlock()
-    );
-  });
-
-
-  /* ========================================
-     AKTIV / INAKTIV
-     ======================================== */
-
-  function updateDayState() {
-    if (activeCheckbox.checked) {
-
-      dayElement.classList.remove(
-        "availability-day-unavailable"
-      );
-
-      /*
-       * Wenn der Tag aktiviert wird und
-       * noch kein Zeitraum existiert,
-       * automatisch 09:00–17:00 hinzufügen.
-       */
-
-      const blocks =
-        blocksContainer.querySelectorAll(
-          ".availability-time-block"
-        );
-
-      if (blocks.length === 0) {
-        blocksContainer.appendChild(
-          createTimeBlock()
-        );
-      }
-
-    } else {
-
-      dayElement.classList.add(
-        "availability-day-unavailable"
-      );
-    }
-  }
-
-
-  activeCheckbox.addEventListener(
-    "change",
-    updateDayState
-  );
-
-
-  /*
-   * Anfangszustand setzen.
-   */
-
-  updateDayState();
-
-
-  return dayElement;
-}
-
-
-/* ========================================
-   VERFÜGBARKEIT LADEN
-   ======================================== */
-
-async function loadAvailability() {
-  hideMessage();
-
-  if (!daysContainer) {
-    console.error(
-      "Element #availability-days wurde nicht gefunden."
-    );
-
-    return;
-  }
-
-
-  const {
-    data,
-    error
-  } = await supabase
-    .from("availability")
-    .select(`
-      id,
-      weekday,
-      start_time,
-      end_time,
-      active
-    `)
-    .order(
-      "weekday",
-      {
-        ascending: true
-      }
-    )
-    .order(
-      "start_time",
-      {
-        ascending: true
-      }
-    );
-
+async function loadSettings() {
+  const { data, error } = await supabase.from("settings").select("*").limit(1);
 
   if (error) {
+    console.error("Fehler beim Laden der Einstellungen:", error);
+    return DEFAULT_SETTINGS;
+  }
 
+  return data?.[0] ?? DEFAULT_SETTINGS;
+}
+
+async function loadAvailability() {
+  const { data, error } = await supabase
+    .from("availability")
+    .select("weekday, start_time, end_time, active")
+    .eq("active", true);
+
+  if (error) {
+    console.error("Fehler beim Laden der Verfügbarkeiten:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+export async function loadBlockedDaysForMonth(year, month) {
+  const monthStart = formatDateISO(new Date(year, month, 1));
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const monthEnd = formatDateISO(new Date(year, month, lastDay));
+
+  const { data, error } = await supabase
+    .from("blocked_days")
+    .select("date")
+    .gte("date", monthStart)
+    .lte("date", monthEnd);
+
+  if (error) {
+    console.error("Fehler beim Laden gesperrter Tage:", error);
+    return;
+  }
+
+  blockedDaysSet.clear();
+
+  data?.forEach((row) => {
+    blockedDaysSet.add(row.date);
+  });
+}
+
+export async function initBookingData() {
+  const [settings, availability] = await Promise.all([
+    loadSettings(),
+    loadAvailability(),
+  ]);
+
+  bookingSettings = settings;
+  availabilityRules = availability;
+
+  if (!availabilityRules.length) {
+    console.warn(
+      "Keine aktiven Verfügbarkeiten gefunden. Verwende Platzhalter Mo–Fr 09:00–17:00.",
+    );
+
+    availabilityRules = [
+      { weekday: 1, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 2, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 3, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 4, start_time: "09:00", end_time: "17:00", active: true },
+      { weekday: 5, start_time: "09:00", end_time: "17:00", active: true },
+    ];
+  }
+
+  const now = new Date();
+  await loadBlockedDaysForMonth(now.getFullYear(), now.getMonth());
+}
+
+export function isDateSelectable(date, today) {
+  if (!bookingSettings) {
+    return false;
+  }
+
+  if (date < today) {
+    return false;
+  }
+
+  if (blockedDaysSet.has(formatDateISO(date))) {
+    return false;
+  }
+
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + bookingSettings.booking_advance_days);
+
+  if (date > maxDate) {
+    return false;
+  }
+
+  const weekday = getWeekdayDb(date);
+  const hasAvailability = availabilityRules.some(
+    (rule) => rule.weekday === weekday,
+  );
+
+  return hasAvailability;
+}
+
+function generateRawSlots(windows, durationMinutes, interval) {
+  const slots = [];
+
+  windows.forEach((window) => {
+    const windowStart = timeToMinutes(window.start_time);
+    const windowEnd = timeToMinutes(window.end_time);
+
+    for (
+      let slot = windowStart;
+      slot + durationMinutes <= windowEnd;
+      slot += interval
+    ) {
+      slots.push(slot);
+    }
+  });
+
+  return [...new Set(slots)].sort((a, b) => a - b);
+}
+
+function filterSlotsByBlockedTimes(slots, durationMinutes, blockedTimes) {
+  return slots.filter((slot) => {
+    const slotEnd = slot + durationMinutes;
+
+    return !blockedTimes.some((block) => {
+      const blockStart = timeToMinutes(block.start_time);
+      const blockEnd = timeToMinutes(block.end_time);
+      return rangesOverlap(slot, slotEnd, blockStart, blockEnd);
+    });
+  });
+}
+
+function filterSlotsByBookings(
+  slots,
+  durationMinutes,
+  bookings,
+  bufferBefore,
+  bufferAfter,
+) {
+  return slots.filter((slot) => {
+    const slotEnd = slot + durationMinutes;
+
+    return !bookings.some((booking) => {
+      const bookStart = timeToMinutes(booking.booking_time) - bufferBefore;
+      const bookEnd =
+        timeToMinutes(booking.booking_time) + booking.duration + bufferAfter;
+
+      return rangesOverlap(slot, slotEnd, bookStart, bookEnd);
+    });
+  });
+}
+
+function filterSlotsByMinimumNotice(slots, date, today, minimumNoticeHours) {
+  if (date.getTime() !== today.getTime()) {
+    return slots;
+  }
+
+  const now = new Date();
+  const earliestMinutes =
+    now.getHours() * 60 + now.getMinutes() + minimumNoticeHours * 60;
+
+  return slots.filter((slot) => slot >= earliestMinutes);
+}
+
+export async function getAvailableSlots(date, durationMinutes) {
+  if (!bookingSettings || !durationMinutes) {
+    return [];
+  }
+
+  const weekday = getWeekdayDb(date);
+  const windows = availabilityRules.filter((rule) => rule.weekday === weekday);
+
+  if (windows.length === 0) {
+    return [];
+  }
+
+  const dateISO = formatDateISO(date);
+
+  const [blockedTimesResult, bookingsResult] = await Promise.all([
+    supabase
+      .from("blocked_times")
+      .select("start_time, end_time")
+      .eq("date", dateISO),
+    supabase
+      .from("booking_blocks")
+      .select("booking_time, duration")
+      .eq("booking_date", dateISO),
+  ]);
+
+  if (blockedTimesResult.error) {
     console.error(
-      "Verfügbarkeit konnte nicht geladen werden:",
-      error
+      "Fehler beim Laden gesperrter Zeiten:",
+      blockedTimesResult.error,
     );
+  }
 
-    showMessage(
-      "Die Verfügbarkeit konnte nicht geladen werden.",
-      "error"
-    );
+  if (bookingsResult.error) {
+    console.error("Fehler beim Laden belegter Termine:", bookingsResult.error);
+  }
+
+  const blockedTimes = blockedTimesResult.data ?? [];
+  const bookings = bookingsResult.data ?? [];
+
+  let slots = generateRawSlots(
+    windows,
+    durationMinutes,
+    bookingSettings.booking_interval,
+  );
+
+  slots = filterSlotsByBlockedTimes(slots, durationMinutes, blockedTimes);
+  slots = filterSlotsByBookings(
+    slots,
+    durationMinutes,
+    bookings,
+    bookingSettings.booking_buffer_before,
+    bookingSettings.booking_buffer_after,
+  );
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  slots = filterSlotsByMinimumNotice(
+    slots,
+    date,
+    today,
+    bookingSettings.minimum_notice_hours,
+  );
+
+  return slots.map(minutesToTime);
+}
+
+
+
+============================================================
+DATEI: js\booking.js
+============================================================
+
+import { supabase } from "./supabase.js";
+
+import {
+  initBookingData,
+  loadBlockedDaysForMonth,
+  isDateSelectable,
+  getAvailableSlots,
+  formatDateISO,
+} from "./booking-api.js";
+
+console.log("Booking System gestartet");
+
+// Utility: race a promise against a timeout (does not abort underlying request)
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), ms),
+    ),
+  ]);
+}
+
+const servicesContainer = document.getElementById("services-list");
+
+const bookingState = {
+  selectedService: null,
+  selectedDate: null,
+  selectedTime: null,
+  customer: {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: "",
+  },
+};
+
+const nextButtons = document.querySelectorAll(".next-step");
+const previousButtons = document.querySelectorAll(".previous-step");
+const bookingForm = document.getElementById("booking-form");
+const bookingFormError = document.getElementById("booking-form-error");
+const bookingSummaryError = document.getElementById("booking-summary-error");
+const bookingConfirmButton = document.getElementById("booking-confirm-button");
+let isBookingSubmitting = false;
+
+function setBookingSubmitting(isSubmitting) {
+  isBookingSubmitting = isSubmitting;
+  if (!bookingConfirmButton) {
+    return;
+  }
+
+  bookingConfirmButton.disabled = isSubmitting;
+  bookingConfirmButton.textContent = isSubmitting
+    ? "Buchung wird verarbeitet..."
+    : "Termin bestätigen";
+}
+
+if (bookingConfirmButton) {
+  bookingConfirmButton.addEventListener("click", confirmBooking);
+}
+
+// Attach live counter to message textarea
+document.addEventListener("DOMContentLoaded", () => {
+  const msg = document.getElementById("message");
+  if (msg) {
+    msg.addEventListener("input", updateMessageCounter);
+    // initialize
+    updateMessageCounter();
+    // also check message length state (warning + disable next)
+    msg.addEventListener("input", checkMessageLengthState);
+    checkMessageLengthState();
+  }
+});
+
+nextButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    const currentStep = event.target.closest(".booking-step");
+
+    if (!currentStep) {
+      return;
+    }
+
+    if (currentStep.id === "booking-step-service") {
+      if (!bookingState.selectedService) {
+        alert("Bitte wählen Sie zuerst eine Beratung aus.");
+        return;
+      }
+
+      showStep("booking-step-date");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-date") {
+      if (!bookingState.selectedDate) {
+        alert("Bitte wählen Sie zuerst ein Datum aus.");
+        return;
+      }
+
+      if (!bookingState.selectedTime) {
+        alert("Bitte wählen Sie zuerst eine Uhrzeit aus.");
+        return;
+      }
+
+      showStep("booking-step-data");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-data") {
+      collectCustomerFormValues();
+
+      if (!validateCustomerForm()) {
+        return;
+      }
+
+      showStep("booking-step-summary");
+      return;
+    }
+  });
+});
+
+previousButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const currentStep = button.closest(".booking-step");
+
+    if (!currentStep) {
+      return;
+    }
+
+    if (currentStep.id === "booking-step-date") {
+      showStep("booking-step-service");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-data") {
+      showStep("booking-step-date");
+      return;
+    }
+
+    if (currentStep.id === "booking-step-summary") {
+      showStep("booking-step-data");
+      return;
+    }
+  });
+});
+
+function showError(message) {
+  servicesContainer.innerHTML = `
+
+        <div class="booking-error">
+
+            <p>
+                ${message}
+            </p>
+
+            <a href="services.html" class="btn btn-primary">
+                Zu den Angeboten
+            </a>
+
+        </div>
+
+    `;
+}
+
+function showStep(stepId) {
+  const steps = document.querySelectorAll(".booking-step");
+
+  steps.forEach((step) => {
+    step.style.display = "none";
+    step.classList.remove("active");
+  });
+
+  const activeStep = document.getElementById(stepId);
+
+  if (activeStep) {
+    activeStep.style.display = "block";
+    activeStep.classList.add("active");
+  }
+
+  if (stepId === "booking-step-date") {
+    updateTimesPanel();
+  }
+
+  if (stepId === "booking-step-data") {
+    populateCustomerForm();
+  }
+
+  if (stepId === "booking-step-summary") {
+    renderBookingSummary();
+  }
+
+  updateProgress(stepId);
+}
+
+function updateProgress(stepId) {
+  const progressSteps = document.querySelectorAll(".progress-step");
+
+  progressSteps.forEach((step) => {
+    step.classList.remove("active");
+  });
+
+  let activeIndex = 0;
+
+  if (stepId === "booking-step-date") {
+    activeIndex = 1;
+  }
+
+  if (stepId === "booking-step-data") {
+    activeIndex = 2;
+  }
+
+  if (stepId === "booking-step-summary") {
+    activeIndex = 3;
+  }
+
+  if (progressSteps[activeIndex]) {
+    progressSteps[activeIndex].classList.add("active");
+  }
+}
+
+async function loadServices() {
+  console.log("Lade Beratungsangebote...");
+
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .eq("active", true)
+    .order("sort_order");
+
+  console.log("Services-Abfrage:", {
+    data,
+    error,
+  });
+
+  if (error) {
+    console.error("Fehler beim Laden der Services:", error);
+
+    showError("Die Beratungsangebote konnten gerade nicht geladen werden.");
 
     return;
   }
 
+  if (!data || data.length === 0) {
+    showError("Aktuell sind keine Beratungsangebote verfügbar.");
 
-  console.log(
-    "Verfügbarkeit geladen:",
-    data
+    return;
+  }
+
+  console.log("Services geladen:", data);
+
+  servicesContainer.innerHTML = "";
+
+  data.forEach((service) => {
+    const card = document.createElement("div");
+    card.className = "booking-service-card";
+
+    const titleEl = document.createElement("h3");
+    titleEl.textContent = service.title;
+
+    const descriptionEl = document.createElement("p");
+    descriptionEl.textContent = service.description || "";
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "service-info";
+
+    const durationSpan = document.createElement("span");
+    durationSpan.textContent = `⏱ ${service.duration} Minuten`;
+
+    const priceSpan = document.createElement("span");
+    priceSpan.textContent = `💶 ${service.price} €`;
+
+    infoDiv.append(durationSpan, priceSpan);
+
+    const button = document.createElement("button");
+    button.className = "btn btn-primary select-service-button";
+    button.type = "button";
+    button.textContent = "Auswählen";
+
+    card.append(titleEl, descriptionEl, infoDiv, button);
+    servicesContainer.appendChild(card);
+
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".booking-service-card").forEach((card) => {
+        card.classList.remove("selected");
+      });
+
+      card.classList.add("selected");
+
+      bookingState.selectedService = {
+        id: service.id,
+        title: service.title,
+        duration: service.duration,
+        price: service.price,
+      };
+
+      console.log("Ausgewählte Beratung:", bookingState.selectedService);
+
+      showStep("booking-step-date");
+    });
+  });
+}
+
+// Welcher Monat gerade im Kalender angezeigt wird (unabhängig vom gewählten Datum)
+let calendarViewDate = new Date();
+calendarViewDate.setDate(1);
+calendarViewDate.setHours(0, 0, 0, 0);
+
+function getTodayAtMidnight() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
+function createDateAtMidnight(year, month, day) {
+  const date = new Date(year, month, day);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function isSameDay(dateA, dateB) {
+  if (!dateA || !dateB) {
+    return false;
+  }
+
+  return (
+    dateA.getFullYear() === dateB.getFullYear() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getDate() === dateB.getDate()
   );
+}
 
+function initCalendar() {
+  const previousMonthButton = document.getElementById("previous-month");
+  const nextMonthButton = document.getElementById("next-month");
 
-  const availabilityRows =
-    data ?? [];
+  previousMonthButton.addEventListener("click", async () => {
+    calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+    await loadBlockedDaysForMonth(
+      calendarViewDate.getFullYear(),
+      calendarViewDate.getMonth(),
+    );
+    renderCalendar();
+  });
 
+  nextMonthButton.addEventListener("click", async () => {
+    calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+    await loadBlockedDaysForMonth(
+      calendarViewDate.getFullYear(),
+      calendarViewDate.getMonth(),
+    );
+    renderCalendar();
+  });
+
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const monthTitle = document.getElementById("current-month");
+  const daysContainer = document.getElementById("calendar-days");
+
+  const year = calendarViewDate.getFullYear();
+  const month = calendarViewDate.getMonth();
+  const today = getTodayAtMidnight();
+
+  const monthName = calendarViewDate.toLocaleDateString("de-DE", {
+    month: "long",
+    year: "numeric",
+  });
+
+  monthTitle.textContent = monthName;
 
   daysContainer.innerHTML = "";
 
+  const firstDay = new Date(year, month, 1);
+  let startDay = firstDay.getDay();
 
-  weekdays.forEach((day) => {
+  // Sonntag = 0 → Montag ist der erste Wochentag
+  if (startDay === 0) {
+    startDay = 7;
+  }
 
-    daysContainer.appendChild(
-      createWeekday(
-        day,
-        availabilityRows
-      )
-    );
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+  // Leere Felder vor dem ersten Tag des Monats
+  for (let i = 1; i < startDay; i++) {
+    const empty = document.createElement("div");
+    empty.className = "calendar-day empty";
+    daysContainer.appendChild(empty);
+  }
+
+  // Tage des Monats erstellen
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayDate = createDateAtMidnight(year, month, day);
+    const dayElement = document.createElement("button");
+
+    dayElement.type = "button";
+    dayElement.className = "calendar-day";
+    dayElement.textContent = day;
+
+    const isPastDay = dayDate < today;
+    const isToday = isSameDay(dayDate, today);
+    const isSelected = isSameDay(dayDate, bookingState.selectedDate);
+    const canSelect = isDateSelectable(dayDate, today);
+
+    if (!canSelect) {
+      dayElement.classList.add("unavailable");
+      dayElement.disabled = true;
+
+      if (isPastDay) {
+        dayElement.classList.add("past");
+      }
+    }
+
+    if (isToday) {
+      dayElement.classList.add("today");
+    }
+
+    if (isSelected) {
+      dayElement.classList.add("selected");
+    }
+
+    if (canSelect) {
+      dayElement.addEventListener("click", () => {
+        document.querySelectorAll(".calendar-day.selected").forEach((el) => {
+          el.classList.remove("selected");
+        });
+
+        dayElement.classList.add("selected");
+
+        bookingState.selectedDate = dayDate;
+
+        // Bei neuem Datum: alte Uhrzeit zurücksetzen
+        bookingState.selectedTime = null;
+
+        console.log("Ausgewähltes Datum:", bookingState.selectedDate);
+
+        updateTimesPanel();
+      });
+    }
+
+    daysContainer.appendChild(dayElement);
+  }
+}
+
+const timesPlaceholder = document.getElementById("times-placeholder");
+const timesContent = document.getElementById("times-content");
+const selectedDateLabel = document.getElementById("selected-date-label");
+const timeSlotsContainer = document.getElementById("time-slots");
+
+function formatDateLabel(date) {
+  return date.toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
   });
 }
 
-
-/* ========================================
-   ZEIT IN MINUTEN UMWANDELN
-   ======================================== */
-
-function timeToMinutes(time) {
-  const [
-    hours,
-    minutes
-  ] = time
-    .split(":")
-    .map(Number);
-
-  return (
-    hours * 60 +
-    minutes
-  );
+function formatDateLabelShort(date) {
+  return date.toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
-
-/* ========================================
-   FORMULAR AUSLESEN
-   ======================================== */
-
-function collectAvailability() {
-  const result = [];
-
-
-  const dayElements =
-    daysContainer.querySelectorAll(
-      ".availability-day"
-    );
-
-
-  dayElements.forEach(
-    (dayElement, index) => {
-
-      const weekday =
-        index + 1;
-
-
-      const activeCheckbox =
-        dayElement.querySelector(
-          ".availability-day-active"
-        );
-
-
-      const active =
-        activeCheckbox.checked;
-
-
-      const blocks =
-        dayElement.querySelectorAll(
-          ".availability-time-block"
-        );
-
-
-      blocks.forEach((block) => {
-
-        const startInput =
-          block.querySelector(
-            ".availability-time-start"
-          );
-
-
-        const endInput =
-          block.querySelector(
-            ".availability-time-end"
-          );
-
-
-        result.push({
-          weekday,
-          start_time:
-            startInput.value,
-          end_time:
-            endInput.value,
-          active,
-        });
-
-      });
-
-    }
-  );
-
-
-  return result;
+function formatCurrency(value) {
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 2,
+  }).format(value);
 }
 
+function renderBookingSummary() {
+  const summaryContainer = document.getElementById("booking-summary");
 
-/* ========================================
-   VALIDIERUNG
-   ======================================== */
-
-function validateAvailability(rows) {
-
-  /*
-   * 1. Jeden einzelnen Zeitraum prüfen.
-   */
-
-  for (const row of rows) {
-
-    /*
-     * Inaktive Tage werden nicht gespeichert.
-     */
-
-    if (!row.active) {
-      continue;
-    }
-
-
-    if (
-      !row.start_time ||
-      !row.end_time
-    ) {
-
-      return {
-        valid: false,
-        message:
-          "Bitte fülle alle Zeiträume vollständig aus.",
-      };
-
-    }
-
-
-    const start =
-      timeToMinutes(
-        row.start_time
-      );
-
-
-    const end =
-      timeToMinutes(
-        row.end_time
-      );
-
-
-    /*
-     * Start muss vor Ende liegen.
-     */
-
-    if (start >= end) {
-
-      return {
-        valid: false,
-        message:
-          "Die Startzeit muss vor der Endzeit liegen.",
-      };
-
-    }
-
+  if (!summaryContainer) {
+    return;
   }
 
+  const service = bookingState.selectedService;
+  const date = bookingState.selectedDate;
+  const time = bookingState.selectedTime;
+  const customer = bookingState.customer;
 
-  /*
-   * 2. Überschneidungen prüfen.
-   */
-
-  for (const day of weekdays) {
-
-    const dayRows =
-      rows
-        .filter(
-          (row) =>
-            row.weekday === day.id &&
-            row.active
-        )
-        .sort(
-          (a, b) =>
-            timeToMinutes(
-              a.start_time
-            ) -
-            timeToMinutes(
-              b.start_time
-            )
-        );
-
-
-    for (
-      let i = 0;
-      i < dayRows.length - 1;
-      i++
-    ) {
-
-      const current =
-        dayRows[i];
-
-      const next =
-        dayRows[i + 1];
-
-
-      const currentEnd =
-        timeToMinutes(
-          current.end_time
-        );
-
-
-      const nextStart =
-        timeToMinutes(
-          next.start_time
-        );
-
-
-      if (
-        currentEnd > nextStart
-      ) {
-
-        return {
-          valid: false,
-          message:
-            `Die Zeiträume am ${day.name} überschneiden sich.`,
-        };
-
-      }
-
-    }
-
+  if (!service || !date || !time) {
+    summaryContainer.innerHTML = `
+      <p class="times-empty">Bitte wählen Sie zuerst eine Beratung, ein Datum und eine Uhrzeit aus.</p>
+    `;
+    return;
   }
 
+  summaryContainer.innerHTML = "";
 
-  /*
-   * Alles korrekt.
-   */
+  const summaryCard = document.createElement("div");
+  summaryCard.className = "booking-summary-card";
 
-  return {
-    valid: true,
+  const title = document.createElement("h3");
+  title.textContent = "Ihre Buchung";
+  summaryCard.appendChild(title);
+
+  function appendSummaryRow(section, label, value, isLink = false) {
+    const heading = document.createElement("p");
+    heading.className = "summary-heading";
+    heading.textContent = label;
+
+    const valueEl = document.createElement("p");
+    valueEl.className = "summary-value";
+
+    if (isLink) {
+      const link = document.createElement("a");
+      link.href = `mailto:${value}`;
+      link.textContent = value;
+      valueEl.appendChild(link);
+    } else {
+      valueEl.textContent = value;
+    }
+
+    section.append(heading, valueEl);
+  }
+
+  const serviceSection = document.createElement("div");
+  serviceSection.className = "summary-section";
+  appendSummaryRow(serviceSection, "Beratung", service.title);
+  appendSummaryRow(serviceSection, "Dauer", `${service.duration} Minuten`);
+  appendSummaryRow(serviceSection, "Preis", formatCurrency(service.price));
+  summaryCard.appendChild(serviceSection);
+
+  const dateSection = document.createElement("div");
+  dateSection.className = "summary-section";
+  appendSummaryRow(dateSection, "Datum", formatDateLabelShort(date));
+  appendSummaryRow(dateSection, "Uhrzeit", `${time} Uhr`);
+  summaryCard.appendChild(dateSection);
+
+  const customerSection = document.createElement("div");
+  customerSection.className = "summary-section";
+  appendSummaryRow(customerSection, "Ihre Daten", `${customer.firstName} ${customer.lastName}`);
+  appendSummaryRow(customerSection, "E-Mail", customer.email, true);
+
+  if (customer.phone) {
+    appendSummaryRow(customerSection, "Telefon", customer.phone);
+  }
+
+  if (customer.message) {
+    appendSummaryRow(customerSection, "Nachricht", customer.message);
+  }
+
+  summaryCard.appendChild(customerSection);
+
+  summaryContainer.appendChild(summaryCard);
+}
+
+function collectCustomerFormValues() {
+  if (!bookingForm) {
+    return;
+  }
+
+  bookingState.customer = {
+    firstName: document.getElementById("first-name").value.trim(),
+    lastName: document.getElementById("last-name").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    message: document.getElementById("message").value.trim(),
   };
 }
 
-
-/* ========================================
-   SPEICHERN
-   ======================================== */
-
-async function saveAvailability() {
-
-  hideMessage();
-
-
-  if (!saveButton) {
+function populateCustomerForm() {
+  if (!bookingForm) {
     return;
   }
 
+  document.getElementById("first-name").value = bookingState.customer.firstName;
+  document.getElementById("last-name").value = bookingState.customer.lastName;
+  document.getElementById("email").value = bookingState.customer.email;
+  document.getElementById("phone").value = bookingState.customer.phone;
+  document.getElementById("message").value = bookingState.customer.message;
 
-  const rows =
-    collectAvailability();
+  // update message counter when populating
+  const msgEl = document.getElementById("message");
+  if (msgEl) {
+    updateMessageCounter();
+  }
 
+  if (bookingFormError) {
+    bookingFormError.hidden = true;
+  }
+}
 
-  /*
-   * Eingaben validieren.
-   */
+function updateMessageCounter() {
+  const counter = document.getElementById("message-counter");
+  const msg = document.getElementById("message");
+  if (!counter || !msg) return;
+  const len = msg.value.length;
+  counter.textContent = len;
+  if (len > 1800) {
+    counter.style.color = "#b45200"; // warn color
+  } else {
+    counter.style.color = "";
+  }
+}
 
-  const validation =
-    validateAvailability(rows);
+function checkMessageLengthState() {
+  const msg = document.getElementById("message");
+  const warning = document.getElementById("message-warning");
+  if (!msg || !warning) return;
+  const len = msg.value.length;
+  const nexts = document.querySelectorAll(".next-step");
 
+  if (len > 2000) {
+    warning.hidden = false;
+    nexts.forEach((b) => (b.disabled = true));
+  } else {
+    warning.hidden = true;
+    nexts.forEach((b) => (b.disabled = false));
+  }
+}
 
-  if (!validation.valid) {
+function validateCustomerForm() {
+  if (!bookingForm) {
+    return false;
+  }
 
-    showMessage(
-      validation.message,
-      "error"
-    );
+  if (!bookingForm.checkValidity()) {
+    bookingForm.reportValidity();
+    return false;
+  }
 
+  const emailValue = bookingState.customer.email;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailPattern.test(emailValue)) {
+    if (bookingFormError) {
+      bookingFormError.textContent =
+        "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+      bookingFormError.hidden = false;
+    }
+    return false;
+  }
+
+  // Vorname / Nachname Mindestlänge
+  const first = bookingState.customer.firstName || "";
+  const last = bookingState.customer.lastName || "";
+  if (first.length < 2 || last.length < 2) {
+    if (bookingFormError) {
+      bookingFormError.textContent =
+        "Bitte geben Sie Vor- und Nachname mit mindestens 2 Zeichen an.";
+      bookingFormError.hidden = false;
+    }
+    return false;
+  }
+
+  // Telefon: optional, aber wenn angegeben muss es ein plausibles Format haben
+  const phone = bookingState.customer.phone || "";
+  if (phone.length > 0) {
+    const phonePattern = /^[+0-9()\s\-]{6,20}$/;
+    if (!phonePattern.test(phone)) {
+      if (bookingFormError) {
+        bookingFormError.textContent =
+          "Bitte geben Sie eine gültige Telefonnummer ein (Ziffern, +, -, Leerzeichen).";
+        bookingFormError.hidden = false;
+      }
+      return false;
+    }
+  }
+
+  // Nachricht: optional, max Länge
+  const message = bookingState.customer.message || "";
+  if (message.length > 2000) {
+    if (bookingFormError) {
+      bookingFormError.textContent =
+        "Die Nachricht ist zu lang. Bitte kürzen Sie Ihre Mitteilung.";
+      bookingFormError.hidden = false;
+    }
+    return false;
+  }
+
+  if (bookingFormError) {
+    bookingFormError.hidden = true;
+  }
+
+  return true;
+}
+
+async function updateTimesPanel() {
+  if (!bookingState.selectedDate) {
+    timesPlaceholder.hidden = false;
+    timesContent.hidden = true;
     return;
   }
 
+  timesPlaceholder.hidden = true;
+  timesContent.hidden = false;
 
-  /*
-   * Button sperren.
-   */
+  selectedDateLabel.textContent = formatDateLabel(bookingState.selectedDate);
 
-  saveButton.disabled = true;
+  timeSlotsContainer.innerHTML =
+    '<p class="times-loading">Zeiten werden geladen...</p>';
 
-  saveButton.textContent =
-    "Wird gespeichert...";
+  const duration = bookingState.selectedService?.duration;
 
+  if (!duration) {
+    timeSlotsContainer.innerHTML =
+      '<p class="times-empty">Bitte wählen Sie zuerst eine Beratung aus.</p>';
+    return;
+  }
+
+  const slots = await getAvailableSlots(bookingState.selectedDate, duration);
+
+  timeSlotsContainer.innerHTML = "";
+
+  if (slots.length === 0) {
+    timeSlotsContainer.innerHTML =
+      '<p class="times-empty">Keine freien Zeiten an diesem Tag.</p>';
+    return;
+  }
+
+  slots.forEach((time) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "time-slot";
+    button.textContent = time;
+
+    if (bookingState.selectedTime === time) {
+      button.classList.add("selected");
+    }
+
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".time-slot.selected").forEach((el) => {
+        el.classList.remove("selected");
+      });
+
+      button.classList.add("selected");
+      bookingState.selectedTime = time;
+
+      console.log("Ausgewählte Uhrzeit:", bookingState.selectedTime);
+    });
+
+    timeSlotsContainer.appendChild(button);
+  });
+}
+
+function showSummaryError(message) {
+  if (!bookingSummaryError) {
+    return;
+  }
+
+  bookingSummaryError.textContent = message;
+  bookingSummaryError.hidden = false;
+}
+
+function hideSummaryError() {
+  if (bookingSummaryError) {
+    bookingSummaryError.hidden = true;
+  }
+}
+
+async function confirmBooking() {
+  if (isBookingSubmitting) {
+    return;
+  }
+
+  hideSummaryError();
+  setBookingSubmitting(true);
 
   try {
+    // --------------------------------------------------
+    // 1. Grundlegende Validierung
+    // --------------------------------------------------
 
-    /*
-     * Alte Verfügbarkeit löschen.
-     */
-
-    const {
-      error: deleteError
-    } = await supabase
-      .from("availability")
-      .delete()
-      .neq(
-        "id",
-        "00000000-0000-0000-0000-000000000000"
-      );
-
-
-    if (deleteError) {
-      throw deleteError;
+    if (!bookingState.selectedService) {
+      showSummaryError("Bitte wählen Sie zuerst ein Beratungsangebot aus.");
+      return;
     }
 
+    if (!bookingState.selectedDate) {
+      showSummaryError("Bitte wählen Sie zuerst ein Datum aus.");
+      return;
+    }
 
-    /*
-     * Nur aktive Zeiträume speichern.
-     */
+    if (!bookingState.selectedTime) {
+      showSummaryError("Bitte wählen Sie zuerst eine Uhrzeit aus.");
+      return;
+    }
 
-    const activeRows =
-      rows.filter(
-        (row) =>
-          row.active === true
+    collectCustomerFormValues();
+
+    if (!validateCustomerForm()) {
+      showSummaryError("Bitte füllen Sie alle Pflichtfelder aus.");
+      return;
+    }
+
+    // --------------------------------------------------
+    // 2. Service noch einmal direkt aus Supabase laden
+    // --------------------------------------------------
+
+    const { data: serviceData, error: serviceError } = await supabase
+      .from("services")
+      .select("id, duration, price, active")
+      .eq("id", bookingState.selectedService.id)
+      .single();
+
+    if (serviceError || !serviceData || !serviceData.active) {
+      console.error(
+        "Fehler beim Laden des Dienstes:",
+        serviceError,
       );
 
+      showSummaryError(
+        "Der gewählte Service ist leider nicht mehr verfügbar.",
+      );
 
-    if (activeRows.length > 0) {
+      return;
+    }
 
-      const {
-        error: insertError
-      } = await supabase
-        .from("availability")
-        .insert(
-          activeRows.map(
-            (row) => ({
-              weekday:
-                row.weekday,
+    // --------------------------------------------------
+    // 3. Verfügbarkeit unmittelbar vor der Buchung prüfen
+    // --------------------------------------------------
 
-              start_time:
-                row.start_time,
+    const availableSlots = await getAvailableSlots(
+      bookingState.selectedDate,
+      serviceData.duration,
+    );
 
-              end_time:
-                row.end_time,
+    if (!availableSlots.includes(bookingState.selectedTime)) {
+      showSummaryError(
+        "Der gewählte Termin ist leider inzwischen vergeben. Bitte wählen Sie eine andere Uhrzeit.",
+      );
 
-              active: true,
-            })
-          )
+      return;
+    }
+
+    // --------------------------------------------------
+    // 4. Buchungsdaten vorbereiten
+    // --------------------------------------------------
+
+    const bookingDate = formatDateISO(bookingState.selectedDate);
+
+    const bookingTime = bookingState.selectedTime;
+
+    const customerName =
+      `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
+
+    // ID bereits im Browser erzeugen.
+    // Dadurch brauchen wir nach dem INSERT kein SELECT.
+    const bookingId = crypto.randomUUID();
+
+    // --------------------------------------------------
+    // 5. Buchung speichern
+    // --------------------------------------------------
+
+    const insertPromise = supabase
+      .from("bookings")
+      .insert({
+        id: bookingId,
+        service_id: serviceData.id,
+        customer_name: customerName,
+        customer_email: bookingState.customer.email,
+        customer_phone: bookingState.customer.phone || null,
+        booking_date: bookingDate,
+        booking_time: bookingTime,
+        notes: bookingState.customer.message || null,
+        status: "pending",
+      });
+
+    const result = await withTimeout(insertPromise, 10000);
+
+    if (result?.error) {
+      const insertError = result.error;
+
+      console.error(
+        "Fehler beim Speichern der Buchung:",
+        insertError,
+      );
+
+      console.error(
+        "Insert error code:",
+        insertError.code,
+      );
+
+      console.error(
+        "Insert error status:",
+        insertError.status,
+      );
+
+      console.error(
+        "Insert error message:",
+        insertError.message,
+      );
+
+      if (insertError.code === "42501") {
+        showSummaryError(
+          "Die Buchung konnte wegen fehlender Berechtigungen nicht gespeichert werden.",
         );
-
-
-      if (insertError) {
-        throw insertError;
+      } else if (insertError.code === "23505") {
+        showSummaryError(
+          "Dieser Termin wurde gerade von jemand anderem gebucht. Bitte wählen Sie eine andere Uhrzeit.",
+        );
+      } else {
+        showSummaryError(
+          "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+        );
       }
+
+      return;
     }
 
+    // --------------------------------------------------
+    // 6. Erfolgreiche Buchung
+    // --------------------------------------------------
 
-    /*
-     * Erfolg.
-     */
+    console.log("Buchung erfolgreich gespeichert:", bookingId);
 
-    showMessage(
-      "✓ Verfügbarkeit gespeichert.",
-      "success"
-    );
+    const createdAt = new Date().toISOString();
 
+    const params = new URLSearchParams({
+      id: bookingId,
+      service: bookingState.selectedService.title || "",
+      date: bookingDate,
+      time: bookingTime,
+      created_at: createdAt,
+    });
 
-    console.log(
-      "Gespeicherte Verfügbarkeit:",
-      activeRows
-    );
+    window.location.href = `success.html?${params.toString()}`;
 
   } catch (error) {
-
     console.error(
-      "Verfügbarkeit konnte nicht gespeichert werden:",
-      error
+      "Unbekannter Fehler bei der Buchungsbestätigung:",
+      error,
     );
 
-
-    /*
-     * RLS-Fehler verständlicher anzeigen.
-     */
-
-    if (error?.code === "42501") {
-
-      showMessage(
-        "Keine Berechtigung zum Speichern der Verfügbarkeit.",
-        "error"
+    if (error?.message === "timeout") {
+      showSummaryError(
+        "Die Anfrage hat zu lange gedauert. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
       );
-
     } else {
-
-      showMessage(
-        "Die Änderungen konnten nicht gespeichert werden.",
-        "error"
+      showSummaryError(
+        "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
       );
-
     }
 
   } finally {
-
-    saveButton.disabled = false;
-
-    saveButton.textContent =
-      "Änderungen speichern";
-
+    setBookingSubmitting(false);
   }
 }
 
-
-/* ========================================
-   EVENTS
-   ======================================== */
-
-if (saveButton) {
-
-  saveButton.addEventListener(
-    "click",
-    saveAvailability
-  );
-
+async function initBookingPage() {
+  await initBookingData();
+  loadServices();
+  initCalendar();
+  updateTimesPanel();
 }
 
+initBookingPage();
 
-/* ========================================
-   START
-   ======================================== */
-
-loadAvailability();
 
 
 ============================================================
-DATEI: admin\pages\availability.html
+DATEI: js\supabase.js
 ============================================================
 
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    <title>Verfügbarkeit | Aufwind Beratung</title>
+// Development helper: if the site is served from localhost/127.0.0.1,
+// use the local Supabase dev instance started with `supabase start`.
+const hostname = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
+const isLocalhost = hostname === "127.0.0.1" || hostname === "localhost";
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+const LOCAL_SUPABASE_URL = "http://127.0.0.1:54321";
+const LOCAL_SUPABASE_ANON_KEY = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
 
-    <link rel="stylesheet" href="../../css/global.css" />
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/availability.css" />
-  </head>
+const PROD_SUPABASE_URL = "https://osesjuwfgytibasmnacl.supabase.co";
+const PROD_SUPABASE_ANON_KEY = "sb_publishable_am5h5emmjCuvdz69L2PHkw_2Pankgs5";
 
-  <body>
-    <div class="admin-layout" id="adminLayout">
+const supabaseUrl = isLocalhost ? LOCAL_SUPABASE_URL : PROD_SUPABASE_URL;
+const supabaseKey = isLocalhost ? LOCAL_SUPABASE_ANON_KEY : PROD_SUPABASE_ANON_KEY;
 
-      <!-- ========================================
-           SIDEBAR
-           ======================================== -->
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
-      <aside class="admin-sidebar" id="adminSidebar">
-
-        <div class="sidebar-header">
-
-          <a
-            href="dashboard.html"
-            class="sidebar-logo"
-          >
-            <span class="sidebar-logo-mark">A</span>
-
-            <span class="sidebar-logo-text">
-              Aufwind
-            </span>
-          </a>
-
-          <button
-            type="button"
-            class="sidebar-toggle"
-            id="sidebarToggle"
-            aria-label="Sidebar einklappen"
-            aria-expanded="true"
-          >
-            <span></span>
-            <span></span>
-          </button>
-
-        </div>
-
-
-        <!-- ========================================
-             NAVIGATION
-             ======================================== -->
-
-        <nav
-          class="sidebar-navigation"
-          aria-label="Admin-Navigation"
-        >
-
-          <a
-            href="dashboard.html"
-            class="sidebar-link"
-          >
-            <span class="sidebar-icon">⌂</span>
-
-            <span class="sidebar-link-text">
-              Dashboard
-            </span>
-          </a>
-
-
-          <a
-            href="bookings.html"
-            class="sidebar-link"
-          >
-            <span class="sidebar-icon">▣</span>
-
-            <span class="sidebar-link-text">
-              Termine
-            </span>
-          </a>
-
-
-          <a
-            href="availability.html"
-            class="sidebar-link active"
-          >
-            <span class="sidebar-icon">◷</span>
-
-            <span class="sidebar-link-text">
-              Verfügbarkeit
-            </span>
-          </a>
-
-
-          <a
-            href="services.html"
-            class="sidebar-link"
-          >
-            <span class="sidebar-icon">◇</span>
-
-            <span class="sidebar-link-text">
-              Beratungsangebote
-            </span>
-          </a>
-
-
-          <a
-            href="settings.html"
-            class="sidebar-link"
-          >
-            <span class="sidebar-icon">⚙</span>
-
-            <span class="sidebar-link-text">
-              Einstellungen
-            </span>
-          </a>
-
-        </nav>
-
-
-        <!-- ========================================
-             SIDEBAR UNTEN
-             ======================================== -->
-
-        <div class="sidebar-bottom">
-
-          <a
-            href="/"
-            class="sidebar-link sidebar-public-link"
-          >
-            <span class="sidebar-icon">↗</span>
-
-            <span class="sidebar-link-text">
-              Zur Website
-            </span>
-          </a>
-
-
-          <button
-            type="button"
-            class="sidebar-link sidebar-logout"
-            id="logoutButton"
-          >
-            <span class="sidebar-icon">↪</span>
-
-            <span class="sidebar-link-text">
-              Abmelden
-            </span>
-          </button>
-
-        </div>
-
-      </aside>
-
-
-      <!-- ========================================
-           MOBILE SIDEBAR OVERLAY
-           ======================================== -->
-
-      <div
-        class="sidebar-overlay"
-        id="sidebarOverlay"
-      ></div>
-
-
-      <!-- ========================================
-           MAIN
-           ======================================== -->
-
-      <main class="admin-main">
-
-        <!-- ========================================
-             TOPBAR
-             ======================================== -->
-
-        <header class="admin-topbar">
-
-          <div class="topbar-left">
-
-            <button
-              type="button"
-              class="mobile-menu-button"
-              id="mobileMenuButton"
-              aria-label="Menü öffnen"
-              aria-expanded="false"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-
-
-            <div class="topbar-title">
-
-              <h1>
-                Verfügbarkeit
-              </h1>
-
-              <p>
-                Reguläre Arbeitszeiten verwalten
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div class="topbar-right">
-
-            <div class="admin-user">
-
-              <div class="admin-user-avatar">
-                A
-              </div>
-
-
-              <div class="admin-user-info">
-
-                <span
-                  class="admin-user-name"
-                  id="adminUserName"
-                >
-                  Administrator
-                </span>
-
-                <span class="admin-user-role">
-                  Admin
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </header>
-
-
-        <!-- ========================================
-             CONTENT
-             ======================================== -->
-
-        <section class="availability-content">
-
-          <!-- ========================================
-               HEADER
-               ======================================== -->
-
-          <div class="availability-header">
-
-            <div>
-
-              <h2>
-                Reguläre Arbeitszeiten
-              </h2>
-
-              <p>
-                Lege fest, wann Termine regulär
-                gebucht werden können.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- ========================================
-               FEHLER / ERFOLG
-               ======================================== -->
-
-          <div
-            id="availability-message"
-            class="availability-message"
-            hidden
-            role="status"
-            aria-live="polite"
-          ></div>
-
-
-          <!-- ========================================
-               WOCHENTAGE
-               ======================================== -->
-
-          <div
-            id="availability-days"
-            class="availability-days"
-          >
-
-            <!-- Wird per JavaScript eingefügt -->
-
-          </div>
-
-
-          <!-- ========================================
-               SPEICHERN
-               ======================================== -->
-
-          <div class="availability-actions">
-
-            <button
-              type="button"
-              class="availability-save"
-              id="save-availability"
-            >
-              Änderungen speichern
-            </button>
-
-          </div>
-
-        </section>
-
-      </main>
-
-    </div>
-
-
-    <!-- ========================================
-         JAVASCRIPT
-         ======================================== -->
-
-    <script
-      type="module"
-      src="../js/auth.js"
-    ></script>
-
-    <script
-      src="../js/admin-layout.js"
-    ></script>
-
-    <script
-      type="module"
-      src="../js/availability.js"
-    ></script>
-
-  </body>
-</html>
 
