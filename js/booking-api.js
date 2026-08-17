@@ -28,6 +28,10 @@ export function getWeekdayDb(date) {
 }
 
 function timeToMinutes(timeStr) {
+  if (!timeStr) {
+    return 0;
+  }
+
   const parts = timeStr.split(":");
 
   return Number(parts[0]) * 60 + Number(parts[1]);
@@ -49,15 +53,14 @@ function rangesOverlap(startA, endA, startB, endB) {
    ======================================== */
 
 async function loadSettings() {
-  const { data, error } = await supabase
-    .from("settings")
-    .select("*")
-    .limit(1);
+  const { data, error } = await supabase.rpc(
+    "get_public_booking_settings",
+  );
 
   if (error) {
     console.error(
       "Fehler beim Laden der Einstellungen:",
-      error
+      error,
     );
 
     return DEFAULT_SETTINGS;
@@ -79,7 +82,7 @@ async function loadAvailability() {
   if (error) {
     console.error(
       "Fehler beim Laden der Verfügbarkeiten:",
-      error
+      error,
     );
 
     return [];
@@ -99,16 +102,18 @@ export async function loadBlockedDaysForMonth(year, month) {
   const monthStart = formatDateISO(monthStartDate);
   const monthEnd = formatDateISO(monthEndDate);
 
-  const { data, error } = await supabase
-    .from("blocked_days")
-    .select("start_date, end_date")
-    .lte("start_date", monthEnd)
-    .gte("end_date", monthStart);
+  const { data, error } = await supabase.rpc(
+    "get_public_blocked_days",
+    {
+      p_start_date: monthStart,
+      p_end_date: monthEnd,
+    },
+  );
 
   if (error) {
     console.error(
       "Fehler beim Laden gesperrter Tage:",
-      error
+      error,
     );
 
     return;
@@ -117,27 +122,8 @@ export async function loadBlockedDaysForMonth(year, month) {
   blockedDaysSet.clear();
 
   for (const row of data ?? []) {
-    const start = new Date(`${row.start_date}T00:00:00`);
-    const end = new Date(`${row.end_date}T00:00:00`);
-
-    const current = new Date(
-      Math.max(
-        start.getTime(),
-        monthStartDate.getTime()
-      )
-    );
-
-    const last = new Date(
-      Math.min(
-        end.getTime(),
-        monthEndDate.getTime()
-      )
-    );
-
-    while (current <= last) {
-      blockedDaysSet.add(formatDateISO(current));
-
-      current.setDate(current.getDate() + 1);
+    if (row?.date) {
+      blockedDaysSet.add(row.date);
     }
   }
 }
@@ -157,7 +143,7 @@ export async function initBookingData() {
 
   if (!availabilityRules.length) {
     console.warn(
-      "Keine aktiven Verfügbarkeiten gefunden. Verwende Platzhalter Mo–Fr 09:00–17:00."
+      "Keine aktiven Verfügbarkeiten gefunden. Verwende Platzhalter Mo–Fr 09:00–17:00.",
     );
 
     availabilityRules = [
@@ -198,7 +184,7 @@ export async function initBookingData() {
 
   await loadBlockedDaysForMonth(
     now.getFullYear(),
-    now.getMonth()
+    now.getMonth(),
   );
 }
 
@@ -223,7 +209,7 @@ export function isDateSelectable(date, today) {
 
   maxDate.setDate(
     maxDate.getDate() +
-      Number(bookingSettings.booking_advance_days)
+      Number(bookingSettings.booking_advance_days),
   );
 
   if (date > maxDate) {
@@ -233,7 +219,7 @@ export function isDateSelectable(date, today) {
   const weekday = getWeekdayDb(date);
 
   return availabilityRules.some(
-    (rule) => rule.weekday === weekday
+    (rule) => rule.weekday === weekday,
   );
 }
 
@@ -244,17 +230,17 @@ export function isDateSelectable(date, today) {
 function generateRawSlots(
   windows,
   durationMinutes,
-  interval
+  interval,
 ) {
   const slots = [];
 
   windows.forEach((window) => {
     const windowStart = timeToMinutes(
-      window.start_time
+      window.start_time,
     );
 
     const windowEnd = timeToMinutes(
-      window.end_time
+      window.end_time,
     );
 
     for (
@@ -267,7 +253,7 @@ function generateRawSlots(
   });
 
   return [...new Set(slots)].sort(
-    (a, b) => a - b
+    (a, b) => a - b,
   );
 }
 
@@ -278,7 +264,7 @@ function generateRawSlots(
 function filterSlotsByBlockedTimes(
   slots,
   durationMinutes,
-  blockedTimes
+  blockedTimes,
 ) {
   return slots.filter((slot) => {
     const slotEnd =
@@ -286,18 +272,18 @@ function filterSlotsByBlockedTimes(
 
     return !blockedTimes.some((block) => {
       const blockStart = timeToMinutes(
-        block.start_time
+        block.start_time,
       );
 
       const blockEnd = timeToMinutes(
-        block.end_time
+        block.end_time,
       );
 
       return rangesOverlap(
         slot,
         slotEnd,
         blockStart,
-        blockEnd
+        blockEnd,
       );
     });
   });
@@ -310,7 +296,7 @@ function filterSlotsByBlockedTimes(
 function filterSlotsByBookings(
   slots,
   durationMinutes,
-  bookings
+  bookings,
 ) {
   return slots.filter((slot) => {
     const slotEnd =
@@ -319,7 +305,7 @@ function filterSlotsByBookings(
     return !bookings.some((booking) => {
       const bookingStart =
         timeToMinutes(
-          booking.booking_time
+          booking.booking_time,
         );
 
       const bookingEnd =
@@ -330,7 +316,7 @@ function filterSlotsByBookings(
         slot,
         slotEnd,
         bookingStart,
-        bookingEnd
+        bookingEnd,
       );
     });
   });
@@ -343,13 +329,16 @@ function filterSlotsByBookings(
 function filterSlotsByMinimumNotice(
   slots,
   date,
-  minimumNoticeHours
+  minimumNoticeHours,
 ) {
   const now = new Date();
 
   const earliestAllowed = new Date(
     now.getTime() +
-      Number(minimumNoticeHours) * 60 * 60 * 1000
+      Number(minimumNoticeHours) *
+        60 *
+        60 *
+        1000,
   );
 
   return slots.filter((slot) => {
@@ -363,7 +352,7 @@ function filterSlotsByMinimumNotice(
       hours,
       minutes,
       0,
-      0
+      0,
     );
 
     return slotDateTime >= earliestAllowed;
@@ -376,7 +365,7 @@ function filterSlotsByMinimumNotice(
 
 export async function getAvailableSlots(
   date,
-  durationMinutes
+  durationMinutes,
 ) {
   if (!bookingSettings || !durationMinutes) {
     return [];
@@ -388,7 +377,7 @@ export async function getAvailableSlots(
   const windows =
     availabilityRules.filter(
       (rule) =>
-        rule.weekday === weekday
+        rule.weekday === weekday,
     );
 
   if (windows.length === 0) {
@@ -402,38 +391,35 @@ export async function getAvailableSlots(
     blockedTimesResult,
     bookingsResult,
   ] = await Promise.all([
-    supabase
-      .from("blocked_times")
-      .select(
-        "start_time, end_time"
-      )
-      .eq(
-        "date",
-        dateISO
-      ),
+    supabase.rpc(
+      "get_public_blocked_times",
+      {
+        p_date: dateISO,
+      },
+    ),
 
     supabase
       .from("booking_blocks")
       .select(
-        "booking_time, duration"
+        "booking_time, duration",
       )
       .eq(
         "booking_date",
-        dateISO
+        dateISO,
       ),
   ]);
 
   if (blockedTimesResult.error) {
     console.error(
       "Fehler beim Laden gesperrter Zeiten:",
-      blockedTimesResult.error
+      blockedTimesResult.error,
     );
   }
 
   if (bookingsResult.error) {
     console.error(
       "Fehler beim Laden belegter Termine:",
-      bookingsResult.error
+      bookingsResult.error,
     );
   }
 
@@ -445,30 +431,30 @@ export async function getAvailableSlots(
 
   let slots = generateRawSlots(
     windows,
-    durationMinutes,
+    Number(durationMinutes),
     Number(
-      bookingSettings.booking_interval
-    )
+      bookingSettings.booking_interval,
+    ),
   );
 
   slots = filterSlotsByBlockedTimes(
     slots,
-    durationMinutes,
-    blockedTimes
+    Number(durationMinutes),
+    blockedTimes,
   );
 
   slots = filterSlotsByBookings(
     slots,
-    durationMinutes,
-    bookings
+    Number(durationMinutes),
+    bookings,
   );
 
   slots = filterSlotsByMinimumNotice(
     slots,
     date,
     Number(
-      bookingSettings.minimum_notice_hours
-    )
+      bookingSettings.minimum_notice_hours,
+    ),
   );
 
   return slots.map(minutesToTime);
