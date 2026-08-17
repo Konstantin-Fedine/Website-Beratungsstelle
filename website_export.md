@@ -1,1267 +1,1962 @@
 
 ============================================================
-DATEI: js\booking-api.js
+DATEI: admin\pages\availability.html
 ============================================================
 
-import { supabase } from "./supabase.js";
-
-// Geladene Buchungsdaten (einmal beim Start, blocked_days pro Monat)
-let bookingSettings = null;
-let availabilityRules = [];
-const blockedDaysSet = new Set();
-
-const DEFAULT_SETTINGS = {
-  booking_interval: 60,
-  booking_buffer_before: 0,
-  booking_buffer_after: 0,
-  booking_advance_days: 180,
-  minimum_notice_hours: 24,
-};
-
-export function formatDateISO(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-// Datenbank: 1=Montag … 7=Sonntag
-export function getWeekdayDb(date) {
-  const jsDay = date.getDay();
-  return jsDay === 0 ? 7 : jsDay;
-}
-
-function timeToMinutes(timeStr) {
-  const parts = timeStr.split(":");
-  return Number(parts[0]) * 60 + Number(parts[1]);
-}
-
-function minutesToTime(minutes) {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-}
-
-function rangesOverlap(startA, endA, startB, endB) {
-  return startA < endB && endA > startB;
-}
-
-async function loadSettings() {
-  const { data, error } = await supabase.from("settings").select("*").limit(1);
-
-  if (error) {
-    console.error("Fehler beim Laden der Einstellungen:", error);
-    return DEFAULT_SETTINGS;
-  }
-
-  return data?.[0] ?? DEFAULT_SETTINGS;
-}
-
-async function loadAvailability() {
-  const { data, error } = await supabase
-    .from("availability")
-    .select("weekday, start_time, end_time, active")
-    .eq("active", true);
-
-  if (error) {
-    console.error("Fehler beim Laden der Verfügbarkeiten:", error);
-    return [];
-  }
-
-  return data ?? [];
-}
-
-export async function loadBlockedDaysForMonth(year, month) {
-  const monthStart = formatDateISO(new Date(year, month, 1));
-  const lastDay = new Date(year, month + 1, 0).getDate();
-  const monthEnd = formatDateISO(new Date(year, month, lastDay));
-
-  const { data, error } = await supabase
-    .from("blocked_days")
-    .select("date")
-    .gte("date", monthStart)
-    .lte("date", monthEnd);
-
-  if (error) {
-    console.error("Fehler beim Laden gesperrter Tage:", error);
-    return;
-  }
-
-  blockedDaysSet.clear();
-
-  data?.forEach((row) => {
-    blockedDaysSet.add(row.date);
-  });
-}
-
-export async function initBookingData() {
-  const [settings, availability] = await Promise.all([
-    loadSettings(),
-    loadAvailability(),
-  ]);
-
-  bookingSettings = settings;
-  availabilityRules = availability;
-
-  if (!availabilityRules.length) {
-    console.warn(
-      "Keine aktiven Verfügbarkeiten gefunden. Verwende Platzhalter Mo–Fr 09:00–17:00.",
-    );
-
-    availabilityRules = [
-      { weekday: 1, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 2, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 3, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 4, start_time: "09:00", end_time: "17:00", active: true },
-      { weekday: 5, start_time: "09:00", end_time: "17:00", active: true },
-    ];
-  }
-
-  const now = new Date();
-  await loadBlockedDaysForMonth(now.getFullYear(), now.getMonth());
-}
-
-export function isDateSelectable(date, today) {
-  if (!bookingSettings) {
-    return false;
-  }
-
-  if (date < today) {
-    return false;
-  }
-
-  if (blockedDaysSet.has(formatDateISO(date))) {
-    return false;
-  }
-
-  const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + bookingSettings.booking_advance_days);
-
-  if (date > maxDate) {
-    return false;
-  }
-
-  const weekday = getWeekdayDb(date);
-  const hasAvailability = availabilityRules.some(
-    (rule) => rule.weekday === weekday,
-  );
-
-  return hasAvailability;
-}
-
-function generateRawSlots(windows, durationMinutes, interval) {
-  const slots = [];
-
-  windows.forEach((window) => {
-    const windowStart = timeToMinutes(window.start_time);
-    const windowEnd = timeToMinutes(window.end_time);
-
-    for (
-      let slot = windowStart;
-      slot + durationMinutes <= windowEnd;
-      slot += interval
-    ) {
-      slots.push(slot);
-    }
-  });
-
-  return [...new Set(slots)].sort((a, b) => a - b);
-}
-
-function filterSlotsByBlockedTimes(slots, durationMinutes, blockedTimes) {
-  return slots.filter((slot) => {
-    const slotEnd = slot + durationMinutes;
-
-    return !blockedTimes.some((block) => {
-      const blockStart = timeToMinutes(block.start_time);
-      const blockEnd = timeToMinutes(block.end_time);
-      return rangesOverlap(slot, slotEnd, blockStart, blockEnd);
-    });
-  });
-}
-
-function filterSlotsByBookings(
-  slots,
-  durationMinutes,
-  bookings,
-  bufferBefore,
-  bufferAfter,
-) {
-  return slots.filter((slot) => {
-    const slotEnd = slot + durationMinutes;
-
-    return !bookings.some((booking) => {
-      const bookStart = timeToMinutes(booking.booking_time) - bufferBefore;
-      const bookEnd =
-        timeToMinutes(booking.booking_time) + booking.duration + bufferAfter;
-
-      return rangesOverlap(slot, slotEnd, bookStart, bookEnd);
-    });
-  });
-}
-
-function filterSlotsByMinimumNotice(slots, date, today, minimumNoticeHours) {
-  if (date.getTime() !== today.getTime()) {
-    return slots;
-  }
-
-  const now = new Date();
-  const earliestMinutes =
-    now.getHours() * 60 + now.getMinutes() + minimumNoticeHours * 60;
-
-  return slots.filter((slot) => slot >= earliestMinutes);
-}
-
-export async function getAvailableSlots(date, durationMinutes) {
-  if (!bookingSettings || !durationMinutes) {
-    return [];
-  }
-
-  const weekday = getWeekdayDb(date);
-  const windows = availabilityRules.filter((rule) => rule.weekday === weekday);
-
-  if (windows.length === 0) {
-    return [];
-  }
-
-  const dateISO = formatDateISO(date);
-
-  const [blockedTimesResult, bookingsResult] = await Promise.all([
-    supabase
-      .from("blocked_times")
-      .select("start_time, end_time")
-      .eq("date", dateISO),
-    supabase
-      .from("booking_blocks")
-      .select("booking_time, duration")
-      .eq("booking_date", dateISO),
-  ]);
-
-  if (blockedTimesResult.error) {
-    console.error(
-      "Fehler beim Laden gesperrter Zeiten:",
-      blockedTimesResult.error,
-    );
-  }
-
-  if (bookingsResult.error) {
-    console.error("Fehler beim Laden belegter Termine:", bookingsResult.error);
-  }
-
-  const blockedTimes = blockedTimesResult.data ?? [];
-  const bookings = bookingsResult.data ?? [];
-
-  let slots = generateRawSlots(
-    windows,
-    durationMinutes,
-    bookingSettings.booking_interval,
-  );
-
-  slots = filterSlotsByBlockedTimes(slots, durationMinutes, blockedTimes);
-  slots = filterSlotsByBookings(
-    slots,
-    durationMinutes,
-    bookings,
-    bookingSettings.booking_buffer_before,
-    bookingSettings.booking_buffer_after,
-  );
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  slots = filterSlotsByMinimumNotice(
-    slots,
-    date,
-    today,
-    bookingSettings.minimum_notice_hours,
-  );
-
-  return slots.map(minutesToTime);
-}
-
-
-
-============================================================
-DATEI: js\booking.js
-============================================================
-
-import { supabase } from "./supabase.js";
-
-import {
-  initBookingData,
-  loadBlockedDaysForMonth,
-  isDateSelectable,
-  getAvailableSlots,
-  formatDateISO,
-} from "./booking-api.js";
-
-console.log("Booking System gestartet");
-
-// Utility: race a promise against a timeout (does not abort underlying request)
-function withTimeout(promise, ms) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("timeout")), ms),
-    ),
-  ]);
-}
-
-const servicesContainer = document.getElementById("services-list");
-
-const bookingState = {
-  selectedService: null,
-  selectedDate: null,
-  selectedTime: null,
-  customer: {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    message: "",
-  },
-};
-
-const nextButtons = document.querySelectorAll(".next-step");
-const previousButtons = document.querySelectorAll(".previous-step");
-const bookingForm = document.getElementById("booking-form");
-const bookingFormError = document.getElementById("booking-form-error");
-const bookingSummaryError = document.getElementById("booking-summary-error");
-const bookingConfirmButton = document.getElementById("booking-confirm-button");
-let isBookingSubmitting = false;
-
-function setBookingSubmitting(isSubmitting) {
-  isBookingSubmitting = isSubmitting;
-  if (!bookingConfirmButton) {
-    return;
-  }
-
-  bookingConfirmButton.disabled = isSubmitting;
-  bookingConfirmButton.textContent = isSubmitting
-    ? "Buchung wird verarbeitet..."
-    : "Termin bestätigen";
-}
-
-if (bookingConfirmButton) {
-  bookingConfirmButton.addEventListener("click", confirmBooking);
-}
-
-// Attach live counter to message textarea
-document.addEventListener("DOMContentLoaded", () => {
-  const msg = document.getElementById("message");
-  if (msg) {
-    msg.addEventListener("input", updateMessageCounter);
-    // initialize
-    updateMessageCounter();
-    // also check message length state (warning + disable next)
-    msg.addEventListener("input", checkMessageLengthState);
-    checkMessageLengthState();
-  }
-});
-
-nextButtons.forEach((button) => {
-  button.addEventListener("click", (event) => {
-    const currentStep = event.target.closest(".booking-step");
-
-    if (!currentStep) {
-      return;
-    }
-
-    if (currentStep.id === "booking-step-service") {
-      if (!bookingState.selectedService) {
-        alert("Bitte wählen Sie zuerst eine Beratung aus.");
-        return;
-      }
-
-      showStep("booking-step-date");
-      return;
-    }
-
-    if (currentStep.id === "booking-step-date") {
-      if (!bookingState.selectedDate) {
-        alert("Bitte wählen Sie zuerst ein Datum aus.");
-        return;
-      }
-
-      if (!bookingState.selectedTime) {
-        alert("Bitte wählen Sie zuerst eine Uhrzeit aus.");
-        return;
-      }
-
-      showStep("booking-step-data");
-      return;
-    }
-
-    if (currentStep.id === "booking-step-data") {
-      collectCustomerFormValues();
-
-      if (!validateCustomerForm()) {
-        return;
-      }
-
-      showStep("booking-step-summary");
-      return;
-    }
-  });
-});
-
-previousButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const currentStep = button.closest(".booking-step");
-
-    if (!currentStep) {
-      return;
-    }
-
-    if (currentStep.id === "booking-step-date") {
-      showStep("booking-step-service");
-      return;
-    }
-
-    if (currentStep.id === "booking-step-data") {
-      showStep("booking-step-date");
-      return;
-    }
-
-    if (currentStep.id === "booking-step-summary") {
-      showStep("booking-step-data");
-      return;
-    }
-  });
-});
-
-function showError(message) {
-  servicesContainer.innerHTML = `
-
-        <div class="booking-error">
-
-            <p>
-                ${message}
-            </p>
-
-            <a href="services.html" class="btn btn-primary">
-                Zu den Angeboten
-            </a>
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Verfügbarkeit | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/availability.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- ========================================
+           SIDEBAR
+           ======================================== -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+
+          <a
+            href="dashboard.html"
+            class="sidebar-logo"
+          >
+            <span class="sidebar-logo-mark">A</span>
+
+            <span class="sidebar-logo-text">
+              Aufwind
+            </span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
 
         </div>
 
-    `;
-}
 
-function showStep(stepId) {
-  const steps = document.querySelectorAll(".booking-step");
+        <!-- ========================================
+             NAVIGATION
+             ======================================== -->
 
-  steps.forEach((step) => {
-    step.style.display = "none";
-    step.classList.remove("active");
-  });
+        <nav
+          class="sidebar-navigation"
+          aria-label="Admin-Navigation"
+        >
 
-  const activeStep = document.getElementById(stepId);
+          <a
+            href="dashboard.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⌂</span>
 
-  if (activeStep) {
-    activeStep.style.display = "block";
-    activeStep.classList.add("active");
-  }
+            <span class="sidebar-link-text">
+              Dashboard
+            </span>
+          </a>
 
-  if (stepId === "booking-step-date") {
-    updateTimesPanel();
-  }
 
-  if (stepId === "booking-step-data") {
-    populateCustomerForm();
-  }
+          <a
+            href="bookings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">▣</span>
 
-  if (stepId === "booking-step-summary") {
-    renderBookingSummary();
-  }
+            <span class="sidebar-link-text">
+              Termine
+            </span>
+          </a>
 
-  updateProgress(stepId);
-}
 
-function updateProgress(stepId) {
-  const progressSteps = document.querySelectorAll(".progress-step");
+          <a
+            href="availability.html"
+            class="sidebar-link active"
+          >
+            <span class="sidebar-icon">◷</span>
 
-  progressSteps.forEach((step) => {
-    step.classList.remove("active");
-  });
+            <span class="sidebar-link-text">
+              Verfügbarkeit
+            </span>
+          </a>
 
-  let activeIndex = 0;
 
-  if (stepId === "booking-step-date") {
-    activeIndex = 1;
-  }
+          <a
+            href="services.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◇</span>
 
-  if (stepId === "booking-step-data") {
-    activeIndex = 2;
-  }
+            <span class="sidebar-link-text">
+              Beratungsangebote
+            </span>
+          </a>
 
-  if (stepId === "booking-step-summary") {
-    activeIndex = 3;
-  }
 
-  if (progressSteps[activeIndex]) {
-    progressSteps[activeIndex].classList.add("active");
-  }
-}
+          <a
+            href="settings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⚙</span>
 
-async function loadServices() {
-  console.log("Lade Beratungsangebote...");
+            <span class="sidebar-link-text">
+              Einstellungen
+            </span>
+          </a>
 
-  const { data, error } = await supabase
-    .from("services")
-    .select("*")
-    .eq("active", true)
-    .order("sort_order");
+        </nav>
 
-  console.log("Services-Abfrage:", {
-    data,
-    error,
-  });
 
-  if (error) {
-    console.error("Fehler beim Laden der Services:", error);
+        <!-- ========================================
+             SIDEBAR UNTEN
+             ======================================== -->
 
-    showError("Die Beratungsangebote konnten gerade nicht geladen werden.");
+        <div class="sidebar-bottom">
 
-    return;
-  }
+          <a
+            href="/"
+            class="sidebar-link sidebar-public-link"
+          >
+            <span class="sidebar-icon">↗</span>
 
-  if (!data || data.length === 0) {
-    showError("Aktuell sind keine Beratungsangebote verfügbar.");
+            <span class="sidebar-link-text">
+              Zur Website
+            </span>
+          </a>
 
-    return;
-  }
 
-  console.log("Services geladen:", data);
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
 
-  servicesContainer.innerHTML = "";
-
-  data.forEach((service) => {
-    const card = document.createElement("div");
-    card.className = "booking-service-card";
-
-    const titleEl = document.createElement("h3");
-    titleEl.textContent = service.title;
-
-    const descriptionEl = document.createElement("p");
-    descriptionEl.textContent = service.description || "";
+            <span class="sidebar-link-text">
+              Abmelden
+            </span>
+          </button>
 
-    const infoDiv = document.createElement("div");
-    infoDiv.className = "service-info";
-
-    const durationSpan = document.createElement("span");
-    durationSpan.textContent = `⏱ ${service.duration} Minuten`;
-
-    const priceSpan = document.createElement("span");
-    priceSpan.textContent = `💶 ${service.price} €`;
-
-    infoDiv.append(durationSpan, priceSpan);
-
-    const button = document.createElement("button");
-    button.className = "btn btn-primary select-service-button";
-    button.type = "button";
-    button.textContent = "Auswählen";
-
-    card.append(titleEl, descriptionEl, infoDiv, button);
-    servicesContainer.appendChild(card);
-
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".booking-service-card").forEach((card) => {
-        card.classList.remove("selected");
-      });
-
-      card.classList.add("selected");
-
-      bookingState.selectedService = {
-        id: service.id,
-        title: service.title,
-        duration: service.duration,
-        price: service.price,
-      };
-
-      console.log("Ausgewählte Beratung:", bookingState.selectedService);
-
-      showStep("booking-step-date");
-    });
-  });
-}
-
-// Welcher Monat gerade im Kalender angezeigt wird (unabhängig vom gewählten Datum)
-let calendarViewDate = new Date();
-calendarViewDate.setDate(1);
-calendarViewDate.setHours(0, 0, 0, 0);
-
-function getTodayAtMidnight() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today;
-}
-
-function createDateAtMidnight(year, month, day) {
-  const date = new Date(year, month, day);
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
-
-function isSameDay(dateA, dateB) {
-  if (!dateA || !dateB) {
-    return false;
-  }
-
-  return (
-    dateA.getFullYear() === dateB.getFullYear() &&
-    dateA.getMonth() === dateB.getMonth() &&
-    dateA.getDate() === dateB.getDate()
-  );
-}
-
-function initCalendar() {
-  const previousMonthButton = document.getElementById("previous-month");
-  const nextMonthButton = document.getElementById("next-month");
-
-  previousMonthButton.addEventListener("click", async () => {
-    calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
-    await loadBlockedDaysForMonth(
-      calendarViewDate.getFullYear(),
-      calendarViewDate.getMonth(),
-    );
-    renderCalendar();
-  });
-
-  nextMonthButton.addEventListener("click", async () => {
-    calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
-    await loadBlockedDaysForMonth(
-      calendarViewDate.getFullYear(),
-      calendarViewDate.getMonth(),
-    );
-    renderCalendar();
-  });
-
-  renderCalendar();
-}
-
-function renderCalendar() {
-  const monthTitle = document.getElementById("current-month");
-  const daysContainer = document.getElementById("calendar-days");
-
-  const year = calendarViewDate.getFullYear();
-  const month = calendarViewDate.getMonth();
-  const today = getTodayAtMidnight();
-
-  const monthName = calendarViewDate.toLocaleDateString("de-DE", {
-    month: "long",
-    year: "numeric",
-  });
-
-  monthTitle.textContent = monthName;
-
-  daysContainer.innerHTML = "";
-
-  const firstDay = new Date(year, month, 1);
-  let startDay = firstDay.getDay();
-
-  // Sonntag = 0 → Montag ist der erste Wochentag
-  if (startDay === 0) {
-    startDay = 7;
-  }
-
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  // Leere Felder vor dem ersten Tag des Monats
-  for (let i = 1; i < startDay; i++) {
-    const empty = document.createElement("div");
-    empty.className = "calendar-day empty";
-    daysContainer.appendChild(empty);
-  }
-
-  // Tage des Monats erstellen
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayDate = createDateAtMidnight(year, month, day);
-    const dayElement = document.createElement("button");
-
-    dayElement.type = "button";
-    dayElement.className = "calendar-day";
-    dayElement.textContent = day;
-
-    const isPastDay = dayDate < today;
-    const isToday = isSameDay(dayDate, today);
-    const isSelected = isSameDay(dayDate, bookingState.selectedDate);
-    const canSelect = isDateSelectable(dayDate, today);
-
-    if (!canSelect) {
-      dayElement.classList.add("unavailable");
-      dayElement.disabled = true;
-
-      if (isPastDay) {
-        dayElement.classList.add("past");
-      }
-    }
-
-    if (isToday) {
-      dayElement.classList.add("today");
-    }
-
-    if (isSelected) {
-      dayElement.classList.add("selected");
-    }
-
-    if (canSelect) {
-      dayElement.addEventListener("click", () => {
-        document.querySelectorAll(".calendar-day.selected").forEach((el) => {
-          el.classList.remove("selected");
-        });
-
-        dayElement.classList.add("selected");
-
-        bookingState.selectedDate = dayDate;
-
-        // Bei neuem Datum: alte Uhrzeit zurücksetzen
-        bookingState.selectedTime = null;
-
-        console.log("Ausgewähltes Datum:", bookingState.selectedDate);
-
-        updateTimesPanel();
-      });
-    }
-
-    daysContainer.appendChild(dayElement);
-  }
-}
-
-const timesPlaceholder = document.getElementById("times-placeholder");
-const timesContent = document.getElementById("times-content");
-const selectedDateLabel = document.getElementById("selected-date-label");
-const timeSlotsContainer = document.getElementById("time-slots");
-
-function formatDateLabel(date) {
-  return date.toLocaleDateString("de-DE", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
-}
-
-function formatDateLabelShort(date) {
-  return date.toLocaleDateString("de-DE", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-function formatCurrency(value) {
-  return new Intl.NumberFormat("de-DE", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 2,
-  }).format(value);
-}
-
-function renderBookingSummary() {
-  const summaryContainer = document.getElementById("booking-summary");
-
-  if (!summaryContainer) {
-    return;
-  }
-
-  const service = bookingState.selectedService;
-  const date = bookingState.selectedDate;
-  const time = bookingState.selectedTime;
-  const customer = bookingState.customer;
-
-  if (!service || !date || !time) {
-    summaryContainer.innerHTML = `
-      <p class="times-empty">Bitte wählen Sie zuerst eine Beratung, ein Datum und eine Uhrzeit aus.</p>
-    `;
-    return;
-  }
-
-  summaryContainer.innerHTML = "";
-
-  const summaryCard = document.createElement("div");
-  summaryCard.className = "booking-summary-card";
-
-  const title = document.createElement("h3");
-  title.textContent = "Ihre Buchung";
-  summaryCard.appendChild(title);
-
-  function appendSummaryRow(section, label, value, isLink = false) {
-    const heading = document.createElement("p");
-    heading.className = "summary-heading";
-    heading.textContent = label;
-
-    const valueEl = document.createElement("p");
-    valueEl.className = "summary-value";
-
-    if (isLink) {
-      const link = document.createElement("a");
-      link.href = `mailto:${value}`;
-      link.textContent = value;
-      valueEl.appendChild(link);
-    } else {
-      valueEl.textContent = value;
-    }
-
-    section.append(heading, valueEl);
-  }
-
-  const serviceSection = document.createElement("div");
-  serviceSection.className = "summary-section";
-  appendSummaryRow(serviceSection, "Beratung", service.title);
-  appendSummaryRow(serviceSection, "Dauer", `${service.duration} Minuten`);
-  appendSummaryRow(serviceSection, "Preis", formatCurrency(service.price));
-  summaryCard.appendChild(serviceSection);
-
-  const dateSection = document.createElement("div");
-  dateSection.className = "summary-section";
-  appendSummaryRow(dateSection, "Datum", formatDateLabelShort(date));
-  appendSummaryRow(dateSection, "Uhrzeit", `${time} Uhr`);
-  summaryCard.appendChild(dateSection);
-
-  const customerSection = document.createElement("div");
-  customerSection.className = "summary-section";
-  appendSummaryRow(customerSection, "Ihre Daten", `${customer.firstName} ${customer.lastName}`);
-  appendSummaryRow(customerSection, "E-Mail", customer.email, true);
-
-  if (customer.phone) {
-    appendSummaryRow(customerSection, "Telefon", customer.phone);
-  }
-
-  if (customer.message) {
-    appendSummaryRow(customerSection, "Nachricht", customer.message);
-  }
-
-  summaryCard.appendChild(customerSection);
-
-  summaryContainer.appendChild(summaryCard);
-}
-
-function collectCustomerFormValues() {
-  if (!bookingForm) {
-    return;
-  }
-
-  bookingState.customer = {
-    firstName: document.getElementById("first-name").value.trim(),
-    lastName: document.getElementById("last-name").value.trim(),
-    email: document.getElementById("email").value.trim(),
-    phone: document.getElementById("phone").value.trim(),
-    message: document.getElementById("message").value.trim(),
-  };
-}
-
-function populateCustomerForm() {
-  if (!bookingForm) {
-    return;
-  }
-
-  document.getElementById("first-name").value = bookingState.customer.firstName;
-  document.getElementById("last-name").value = bookingState.customer.lastName;
-  document.getElementById("email").value = bookingState.customer.email;
-  document.getElementById("phone").value = bookingState.customer.phone;
-  document.getElementById("message").value = bookingState.customer.message;
-
-  // update message counter when populating
-  const msgEl = document.getElementById("message");
-  if (msgEl) {
-    updateMessageCounter();
-  }
-
-  if (bookingFormError) {
-    bookingFormError.hidden = true;
-  }
-}
-
-function updateMessageCounter() {
-  const counter = document.getElementById("message-counter");
-  const msg = document.getElementById("message");
-  if (!counter || !msg) return;
-  const len = msg.value.length;
-  counter.textContent = len;
-  if (len > 1800) {
-    counter.style.color = "#b45200"; // warn color
-  } else {
-    counter.style.color = "";
-  }
-}
-
-function checkMessageLengthState() {
-  const msg = document.getElementById("message");
-  const warning = document.getElementById("message-warning");
-  if (!msg || !warning) return;
-  const len = msg.value.length;
-  const nexts = document.querySelectorAll(".next-step");
-
-  if (len > 2000) {
-    warning.hidden = false;
-    nexts.forEach((b) => (b.disabled = true));
-  } else {
-    warning.hidden = true;
-    nexts.forEach((b) => (b.disabled = false));
-  }
-}
-
-function validateCustomerForm() {
-  if (!bookingForm) {
-    return false;
-  }
-
-  if (!bookingForm.checkValidity()) {
-    bookingForm.reportValidity();
-    return false;
-  }
-
-  const emailValue = bookingState.customer.email;
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailPattern.test(emailValue)) {
-    if (bookingFormError) {
-      bookingFormError.textContent =
-        "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
-      bookingFormError.hidden = false;
-    }
-    return false;
-  }
-
-  // Vorname / Nachname Mindestlänge
-  const first = bookingState.customer.firstName || "";
-  const last = bookingState.customer.lastName || "";
-  if (first.length < 2 || last.length < 2) {
-    if (bookingFormError) {
-      bookingFormError.textContent =
-        "Bitte geben Sie Vor- und Nachname mit mindestens 2 Zeichen an.";
-      bookingFormError.hidden = false;
-    }
-    return false;
-  }
-
-  // Telefon: optional, aber wenn angegeben muss es ein plausibles Format haben
-  const phone = bookingState.customer.phone || "";
-  if (phone.length > 0) {
-    const phonePattern = /^[+0-9()\s\-]{6,20}$/;
-    if (!phonePattern.test(phone)) {
-      if (bookingFormError) {
-        bookingFormError.textContent =
-          "Bitte geben Sie eine gültige Telefonnummer ein (Ziffern, +, -, Leerzeichen).";
-        bookingFormError.hidden = false;
-      }
-      return false;
-    }
-  }
-
-  // Nachricht: optional, max Länge
-  const message = bookingState.customer.message || "";
-  if (message.length > 2000) {
-    if (bookingFormError) {
-      bookingFormError.textContent =
-        "Die Nachricht ist zu lang. Bitte kürzen Sie Ihre Mitteilung.";
-      bookingFormError.hidden = false;
-    }
-    return false;
-  }
-
-  if (bookingFormError) {
-    bookingFormError.hidden = true;
-  }
-
-  return true;
-}
-
-async function updateTimesPanel() {
-  if (!bookingState.selectedDate) {
-    timesPlaceholder.hidden = false;
-    timesContent.hidden = true;
-    return;
-  }
-
-  timesPlaceholder.hidden = true;
-  timesContent.hidden = false;
-
-  selectedDateLabel.textContent = formatDateLabel(bookingState.selectedDate);
-
-  timeSlotsContainer.innerHTML =
-    '<p class="times-loading">Zeiten werden geladen...</p>';
-
-  const duration = bookingState.selectedService?.duration;
-
-  if (!duration) {
-    timeSlotsContainer.innerHTML =
-      '<p class="times-empty">Bitte wählen Sie zuerst eine Beratung aus.</p>';
-    return;
-  }
-
-  const slots = await getAvailableSlots(bookingState.selectedDate, duration);
-
-  timeSlotsContainer.innerHTML = "";
-
-  if (slots.length === 0) {
-    timeSlotsContainer.innerHTML =
-      '<p class="times-empty">Keine freien Zeiten an diesem Tag.</p>';
-    return;
-  }
-
-  slots.forEach((time) => {
-    const button = document.createElement("button");
-
-    button.type = "button";
-    button.className = "time-slot";
-    button.textContent = time;
-
-    if (bookingState.selectedTime === time) {
-      button.classList.add("selected");
-    }
-
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".time-slot.selected").forEach((el) => {
-        el.classList.remove("selected");
-      });
-
-      button.classList.add("selected");
-      bookingState.selectedTime = time;
-
-      console.log("Ausgewählte Uhrzeit:", bookingState.selectedTime);
-    });
-
-    timeSlotsContainer.appendChild(button);
-  });
-}
-
-function showSummaryError(message) {
-  if (!bookingSummaryError) {
-    return;
-  }
-
-  bookingSummaryError.textContent = message;
-  bookingSummaryError.hidden = false;
-}
-
-function hideSummaryError() {
-  if (bookingSummaryError) {
-    bookingSummaryError.hidden = true;
-  }
-}
-
-async function confirmBooking() {
-  if (isBookingSubmitting) {
-    return;
-  }
-
-  hideSummaryError();
-  setBookingSubmitting(true);
-
-  try {
-    // --------------------------------------------------
-    // 1. Grundlegende Validierung
-    // --------------------------------------------------
-
-    if (!bookingState.selectedService) {
-      showSummaryError("Bitte wählen Sie zuerst ein Beratungsangebot aus.");
-      return;
-    }
-
-    if (!bookingState.selectedDate) {
-      showSummaryError("Bitte wählen Sie zuerst ein Datum aus.");
-      return;
-    }
-
-    if (!bookingState.selectedTime) {
-      showSummaryError("Bitte wählen Sie zuerst eine Uhrzeit aus.");
-      return;
-    }
-
-    collectCustomerFormValues();
-
-    if (!validateCustomerForm()) {
-      showSummaryError("Bitte füllen Sie alle Pflichtfelder aus.");
-      return;
-    }
-
-    // --------------------------------------------------
-    // 2. Service noch einmal direkt aus Supabase laden
-    // --------------------------------------------------
-
-    const { data: serviceData, error: serviceError } = await supabase
-      .from("services")
-      .select("id, duration, price, active")
-      .eq("id", bookingState.selectedService.id)
-      .single();
-
-    if (serviceError || !serviceData || !serviceData.active) {
-      console.error(
-        "Fehler beim Laden des Dienstes:",
-        serviceError,
-      );
-
-      showSummaryError(
-        "Der gewählte Service ist leider nicht mehr verfügbar.",
-      );
-
-      return;
-    }
-
-    // --------------------------------------------------
-    // 3. Verfügbarkeit unmittelbar vor der Buchung prüfen
-    // --------------------------------------------------
-
-    const availableSlots = await getAvailableSlots(
-      bookingState.selectedDate,
-      serviceData.duration,
-    );
-
-    if (!availableSlots.includes(bookingState.selectedTime)) {
-      showSummaryError(
-        "Der gewählte Termin ist leider inzwischen vergeben. Bitte wählen Sie eine andere Uhrzeit.",
-      );
-
-      return;
-    }
-
-    // --------------------------------------------------
-    // 4. Buchungsdaten vorbereiten
-    // --------------------------------------------------
-
-    const bookingDate = formatDateISO(bookingState.selectedDate);
-
-    const bookingTime = bookingState.selectedTime;
-
-    const customerName =
-      `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
-
-    // ID bereits im Browser erzeugen.
-    // Dadurch brauchen wir nach dem INSERT kein SELECT.
-    const bookingId = crypto.randomUUID();
-
-    // --------------------------------------------------
-    // 5. Buchung speichern
-    // --------------------------------------------------
-
-    const insertPromise = supabase
-      .from("bookings")
-      .insert({
-        id: bookingId,
-        service_id: serviceData.id,
-        customer_name: customerName,
-        customer_email: bookingState.customer.email,
-        customer_phone: bookingState.customer.phone || null,
-        booking_date: bookingDate,
-        booking_time: bookingTime,
-        notes: bookingState.customer.message || null,
-        status: "pending",
-      });
-
-    const result = await withTimeout(insertPromise, 10000);
-
-    if (result?.error) {
-      const insertError = result.error;
-
-      console.error(
-        "Fehler beim Speichern der Buchung:",
-        insertError,
-      );
-
-      console.error(
-        "Insert error code:",
-        insertError.code,
-      );
-
-      console.error(
-        "Insert error status:",
-        insertError.status,
-      );
-
-      console.error(
-        "Insert error message:",
-        insertError.message,
-      );
-
-      if (insertError.code === "42501") {
-        showSummaryError(
-          "Die Buchung konnte wegen fehlender Berechtigungen nicht gespeichert werden.",
-        );
-      } else if (insertError.code === "23505") {
-        showSummaryError(
-          "Dieser Termin wurde gerade von jemand anderem gebucht. Bitte wählen Sie eine andere Uhrzeit.",
-        );
-      } else {
-        showSummaryError(
-          "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
-        );
-      }
-
-      return;
-    }
-
-    // --------------------------------------------------
-    // 6. Erfolgreiche Buchung
-    // --------------------------------------------------
-
-    console.log("Buchung erfolgreich gespeichert:", bookingId);
-
-    const createdAt = new Date().toISOString();
-
-    const params = new URLSearchParams({
-      id: bookingId,
-      service: bookingState.selectedService.title || "",
-      date: bookingDate,
-      time: bookingTime,
-      created_at: createdAt,
-    });
-
-    window.location.href = `success.html?${params.toString()}`;
-
-  } catch (error) {
-    console.error(
-      "Unbekannter Fehler bei der Buchungsbestätigung:",
-      error,
-    );
-
-    if (error?.message === "timeout") {
-      showSummaryError(
-        "Die Anfrage hat zu lange gedauert. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
-      );
-    } else {
-      showSummaryError(
-        "Die Buchung konnte leider nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
-      );
-    }
-
-  } finally {
-    setBookingSubmitting(false);
-  }
-}
-
-async function initBookingPage() {
-  await initBookingData();
-  loadServices();
-  initCalendar();
-  updateTimesPanel();
-}
-
-initBookingPage();
+        </div>
+
+      </aside>
+
+
+      <!-- ========================================
+           MOBILE SIDEBAR OVERLAY
+           ======================================== -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+
+      <!-- ========================================
+           MAIN
+           ======================================== -->
+
+      <main class="admin-main">
+
+        <!-- ========================================
+             TOPBAR
+             ======================================== -->
+
+        <header class="admin-topbar">
+
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+
+            <div class="topbar-title">
+
+              <h1>
+                Verfügbarkeit
+              </h1>
+
+              <p>
+                Reguläre Arbeitszeiten verwalten
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+
+              <div class="admin-user-info">
+
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        <!-- ========================================
+             CONTENT
+             ======================================== -->
+
+        <section class="availability-content">
+
+          <!-- ========================================
+               HEADER
+               ======================================== -->
+
+          <div class="availability-header">
+
+            <div>
+
+              <h2>
+                Reguläre Arbeitszeiten
+              </h2>
+
+              <p>
+                Lege fest, wann Termine regulär
+                gebucht werden können.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- ========================================
+               WOCHENTAGE
+               ======================================== -->
+
+          <div
+            id="availability-days"
+            class="availability-days"
+          >
+
+            <!-- Wird per JavaScript eingefügt -->
+
+          </div>
+
+
+          <!-- ========================================
+               SPEICHERN
+               ======================================== -->
+
+          <div class="availability-actions">
+
+            <div
+              id="availability-message"
+              class="availability-message"
+              hidden
+              role="status"
+              aria-live="polite"
+            ></div>
+
+            <button
+              type="button"
+              class="availability-save"
+              id="save-availability"
+            >
+              Änderungen speichern
+            </button>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
+
+    <script
+      type="module"
+      src="../js/auth.js"
+    ></script>
+
+    <script
+      src="../js/admin-layout.js"
+    ></script>
+
+    <script
+      type="module"
+      src="../js/availability.js"
+    ></script>
+
+  </body>
+</html>
+
+
+============================================================
+DATEI: admin\pages\blocked-times.html
+============================================================
+
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Sperrzeiten | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/blocked-times.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- SIDEBAR -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+
+          <a
+            href="dashboard.html"
+            class="sidebar-logo"
+          >
+            <span class="sidebar-logo-mark">A</span>
+            <span class="sidebar-logo-text">Aufwind</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
+
+        </div>
+
+
+        <nav
+          class="sidebar-navigation"
+          aria-label="Admin-Navigation"
+        >
+
+          <a
+            href="dashboard.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⌂</span>
+            <span class="sidebar-link-text">Dashboard</span>
+          </a>
+
+          <a
+            href="bookings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">▣</span>
+            <span class="sidebar-link-text">Termine</span>
+          </a>
+
+          <a
+            href="availability.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◷</span>
+            <span class="sidebar-link-text">Verfügbarkeit</span>
+          </a>
+
+          <a
+            href="blocked-times.html"
+            class="sidebar-link active"
+          >
+            <span class="sidebar-icon">⊘</span>
+            <span class="sidebar-link-text">Sperrzeiten</span>
+          </a>
+
+          <a
+            href="services.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◇</span>
+            <span class="sidebar-link-text">
+              Beratungsangebote
+            </span>
+          </a>
+
+          <a
+            href="settings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-link-text">Einstellungen</span>
+          </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+          <a
+            href="/"
+            class="sidebar-link sidebar-public-link"
+          >
+            <span class="sidebar-icon">↗</span>
+            <span class="sidebar-link-text">Zur Website</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-link-text">Abmelden</span>
+          </button>
+
+        </div>
+
+      </aside>
+
+
+      <!-- MOBILE OVERLAY -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+
+      <!-- MAIN -->
+
+      <main class="admin-main">
+
+        <!-- TOPBAR -->
+
+        <!-- TOPBAR -->
+
+        <header class="admin-topbar">
+
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <div class="topbar-title">
+              <h1>Sperrzeiten</h1>
+              <p>Zeiten und Tage für Buchungen sperren</p>
+            </div>
+
+          </div>
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+              <div class="admin-user-info">
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="blocked-times-content">
+
+          <div class="blocked-times-header">
+
+            <div>
+              <h2>Sperrzeiten</h2>
+
+              <p>
+                Verwalte ganze Tage und einzelne Zeiten,
+                an denen keine Buchungen möglich sein sollen.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="blocked-times-add-button"
+              id="add-blocked-time-button"
+            >
+              + Sperrzeit hinzufügen
+            </button>
+
+          </div>
+
+
+          <!-- MESSAGE -->
+
+          <div
+            id="blocked-times-message"
+            class="blocked-times-message"
+            hidden
+            role="status"
+            aria-live="polite"
+          ></div>
+
+
+          <!-- LOADING -->
+
+          <div
+            id="blocked-times-loading"
+            class="blocked-times-state"
+          >
+            <p>Sperrzeiten werden geladen...</p>
+          </div>
+
+
+          <!-- EMPTY -->
+
+          <div
+            id="blocked-times-empty"
+            class="blocked-times-state"
+            hidden
+          >
+            <p>Keine Sperrzeiten vorhanden.</p>
+
+            <button
+              type="button"
+              class="blocked-times-empty-button"
+              id="empty-add-blocked-time"
+            >
+              + Sperrzeit hinzufügen
+            </button>
+          </div>
+
+
+          <!-- ERROR -->
+
+          <div
+            id="blocked-times-error"
+            class="blocked-times-state blocked-times-state-error"
+            hidden
+          >
+            <p>
+              Die Sperrzeiten konnten nicht geladen werden.
+            </p>
+
+            <button
+              type="button"
+              class="blocked-times-empty-button"
+              id="retry-blocked-times"
+            >
+              Erneut versuchen
+            </button>
+          </div>
+
+
+          <!-- LIST -->
+
+          <div
+            id="blocked-times-list"
+            class="blocked-times-list"
+          ></div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+
+    <!-- ==================================================
+         MODAL
+         ================================================== -->
+
+    <div
+      class="blocked-time-modal"
+      id="blocked-time-modal"
+      hidden
+    >
+
+      <div
+        class="blocked-time-modal-backdrop"
+        data-modal-close
+      ></div>
+
+      <div
+        class="blocked-time-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="blocked-time-modal-title"
+      >
+
+        <div class="blocked-time-modal-header">
+
+          <div>
+            <h2 id="blocked-time-modal-title">
+              Neue Sperrzeit hinzufügen
+            </h2>
+
+            <p>
+              Lege fest, wann keine Termine gebucht werden können.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="blocked-time-modal-close"
+            id="blocked-time-modal-close"
+            aria-label="Modal schließen"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <form
+          id="blocked-time-form"
+          class="blocked-time-form"
+        >
+
+          <input
+            type="hidden"
+            id="blocked-time-edit-id"
+          />
+
+          <input
+            type="hidden"
+            id="blocked-time-edit-type"
+          />
+
+          <!-- ART -->
+
+          <fieldset class="blocked-time-fieldset">
+
+            <legend>Art der Sperrzeit</legend>
+
+            <div class="blocked-time-type-options">
+
+              <label class="blocked-time-radio">
+
+                <input
+                  type="radio"
+                  name="blocked-time-type"
+                  value="day"
+                  checked
+                />
+
+                <span>
+                  Ganzer Tag / Zeitraum
+                </span>
+
+              </label>
+
+              <label class="blocked-time-radio">
+
+                <input
+                  type="radio"
+                  name="blocked-time-type"
+                  value="time"
+                />
+
+                <span>
+                  Bestimmte Uhrzeit
+                </span>
+
+              </label>
+
+            </div>
+
+          </fieldset>
+
+
+          <!-- GANZER TAG -->
+
+          <div
+            id="blocked-day-fields"
+            class="blocked-time-fields"
+          >
+
+            <div class="blocked-time-field-row">
+
+              <div class="blocked-time-field">
+
+                <label for="blocked-day-from">
+                  Von
+                </label>
+
+                <input
+                  type="date"
+                  id="blocked-day-from"
+                  required
+                />
+
+              </div>
+
+
+              <div class="blocked-time-field">
+
+                <label for="blocked-day-to">
+                  Bis
+                </label>
+
+                <input
+                  type="date"
+                  id="blocked-day-to"
+                  required
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- BESTIMMTE UHRZEIT -->
+
+          <div
+            id="blocked-time-fields"
+            class="blocked-time-fields"
+            hidden
+          >
+
+            <div class="blocked-time-field">
+
+              <label for="blocked-time-date">
+                Datum
+              </label>
+
+              <input
+                type="date"
+                id="blocked-time-date"
+              />
+
+            </div>
+
+
+            <div class="blocked-time-field-row">
+
+              <div class="blocked-time-field">
+
+                <label for="blocked-time-start">
+                  Von
+                </label>
+
+                <input
+                  type="time"
+                  id="blocked-time-start"
+                />
+
+              </div>
+
+
+              <div class="blocked-time-field">
+
+                <label for="blocked-time-end">
+                  Bis
+                </label>
+
+                <input
+                  type="time"
+                  id="blocked-time-end"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- GRUND -->
+
+          <div class="blocked-time-field">
+
+            <label for="blocked-time-reason">
+              Grund
+            </label>
+
+            <input
+              type="text"
+              id="blocked-time-reason"
+              maxlength="200"
+              placeholder="z. B. Urlaub"
+            />
+
+          </div>
+
+
+          <!-- VALIDATION -->
+
+          <p
+            id="blocked-time-form-error"
+            class="blocked-time-form-error"
+            role="alert"
+            aria-live="assertive"
+            hidden
+          ></p>
+
+
+          <!-- ACTIONS -->
+
+          <div class="blocked-time-modal-actions">
+
+            <button
+              type="button"
+              class="blocked-time-secondary-button"
+              id="blocked-time-cancel"
+            >
+              Abbrechen
+            </button>
+
+            <button
+              type="submit"
+              class="blocked-time-primary-button"
+              id="blocked-time-save"
+            >
+              Speichern
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script
+      type="module"
+      src="../js/auth.js"
+    ></script>
+
+    <script src="../js/admin-layout.js"></script>
+
+    <script
+      type="module"
+      src="../js/blocked-times.js"
+    ></script>
+
+  </body>
+</html>
+
+
+============================================================
+DATEI: admin\pages\bookings.html
+============================================================
+
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Buchungen | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/bookings.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- SIDEBAR -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+          <a href="dashboard.html" class="sidebar-logo">
+            <span class="sidebar-logo-mark">A</span>
+            <span class="sidebar-logo-text">Aufwind</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <nav class="sidebar-navigation" aria-label="Admin-Navigation">
+
+          <a href="dashboard.html" class="sidebar-link">
+            <span class="sidebar-icon">⌂</span>
+            <span class="sidebar-link-text">Dashboard</span>
+          </a>
+
+          <a href="bookings.html" class="sidebar-link active">
+            <span class="sidebar-icon">▣</span>
+            <span class="sidebar-link-text">Termine</span>
+          </a>
+
+          <a href="availability.html" class="sidebar-link">
+            <span class="sidebar-icon">◷</span>
+            <span class="sidebar-link-text">Verfügbarkeit</span>
+          </a>
+
+          <a href="services.html" class="sidebar-link">
+            <span class="sidebar-icon">◇</span>
+            <span class="sidebar-link-text">Beratungsangebote</span>
+          </a>
+
+          <a href="settings.html" class="sidebar-link">
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-link-text">Einstellungen</span>
+          </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+          <a href="/" class="sidebar-link sidebar-public-link">
+            <span class="sidebar-icon">↗</span>
+            <span class="sidebar-link-text">Zur Website</span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-link-text">Abmelden</span>
+          </button>
+
+        </div>
+
+      </aside>
+
+
+      <!-- MOBILE OVERLAY -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+
+      <!-- MAIN -->
+
+      <main class="admin-main">
+
+        <!-- TOPBAR -->
+
+        <header class="admin-topbar">
+
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <div class="topbar-title">
+              <h1>Termine</h1>
+              <p>Alle Buchungen verwalten</p>
+            </div>
+
+          </div>
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+              <div class="admin-user-info">
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="bookings-content">
+
+          <!-- HEADER -->
+
+          <div class="bookings-header">
+
+            <div>
+              <h2>Buchungen</h2>
+
+              <p>
+                Hier kannst du alle eingegangenen Termine verwalten.
+              </p>
+            </div>
+
+          </div>
+
+
+          <!-- FILTER -->
+
+          <div class="bookings-toolbar">
+
+            <!-- SUCHE -->
+
+            <div class="booking-search">
+
+              <label for="booking-search">
+                Suche
+              </label>
+
+              <input
+                type="search"
+                id="booking-search"
+                placeholder="Name oder E-Mail suchen..."
+                autocomplete="off"
+              />
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="booking-filter">
+
+              <label for="status-filter">
+                Status
+              </label>
+
+              <select id="status-filter">
+
+                <option value="all">
+                  Alle
+                </option>
+
+                <option value="pending">
+                  Ausstehend
+                </option>
+
+                <option value="confirmed">
+                  Bestätigt
+                </option>
+
+                <option value="completed">
+                  Abgeschlossen
+                </option>
+
+                <option value="cancelled">
+                  Storniert
+                </option>
+
+                <option value="no_show">
+                  Nicht erschienen
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- BERATUNGSART -->
+
+            <div class="booking-filter">
+
+              <label for="service-filter">
+                Beratungsart
+              </label>
+
+              <select id="service-filter">
+
+                <option value="all">
+                  Alle
+                </option>
+
+                <!-- Wird später dynamisch aus Supabase geladen -->
+
+              </select>
+
+            </div>
+
+
+            <!-- ZEITRAUM -->
+
+            <div class="booking-filter">
+
+              <label for="date-filter">
+                Zeitraum
+              </label>
+
+              <select id="date-filter">
+
+                <option value="all">
+                  Alle
+                </option>
+
+                <option value="today">
+                  Heute
+                </option>
+
+                <option value="tomorrow">
+                  Morgen
+                </option>
+
+                <option value="this_week">
+                  Diese Woche
+                </option>
+
+                <option value="next_week">
+                  Nächste Woche
+                </option>
+
+                <option value="this_month">
+                  Dieser Monat
+                </option>
+
+                <option value="custom">
+                  Benutzerdefiniert
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- BENUTZERDEFINIERTER ZEITRAUM -->
+
+            <div
+              class="booking-custom-date-filter"
+              id="custom-date-filter"
+              hidden
+            >
+
+              <div class="booking-filter">
+
+                <label for="date-from">
+                  Von
+                </label>
+
+                <input
+                  type="date"
+                  id="date-from"
+                />
+
+              </div>
+
+              <div class="booking-filter">
+
+                <label for="date-to">
+                  Bis
+                </label>
+
+                <input
+                  type="date"
+                  id="date-to"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- AKTUALISIEREN -->
+
+            <button
+              type="button"
+              class="bookings-refresh"
+              id="refresh-bookings"
+            >
+              Aktualisieren
+            </button>
+
+          </div>
+
+
+          <!-- AKTIVE FILTER + TREFFERZAHL -->
+
+          <div class="bookings-meta">
+
+            <div
+              class="active-booking-filters"
+              id="active-booking-filters"
+            >
+            </div>
+
+            <p class="booking-count">
+
+              <span id="booking-count">
+                0
+              </span>
+
+              <span id="booking-count-label">
+                Buchungen
+              </span>
+
+            </p>
+
+          </div>
+
+
+          <!-- LISTE -->
+
+          <div
+            id="bookings-list"
+            class="bookings-list"
+          >
+
+            <div class="empty-state">
+              <p>
+                Buchungen werden geladen...
+              </p>
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script type="module" src="../js/auth.js"></script>
+    <script src="../js/admin-layout.js"></script>
+    <script type="module" src="../js/bookings.js"></script>
+
+  </body>
+
+  <!-- BUCHUNGS-MODAL -->
+
+  <div
+    class="booking-modal"
+    id="booking-modal"
+    hidden
+    aria-hidden="true"
+  >
+    <div
+      class="booking-modal-backdrop"
+      data-modal-close
+    ></div>
+
+    <div
+      class="booking-modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="booking-modal-title"
+    >
+
+      <header class="booking-modal-header">
+
+        <div>
+          <h2 id="booking-modal-title">
+            Buchung
+          </h2>
+
+          <p id="booking-modal-subtitle">
+            Buchungsdetails
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="booking-modal-close"
+          id="booking-modal-close"
+          aria-label="Modal schließen"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <div class="booking-modal-content">
+
+        <div class="booking-details-grid">
+
+          <div class="booking-details-column">
+
+            <section class="booking-details-section">
+              <span class="booking-details-label">
+                Kunde
+              </span>
+
+              <strong
+                class="booking-details-value"
+                id="booking-modal-customer"
+              >
+                –
+              </strong>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-email"
+              >
+                –
+              </span>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-phone"
+              >
+                –
+              </span>
+            </section>
+
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Termin
+              </span>
+
+              <strong
+                class="booking-details-value"
+                id="booking-modal-date"
+              >
+                –
+              </strong>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-time"
+              >
+                –
+              </span>
+
+            </section>
+
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Beratungsangebot
+              </span>
+
+              <strong
+                class="booking-details-value"
+                id="booking-modal-service"
+              >
+                –
+              </strong>
+
+              <span
+                class="booking-details-secondary"
+                id="booking-modal-duration"
+              >
+                –
+              </span>
+
+            </section>
+
+          </div>
+
+
+          <div class="booking-details-column">
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Status
+              </span>
+
+              <span
+                class="booking-card-status"
+                id="booking-modal-status"
+              >
+                –
+              </span>
+
+            </section>
+
+
+            <section class="booking-details-section">
+
+              <span class="booking-details-label">
+                Notizen
+              </span>
+
+              <div
+                class="booking-details-notes"
+                id="booking-modal-notes"
+              >
+                Keine Notizen vorhanden.
+              </div>
+
+            </section>
+
+          </div>
+
+        </div>
+
+
+        <div class="booking-details-actions">
+
+          <button
+            type="button"
+            class="booking-modal-action booking-modal-confirm"
+            id="booking-modal-confirm"
+            data-action="confirm"
+          >
+            Buchung bestätigen
+          </button>
+
+          <button
+            type="button"
+            class="booking-modal-action booking-modal-cancel"
+            id="booking-modal-cancel"
+            data-action="cancel"
+          >
+            Buchung stornieren
+          </button>
+
+        </div>
+
+
+        <p class="booking-modal-info">
+          Die Buchung wurde über die Website eingereicht.
+        </p>
+
+      </div>
+
+    </div>
+  </div>
+</html>
+
+
+============================================================
+DATEI: admin\pages\dashboard.html
+============================================================
+
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Dashboard | Aufwind Beratung</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Gemeinsame Website-Styles -->
+    <link rel="stylesheet" href="../../css/global.css" />
+
+    <!-- Admin-Styles -->
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+  </head>
+
+  <body>
+    <div class="admin-layout" id="adminLayout">
+
+      <!-- ========================================
+           SIDEBAR
+           ======================================== -->
+
+      <aside class="admin-sidebar" id="adminSidebar">
+
+        <div class="sidebar-header">
+
+          <a href="dashboard.html" class="sidebar-logo">
+            <span class="sidebar-logo-mark">A</span>
+            <span class="sidebar-logo-text">
+              Aufwind
+            </span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Sidebar einklappen"
+            aria-expanded="true"
+          >
+            <span></span>
+            <span></span>
+          </button>
+
+        </div>
+
+
+        <!-- ========================================
+             NAVIGATION
+             ======================================== -->
+
+        <nav
+          class="sidebar-navigation"
+          aria-label="Admin-Navigation"
+        >
+
+          <a
+            href="dashboard.html"
+            class="sidebar-link active"
+          >
+            <span class="sidebar-icon">⌂</span>
+            <span class="sidebar-link-text">
+              Dashboard
+            </span>
+          </a>
+
+          <a
+            href="bookings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">▣</span>
+            <span class="sidebar-link-text">
+              Termine
+            </span>
+          </a>
+
+          <a
+            href="availability.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◷</span>
+            <span class="sidebar-link-text">
+              Verfügbarkeit
+            </span>
+          </a>
+
+          <a
+            href="services.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">◇</span>
+            <span class="sidebar-link-text">
+              Beratungsangebote
+            </span>
+          </a>
+
+          <a
+            href="settings.html"
+            class="sidebar-link"
+          >
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-link-text">
+              Einstellungen
+            </span>
+          </a>
+
+        </nav>
+
+
+        <!-- ========================================
+             SIDEBAR UNTEN
+             ======================================== -->
+
+        <div class="sidebar-bottom">
+
+          <a
+            href="/"
+            class="sidebar-link sidebar-public-link"
+          >
+            <span class="sidebar-icon">↗</span>
+            <span class="sidebar-link-text">
+              Zur Website
+            </span>
+          </a>
+
+          <button
+            type="button"
+            class="sidebar-link sidebar-logout"
+            id="logoutButton"
+          >
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-link-text">
+              Abmelden
+            </span>
+          </button>
+
+        </div>
+
+      </aside>
+
+
+      <!-- ========================================
+           MOBILE OVERLAY
+           ======================================== -->
+
+      <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+      ></div>
+
+
+      <!-- ========================================
+           MAIN
+           ======================================== -->
+
+      <main class="admin-main">
+
+        <!-- ========================================
+             TOPBAR
+             ======================================== -->
+
+        <header class="admin-topbar">
+
+          <div class="topbar-left">
+
+            <button
+              type="button"
+              class="mobile-menu-button"
+              id="mobileMenuButton"
+              aria-label="Menü öffnen"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <div class="topbar-title">
+              <h1>Dashboard</h1>
+              <p>
+                Willkommen im Admin-Bereich
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="topbar-right">
+
+            <div class="admin-user">
+
+              <div class="admin-user-avatar">
+                A
+              </div>
+
+              <div class="admin-user-info">
+
+                <span
+                  class="admin-user-name"
+                  id="adminUserName"
+                >
+                  Administrator
+                </span>
+
+                <span class="admin-user-role">
+                  Admin
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        <!-- ========================================
+        DASHBOARD
+        ======================================== -->
+
+        <section class="dashboard-content">
+
+          <!-- BEGRÜSSUNG -->
+
+          <div class="dashboard-header">
+
+            <h2>Guten Tag!</h2>
+
+            <p>
+              Aktueller Überblick:
+            </p>
+
+          </div>
+
+
+          <!-- KPI-KARTEN -->
+
+          <div class="dashboard-stats">
+
+            <article class="dashboard-stat">
+
+              <div class="dashboard-stat-content">
+
+                <span class="stat-label">
+                  Termine heute
+                </span>
+
+                <strong id="today-bookings">
+                  –
+                </strong>
+
+              </div>
+
+              <a
+                href="bookings.html"
+                class="stat-action"
+              >
+                Termine ansehen
+              </a>
+
+            </article>
+
+
+            <article class="dashboard-stat">
+
+              <div class="dashboard-stat-content">
+
+                <span class="stat-label">
+                  Diese Woche
+                </span>
+
+                <strong id="week-bookings">
+                  –
+                </strong>
+
+              </div>
+
+              <a
+                href="bookings.html"
+                class="stat-action"
+              >
+                Termine ansehen
+              </a>
+
+            </article>
+
+
+            <article class="dashboard-stat">
+
+              <div class="dashboard-stat-content">
+
+                <span class="stat-label">
+                  Offene Buchungen
+                </span>
+
+                <strong id="pending-bookings">
+                  –
+                </strong>
+
+              </div>
+
+              <a
+                href="bookings.html?status=pending"
+                class="stat-action"
+              >
+                Buchungen
+              </a>
+
+            </article>
+
+          </div>
+
+
+          <!-- NÄCHSTER TERMIN -->
+
+          <section class="dashboard-section next-booking-section">
+
+            <div class="section-header">
+
+              <div>
+                <h2>Nächster Termin</h2>
+              </div>
+
+            </div>
+
+
+            <div
+              id="next-booking"
+              class="next-booking"
+            >
+
+              <div class="empty-state">
+                <p>
+                  Termine werden geladen...
+                </p>
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- HEUTIGE TERMINE -->
+
+          <section class="dashboard-section">
+
+            <div class="section-header">
+
+              <div>
+                <h2>Heute</h2>
+
+                <p>
+                  Die nächsten Termine des heutigen Tages.
+                </p>
+              </div>
+
+              <a
+                href="bookings.html"
+                class="dashboard-link"
+              >
+                Alle Termine heute
+              </a>
+
+            </div>
+
+
+            <div
+              id="today-bookings-list"
+              class="booking-list"
+            >
+
+              <div class="empty-state">
+                <p>
+                  Termine werden geladen...
+                </p>
+              </div>
+
+            </div>
+
+          </section>
+
+        </section>
+
+      </main>
+
+    </div>
+
+
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
+
+    <script type="module" src="../js/auth.js"></script>
+    <script src="../js/admin-layout.js"></script>
+    <script type="module" src="../js/dashboard.js"></script>
+
+  </body>
+</html>
+
+
+============================================================
+DATEI: admin\pages\services.html
+============================================================
+
 
 
 
 ============================================================
-DATEI: js\supabase.js
+DATEI: admin\pages\settings.html
 ============================================================
 
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-// Development helper: if the site is served from localhost/127.0.0.1,
-// use the local Supabase dev instance started with `supabase start`.
-const hostname = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
-const isLocalhost = hostname === "127.0.0.1" || hostname === "localhost";
-
-const LOCAL_SUPABASE_URL = "http://127.0.0.1:54321";
-const LOCAL_SUPABASE_ANON_KEY = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
-
-const PROD_SUPABASE_URL = "https://osesjuwfgytibasmnacl.supabase.co";
-const PROD_SUPABASE_ANON_KEY = "sb_publishable_am5h5emmjCuvdz69L2PHkw_2Pankgs5";
-
-const supabaseUrl = isLocalhost ? LOCAL_SUPABASE_URL : PROD_SUPABASE_URL;
-const supabaseKey = isLocalhost ? LOCAL_SUPABASE_ANON_KEY : PROD_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
 
 
