@@ -341,6 +341,9 @@ function openCreateModal() {
   dayToInput.value =
     today;
 
+  timeDateInput.value =
+    today;
+
   modal.hidden = false;
 
   document.body.classList.add(
