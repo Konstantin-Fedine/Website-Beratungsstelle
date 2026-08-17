@@ -879,3 +879,40 @@ body.blocked-time-modal-open {
     padding: 16px;
   }
 }
+
+/* ========================================
+   KONFLIKT – TERMIN ANSEHEN
+   ======================================== */
+
+.blocked-time-booking-link {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  margin-top: 10px;
+
+  padding: 8px 12px;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition);
+}
+
+.blocked-time-booking-link:hover {
+  background: rgba(42, 36, 33, 0.04);
+  border-color: rgba(42, 36, 33, 0.14);
+}
