@@ -745,7 +745,6 @@ async function validateTimeConflicts(
   const endMinutes =
     timeToMinutes(endTime);
 
-
   /* ========================================
      1. GANZTÄGIGE SPERREN
      ======================================== */
@@ -768,15 +767,14 @@ async function validateTimeConflicts(
     return "Die bestehenden Sperrzeiten konnten nicht geprüft werden.";
   }
 
-  if ((blockedDaysForDate ?? []).length > 0) {
-    console.log(
-      "Ganztagssperre gefunden:",
-      blockedDaysForDate
+  const conflictingDay =
+    (blockedDaysForDate ?? []).find(
+      (entry) => entry.id !== editId
     );
 
+  if (conflictingDay) {
     return "Der gewählte Zeitpunkt liegt bereits in einer bestehenden ganztägigen Sperrzeit.";
   }
-
 
   /* ========================================
      2. ANDERE UHRZEIT-SPERREN
@@ -787,7 +785,9 @@ async function validateTimeConflicts(
     error: timesError,
   } = await supabase
     .from("blocked_times")
-    .select("id, date, start_time, end_time")
+    .select(
+      "id, date, start_time, end_time"
+    )
     .eq("date", date);
 
   if (timesError) {
@@ -822,52 +822,57 @@ async function validateTimeConflicts(
     );
 
   if (conflictingTime) {
-    console.log(
-      "Zeit-Konflikt gefunden:",
-      conflictingTime
-    );
-
     return "Die gewählte Zeit überschneidet sich mit einer bestehenden Sperrzeit.";
   }
 
-
   /* ========================================
-     3. BESTÄTIGTE BUCHUNGEN
+     3. BESTÄTIGTER TERMIN
      ======================================== */
 
-  const confirmedBookings =
-    await loadConfirmedBookings(
-      date,
-      date
-    );
+  try {
+    const confirmedBookings =
+      await loadConfirmedBookings(
+        date,
+        date
+      );
 
-  const conflictingBooking =
-    confirmedBookings.find(
-      (booking) => {
-        const bookingStart =
-          timeToMinutes(
-            booking.booking_time
+    const conflictingBooking =
+      confirmedBookings.find(
+        (booking) => {
+          const bookingStart =
+            timeToMinutes(
+              booking.booking_time
+            );
+
+          const bookingEnd =
+            bookingStart +
+            booking.duration;
+
+          return timeRangesOverlap(
+            startMinutes,
+            endMinutes,
+            bookingStart,
+            bookingEnd
           );
+        }
+      );
 
-        const bookingEnd =
-          bookingStart +
-          booking.duration;
-
-        return timeRangesOverlap(
-          startMinutes,
-          endMinutes,
-          bookingStart,
-          bookingEnd
-        );
-      }
+    if (conflictingBooking) {
+      return {
+        message:
+          "Die gewählte Zeit überschneidet sich mit einem bereits bestätigten Termin.",
+        bookingId:
+          conflictingBooking.id,
+      };
+    }
+  } catch (error) {
+    console.error(
+      "Fehler bei Prüfung bestätigter Termine:",
+      error
     );
 
-  if (conflictingBooking) {
-    return {
-      message:
-        "Die gewählte Zeit überschneidet sich mit einem bereits bestätigten Termin.",
-      bookingId: conflictingBooking.id,
-    };
+    return error.message ||
+      "Die bestehenden Termine konnten nicht geprüft werden.";
   }
 
   return null;
