@@ -643,6 +643,16 @@
   color: var(--color-text-muted);
 }
 
+.blocked-time-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.blocked-time-fields[hidden] {
+  display: none !important;
+}
+
 
 /* ========================================
    EINHEITLICHE DATUMSFELDER

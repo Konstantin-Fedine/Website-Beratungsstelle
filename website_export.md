@@ -611,6 +611,88 @@ DATEI: admin\css\blocked-times.css
   line-height: 1.45;
 }
 
+/* ========================================
+   FORM INPUTS
+   ======================================== */
+
+.blocked-time-field input {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+
+  background: var(--color-surface);
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 0.88rem;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.blocked-time-field input:focus {
+  border-color: var(--color-primary);
+
+  box-shadow:
+    0 0 0 3px rgba(212, 178, 149, 0.15);
+}
+
+.blocked-time-field input::placeholder {
+  color: var(--color-text-muted);
+}
+
+
+/* ========================================
+   EINHEITLICHE DATUMSFELDER
+   ======================================== */
+
+.blocked-date-input {
+  width: 100%;
+}
+
+.blocked-date-input::-webkit-datetime-edit {
+  padding: 0;
+}
+
+.blocked-date-input::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+.blocked-date-input::-webkit-calendar-picker-indicator {
+  margin-left: auto;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.blocked-date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+
+/* ========================================
+   EINHEITLICHE ZEITFELDER
+   ======================================== */
+
+.blocked-time-input {
+  width: 100%;
+}
+
+.blocked-time-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.blocked-time-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
 
 /* ========================================
    MODAL ACTIONS
@@ -1139,6 +1221,9 @@ function openCreateModal() {
     today;
 
   dayToInput.value =
+    today;
+
+  timeDateInput.value =
     today;
 
   modal.hidden = false;
@@ -2482,6 +2567,7 @@ DATEI: admin\pages\blocked-times.html
                 <input
                   type="date"
                   id="blocked-day-from"
+                  class="blocked-date-input"
                   required
                 />
 
@@ -2497,6 +2583,7 @@ DATEI: admin\pages\blocked-times.html
                 <input
                   type="date"
                   id="blocked-day-to"
+                  class="blocked-date-input"
                   required
                 />
 
@@ -2524,6 +2611,7 @@ DATEI: admin\pages\blocked-times.html
               <input
                 type="date"
                 id="blocked-time-date"
+                class="blocked-date-input"
               />
 
             </div>
@@ -2540,6 +2628,7 @@ DATEI: admin\pages\blocked-times.html
                 <input
                   type="time"
                   id="blocked-time-start"
+                  class="blocked-time-input"
                 />
 
               </div>
@@ -2554,6 +2643,7 @@ DATEI: admin\pages\blocked-times.html
                 <input
                   type="time"
                   id="blocked-time-end"
+                  class="blocked-time-input"
                 />
 
               </div>
