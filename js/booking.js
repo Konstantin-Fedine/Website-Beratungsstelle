@@ -841,58 +841,69 @@ async function confirmBooking() {
     const customerName =
       `${bookingState.customer.firstName} ${bookingState.customer.lastName}`;
 
-    // ID bereits im Browser erzeugen.
-    // Dadurch brauchen wir nach dem INSERT kein SELECT.
-    const bookingId = crypto.randomUUID();
 
     // --------------------------------------------------
-    // 5. Buchung speichern
+    // 5. Buchung über sichere PostgreSQL-Funktion speichern
     // --------------------------------------------------
 
-    const insertPromise = supabase
-      .from("bookings")
-      .insert({
-        id: bookingId,
-        service_id: serviceData.id,
-        customer_name: customerName,
-        customer_email: bookingState.customer.email,
-        customer_phone: bookingState.customer.phone || null,
-        booking_date: bookingDate,
-        booking_time: bookingTime,
-        notes: bookingState.customer.message || null,
-        status: "pending",
-      });
+    const rpcPromise = supabase.rpc("create_booking", {
+      p_service_id: serviceData.id,
+      p_customer_name: customerName,
+      p_customer_email: bookingState.customer.email,
+      p_customer_phone: bookingState.customer.phone || null,
+      p_booking_date: bookingDate,
+      p_booking_time: bookingTime,
+      p_notes: bookingState.customer.message || null,
+    });
 
-    const result = await withTimeout(insertPromise, 10000);
+    const result = await withTimeout(rpcPromise, 10000);
 
     if (result?.error) {
-      const insertError = result.error;
+      const bookingError = result.error;
 
       console.error(
-        "Fehler beim Speichern der Buchung:",
-        insertError,
+        "Fehler beim Erstellen der Buchung:",
+        bookingError,
       );
 
       console.error(
-        "Insert error code:",
-        insertError.code,
+        "Booking error code:",
+        bookingError.code,
       );
 
       console.error(
-        "Insert error status:",
-        insertError.status,
+        "Booking error message:",
+        bookingError.message,
       );
 
-      console.error(
-        "Insert error message:",
-        insertError.message,
-      );
+      const errorMessage =
+        bookingError.message || "";
 
-      if (insertError.code === "42501") {
+      if (errorMessage.includes("SERVICE_NOT_AVAILABLE")) {
         showSummaryError(
-          "Die Buchung konnte wegen fehlender Berechtigungen nicht gespeichert werden.",
+          "Der gewählte Service ist leider nicht mehr verfügbar.",
         );
-      } else if (insertError.code === "23505") {
+      } else if (errorMessage.includes("MINIMUM_NOTICE_NOT_MET")) {
+        showSummaryError(
+          "Dieser Termin liegt zu kurzfristig. Bitte wählen Sie eine spätere Uhrzeit.",
+        );
+      } else if (errorMessage.includes("MAXIMUM_ADVANCE_REACHED")) {
+        showSummaryError(
+          "Dieser Termin liegt außerhalb des möglichen Buchungszeitraums.",
+        );
+      } else if (errorMessage.includes("DAY_BLOCKED")) {
+        showSummaryError(
+          "Dieser Tag ist leider nicht buchbar.",
+        );
+      } else if (errorMessage.includes("OUTSIDE_AVAILABILITY")) {
+        showSummaryError(
+          "Diese Uhrzeit liegt nicht innerhalb der verfügbaren Arbeitszeit.",
+        );
+      } else if (errorMessage.includes("TIME_BLOCKED")) {
+        showSummaryError(
+          "Diese Uhrzeit ist bereits gesperrt.",
+        );
+      } else if (errorMessage.includes("TIME_ALREADY_BOOKED")) {
         showSummaryError(
           "Dieser Termin wurde gerade von jemand anderem gebucht. Bitte wählen Sie eine andere Uhrzeit.",
         );
@@ -904,6 +915,9 @@ async function confirmBooking() {
 
       return;
     }
+
+    const bookingId = result.data;
+
 
     // --------------------------------------------------
     // 6. Erfolgreiche Buchung
