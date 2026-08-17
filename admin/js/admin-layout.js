@@ -24,7 +24,7 @@ async function loadSidebar() {
 
   try {
     const response = await fetch(
-      "/admin/sidebar.html",
+      "/admin/components/sidebar.html",
       {
         cache: "no-store",
       },
