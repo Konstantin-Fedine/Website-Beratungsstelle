@@ -2,8 +2,8 @@ import { supabase } from "../../js/supabase.js";
 
 const loginForm = document.getElementById("login-form");
 const loginError = document.getElementById("login-error");
-const logoutButton = document.getElementById("logout-button");
 const adminEmail = document.getElementById("admin-email");
+const adminUserName = document.getElementById("adminUserName");
 
 /* ========================================
    FEHLERMELDUNG
@@ -95,8 +95,25 @@ if (loginForm) {
    ======================================== */
 
 async function protectAdminPage() {
-  // Login-Seite muss nicht geschützt werden
+  // Login-Seite: bei aktiver Session direkt ins Dashboard
   if (loginForm) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      return;
+    }
+
+    const isAdmin = await checkAdmin();
+
+    if (isAdmin) {
+      window.location.href = "pages/dashboard.html";
+      return;
+    }
+
+    await supabase.auth.signOut();
+
     return;
   }
 
@@ -124,31 +141,51 @@ async function protectAdminPage() {
   if (adminEmail) {
     adminEmail.textContent = session.user.email;
   }
+
+  // Name in der Topbar anzeigen
+  if (adminUserName) {
+    adminUserName.textContent = session.user.email || "Admin";
+  }
 }
 
 /* ========================================
    LOGOUT
    ======================================== */
 
-if (logoutButton) {
-  logoutButton.addEventListener("click", async () => {
-    logoutButton.disabled = true;
-    logoutButton.textContent = "Abmelden...";
+async function logout(triggerButton = null) {
+  if (triggerButton) {
+    triggerButton.disabled = true;
+    triggerButton.textContent = "Abmelden...";
+  }
 
-    const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
 
-    if (error) {
-      console.error("Logout fehlgeschlagen:", error);
+  if (error) {
+    console.error("Logout fehlgeschlagen:", error);
 
-      logoutButton.disabled = false;
-      logoutButton.textContent = "Abmelden";
-
-      return;
+    if (triggerButton) {
+      triggerButton.disabled = false;
+      triggerButton.textContent = "Abmelden";
     }
 
-    window.location.href = "../index.html";
-  });
+    return;
+  }
+
+  window.location.href = "../index.html";
 }
+
+// Sidebar wird dynamisch geladen, daher Event Delegation nutzen.
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest(
+    "#logoutButton, #logout-button"
+  );
+
+  if (!button) {
+    return;
+  }
+
+  await logout(button);
+});
 
 /* ========================================
    START
