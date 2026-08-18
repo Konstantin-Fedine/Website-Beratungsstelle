@@ -98,7 +98,7 @@ function createTimeBlock(
       aria-label="Zeitraum löschen"
       title="Zeitraum löschen"
     >
-      🗑
+      <span data-icon=delete></span>
     </button>
   `;
 
