@@ -36,9 +36,12 @@
   gap: 24px;
 
   text-align: left;
+
+  align-items: stretch;
 }
 
 .service-card {
+  height: 100%;
   overflow: hidden;
 
   display: flex;
@@ -60,19 +63,12 @@
   box-shadow: 0 14px 30px rgba(42, 36, 33, 0.12);
 }
 
-.service-card img {
-  display: block;
-
-  width: 100%;
-  height: 220px;
-
-  object-fit: cover;
-}
-
 .service-content {
   display: flex;
   flex-direction: column;
+
   flex: 1;
+  height: 100%;
 
   padding: 28px;
 }
@@ -90,10 +86,14 @@
 
   color: var(--color-text);
   line-height: 1.7;
+
+  /* Verbraucht den verfügbaren Platz */
+  flex: 1;
 }
 
 .service-content .btn {
   align-self: flex-start;
+
   margin-top: auto;
 }
 

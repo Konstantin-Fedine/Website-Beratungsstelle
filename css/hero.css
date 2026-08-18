@@ -1,6 +1,6 @@
 /* ========================================
    HERO
-   ======================================== */
+======================================== */
 
 .hero {
   display: flex;
@@ -41,7 +41,10 @@
   color: var(--color-dark);
 
   font-size: clamp(2.2rem, 6vw, 4rem);
-  line-height: 1.15;
+
+  /* Mehr Luft zwischen den Zeilen */
+  line-height: 1.25;
+
   font-weight: 700;
 }
 
@@ -59,6 +62,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+
   gap: 14px;
 
   max-width: 420px;
@@ -71,8 +75,35 @@
 
 
 /* ========================================
+   HERO – GHOST BUTTON
+======================================== */
+
+.hero-buttons .btn-secondary {
+  background: transparent;
+
+  border: 1px solid var(--color-dark);
+
+  color: var(--color-dark);
+
+  box-shadow: none;
+}
+
+.hero-buttons .btn-secondary:hover {
+  background: rgba(42, 36, 33, 0.05);
+
+  border-color: var(--color-dark);
+
+  color: var(--color-dark);
+
+  box-shadow: none;
+
+  transform: translateY(-1px);
+}
+
+
+/* ========================================
    DESKTOP
-   ======================================== */
+======================================== */
 
 @media (min-width: 768px) {
   .hero {
