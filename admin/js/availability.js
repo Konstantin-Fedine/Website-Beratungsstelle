@@ -1,4 +1,5 @@
 import { supabase } from "../../js/supabase.js";
+import { icons } from "../../js/icons.js";
 
 /* ========================================
    KONFIGURATION
@@ -67,6 +68,10 @@ function createTimeBlock(
   end = "17:00"
 ) {
   const block = document.createElement("div");
+  const deleteIconSvg =
+    icons.delete ||
+    icons.trash ||
+    "<span aria-hidden=\"true\">×</span>";
 
   /*
    * Diese Klasse entspricht dem CSS.
@@ -98,7 +103,7 @@ function createTimeBlock(
       aria-label="Zeitraum löschen"
       title="Zeitraum löschen"
     >
-      <span data-icon=delete></span>
+      ${deleteIconSvg}
     </button>
   `;
 
