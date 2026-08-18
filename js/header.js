@@ -52,17 +52,10 @@ function initHeader() {
         linkPage === currentPage;
 
       link.classList.toggle("active", isCurrentPage);
-
-      // Termin buchen auf der Booking-Seite als CTA hervorheben
-      link.classList.toggle(
-        "nav-cta",
-        isCurrentPage && linkPage === "booking.html"
-      );
     });
 
     console.log(`✓ Aktive Navigation: ${currentPage}`);
   });
 }
 
-// Header initialisieren
 initHeader();

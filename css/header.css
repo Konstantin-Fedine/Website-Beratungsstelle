@@ -9,7 +9,7 @@
 
   background: var(--color-dark);
 
-  z-index: 1000;
+  z-index: 1100;
 
   padding: 15px 0;
 }
@@ -25,6 +25,7 @@
   padding: 0 20px;
 }
 
+
 /* ========================================
    LOGO
    ======================================== */
@@ -37,6 +38,7 @@
   font-size: 20px;
   font-weight: 600;
 }
+
 
 /* ========================================
    MOBILE MENU BUTTON
@@ -67,6 +69,7 @@
   transition: var(--transition);
 }
 
+
 /* ========================================
    NAVIGATION – MOBILE
    ======================================== */
@@ -74,10 +77,8 @@
 .navigation {
   position: absolute;
   top: 100%;
-  right: 0;
-
-  width: 300px;
-  max-width: 100vw;
+  left: 12px;
+  right: 12px;
 
   background: var(--color-dark);
 
@@ -88,7 +89,7 @@
   opacity: 0;
   visibility: hidden;
 
-  transform: translateY(-20px);
+  transform: translateY(-10px);
 
   transition:
     opacity var(--transition),
@@ -107,11 +108,11 @@
   display: flex;
   flex-direction: column;
 
-  gap: 12px;
+  gap: 6px;
 
   width: 100%;
 
-  padding: 20px;
+  padding: 16px;
 
   list-style: none;
 }
@@ -120,9 +121,9 @@
   width: 100%;
 }
 
+
 /* ========================================
-   NAVIGATION LINKS
-   Einheitlicher Stil für ALLE Links
+   NORMALE NAVIGATION LINKS
    ======================================== */
 
 .navigation a {
@@ -135,7 +136,7 @@
 
   padding: 10px 20px;
 
-  color: var(--color-text-light);
+  color: rgba(255, 255, 255, 0.82);
   background: transparent;
 
   border: 2px solid transparent;
@@ -153,27 +154,63 @@
   cursor: pointer;
 
   transition:
-    transform var(--transition),
     background var(--transition),
     color var(--transition),
-    border-color var(--transition),
-    box-shadow var(--transition);
+    border-color var(--transition);
 }
+
 
 /* ========================================
-   HOVER + AKTIVE SEITE
-   Alle Navigation-Buttons gleich
+   NORMALE LINKS – HOVER
    ======================================== */
 
-.navigation a:hover,
+.navigation a:hover {
+  background: rgba(255, 255, 255, 0.06);
+
+  color: var(--color-primary);
+}
+
+
+/* ========================================
+   AKTIVE SEITE
+   ======================================== */
+
 .navigation a.active {
+  color: var(--color-primary);
+}
+
+
+/* ========================================
+   TERMIN BUCHEN – CTA
+   ======================================== */
+
+.navigation li:last-child {
+  margin-top: 6px;
+  padding-top: 10px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.navigation li:last-child a {
   background: var(--color-primary);
+
   color: var(--color-dark);
 
-  transform: translateY(-2px);
+  box-shadow:
+    0 2px 6px rgba(212, 178, 149, 0.12);
 
-  box-shadow: 0 10px 24px rgba(212, 178, 149, 0.35);
+  font-weight: 600;
 }
+
+.navigation li:last-child a:hover {
+  background: var(--color-primary);
+
+  color: var(--color-dark);
+
+  box-shadow:
+    0 3px 8px rgba(212, 178, 149, 0.18);
+}
+
 
 /* ========================================
    DESKTOP
@@ -208,7 +245,7 @@
   .navigation ul {
     flex-direction: row;
 
-    gap: 10px;
+    gap: 6px;
 
     padding: 0;
 
@@ -221,10 +258,41 @@
 
   .navigation a {
     width: auto;
+
     min-height: 42px;
 
     padding: 8px 14px;
 
     font-size: 14px;
+  }
+
+  .navigation li:last-child {
+    margin-top: 0;
+    margin-left: 8px;
+
+    padding-top: 0;
+    padding-left: 12px;
+
+    border-top: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .navigation li:last-child a {
+    padding: 8px 16px;
+  }
+}
+
+
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media (max-width: 600px) {
+  .header-container {
+    padding: 0 16px;
+  }
+
+  .logo h1 {
+    font-size: 21px;
   }
 }

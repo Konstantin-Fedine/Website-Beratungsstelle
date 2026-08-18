@@ -41,7 +41,7 @@
   color: var(--color-dark);
 
   font-size: clamp(2.2rem, 6vw, 4rem);
-  line-height: 1.15;
+  line-height: 1.25;
   font-weight: 700;
 }
 
