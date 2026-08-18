@@ -8,7 +8,6 @@ function initHeader() {
       return;
     }
 
-    // Mobile-Menü öffnen/schließen
     menuToggle.addEventListener("click", () => {
       const isActive = navigation.classList.toggle("is-active");
 
@@ -18,7 +17,6 @@ function initHeader() {
       );
     });
 
-    // Menü schließen, wenn außerhalb geklickt wird
     document.addEventListener("click", (e) => {
       if (
         !navigation.contains(e.target) &&
@@ -29,7 +27,6 @@ function initHeader() {
       }
     });
 
-    // Menü mit Escape schließen
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "Escape" &&
@@ -41,22 +38,15 @@ function initHeader() {
       }
     });
 
-    // Aktuelle Seite hervorheben
     const currentPage =
       window.location.pathname.split("/").pop() || "index.html";
 
     document.querySelectorAll(".navigation a").forEach((link) => {
       const linkPage = link.getAttribute("href");
 
-      const isCurrentPage =
-        linkPage === currentPage;
-
-      link.classList.toggle("active", isCurrentPage);
-
-      // Termin buchen auf der Booking-Seite als CTA hervorheben
       link.classList.toggle(
-        "nav-cta",
-        isCurrentPage && linkPage === "booking.html"
+        "active",
+        linkPage === currentPage
       );
     });
 
@@ -64,5 +54,4 @@ function initHeader() {
   });
 }
 
-// Header initialisieren
 initHeader();
