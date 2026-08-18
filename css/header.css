@@ -1,26 +1,28 @@
 /* ========================================
    HEADER
-   ======================================== */
-
+======================================== */
 .main-header {
   position: sticky;
   top: 0;
+
   width: 100%;
 
   background: var(--color-dark);
 
   z-index: 1100;
 
-  padding: 15px 0;
+  padding: 14px 0;
 }
+
 
 .header-container {
   max-width: var(--container-width);
+
   margin: 0 auto;
 
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 
   padding: 0 20px;
 }
@@ -28,21 +30,28 @@
 
 /* ========================================
    LOGO
-   ======================================== */
+======================================== */
+
+.logo {
+  flex-shrink: 0;
+}
+
 
 .logo h1 {
-  min-inline-size: 250px;
+  min-inline-size: 0;
 
   color: var(--color-primary);
 
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
+
+  line-height: 1.2;
 }
 
 
 /* ========================================
    MOBILE MENU BUTTON
-   ======================================== */
+======================================== */
 
 .menu-toggle {
   display: flex;
@@ -55,47 +64,58 @@
   padding: 0;
 
   border: none;
+
   background: transparent;
 
   cursor: pointer;
 }
 
+
 .menu-toggle span {
   width: 100%;
-  height: 3px;
+  height: 2px;
+
+  border-radius: 2px;
 
   background: var(--color-primary);
 
-  transition: var(--transition);
+  transition:
+    transform var(--transition),
+    opacity var(--transition);
 }
 
 
 /* ========================================
    NAVIGATION – MOBILE
-   ======================================== */
+======================================== */
 
 .navigation {
   position: absolute;
+
   top: 100%;
   left: 12px;
   right: 12px;
 
   background: var(--color-dark);
 
-  border-radius: 0 0 var(--radius) var(--radius);
+  border-radius:
+    0 0
+    var(--radius-lg)
+    var(--radius-lg);
 
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-md);
 
   opacity: 0;
   visibility: hidden;
 
-  transform: translateY(-10px);
+  transform: translateY(-20px);
 
   transition:
     opacity var(--transition),
     visibility var(--transition),
     transform var(--transition);
 }
+
 
 .navigation.is-active {
   opacity: 1;
@@ -104,18 +124,20 @@
   transform: translateY(0);
 }
 
+
 .navigation ul {
   display: flex;
   flex-direction: column;
 
-  gap: 6px;
+  gap: 12px;
 
   width: 100%;
 
-  padding: 16px;
+  padding: 20px;
 
   list-style: none;
 }
+
 
 .navigation li {
   width: 100%;
@@ -123,107 +145,73 @@
 
 
 /* ========================================
-   NORMALE NAVIGATION LINKS
+   NAVIGATION LINKS
+   Einheitlicher Stil für ALLE Links
    ======================================== */
 
 .navigation a {
   display: flex;
   align-items: center;
-  justify-content: center;
 
   width: 100%;
   min-height: 44px;
 
-  padding: 10px 20px;
+  padding: 10px 14px;
 
-  color: rgba(255, 255, 255, 0.82);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+
+  color: var(--color-text-light);
   background: transparent;
 
-  border: 2px solid transparent;
-  border-radius: var(--radius);
+  color: rgba(255, 255, 255, 0.82);
 
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
 
   line-height: 1.2;
 
   text-decoration: none;
-  text-align: center;
+  text-align: left;
 
   cursor: pointer;
 
   transition:
+    transform var(--transition),
     background var(--transition),
     color var(--transition),
-    border-color var(--transition);
+    border-color var(--transition),
+    box-shadow var(--transition);
 }
 
 
 /* ========================================
-   NORMALE LINKS – HOVER
-   ======================================== */
-
-.navigation a:hover {
-  background: rgba(255, 255, 255, 0.06);
-
-  color: var(--color-primary);
-}
-
-
-/* ========================================
-   AKTIVE SEITE
+   HOVER + AKTIVE SEITE
+   Alle Navigation-Buttons gleich
    ======================================== */
 
 .navigation a.active {
-  color: var(--color-primary);
-}
-
-
-/* ========================================
-   TERMIN BUCHEN – CTA
-   ======================================== */
-
-.navigation li:last-child {
-  margin-top: 6px;
-  padding-top: 10px;
-
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.navigation li:last-child a {
   background: var(--color-primary);
 
   color: var(--color-dark);
 
-  box-shadow:
-    0 2px 6px rgba(212, 178, 149, 0.12);
+  transform: translateY(-2px);
 
-  font-weight: 600;
-}
-
-.navigation li:last-child a:hover {
-  background: var(--color-primary);
-
-  color: var(--color-dark);
-
-  box-shadow:
-    0 3px 8px rgba(212, 178, 149, 0.18);
+  box-shadow: 0 10px 24px rgba(212, 178, 149, 0.35);
 }
 
 
 /* ========================================
    DESKTOP
-   ======================================== */
+======================================== */
 
 @media (min-width: 1024px) {
-  .logo h1 {
-    font-size: 26px;
-  }
 
   .menu-toggle {
     display: none;
   }
+
 
   .navigation {
     position: static;
@@ -242,57 +230,38 @@
     transform: none;
   }
 
+
   .navigation ul {
     flex-direction: row;
 
-    gap: 6px;
+    gap: 10px;
 
     padding: 0;
-
-    align-items: center;
   }
+
 
   .navigation li {
     width: auto;
   }
 
+
   .navigation a {
     width: auto;
-
     min-height: 42px;
 
-    padding: 8px 14px;
+    padding: 8px 12px;
 
-    font-size: 14px;
+    font-size: 0.9rem;
+
+    text-align: center;
   }
 
-  .navigation li:last-child {
+
+  .navigation li:nth-child(5) a {
     margin-top: 0;
     margin-left: 8px;
 
-    padding-top: 0;
-    padding-left: 12px;
-
-    border-top: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .navigation li:last-child a {
-    padding: 8px 16px;
-  }
-}
-
-
-/* ========================================
-   MOBILE
-   ======================================== */
-
-@media (max-width: 600px) {
-  .header-container {
-    padding: 0 16px;
-  }
-
-  .logo h1 {
-    font-size: 21px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }

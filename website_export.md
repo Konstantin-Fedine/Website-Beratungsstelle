@@ -1,2848 +1,1682 @@
 
 ============================================================
-DATEI: admin\components\sidebar.html
+DATEI: css\about.css
 ============================================================
-
-<aside class="admin-sidebar" id="adminSidebar">
-  <div class="sidebar-header">
-    <a
-      href="/admin/pages/dashboard.html"
-      class="sidebar-logo"
-    >
-      <span class="sidebar-logo-mark">A</span>
-      <span class="sidebar-logo-text">Aufwind</span>
-    </a>
-
-    <button
-      type="button"
-      class="sidebar-toggle"
-      id="sidebarToggle"
-      aria-label="Sidebar einklappen"
-      aria-expanded="true"
-    >
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-
-  <nav
-    class="sidebar-navigation"
-    aria-label="Admin-Navigation"
-  >
-    <a
-      href="/admin/pages/dashboard.html"
-      class="sidebar-link"
-      data-page="dashboard"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="home"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Dashboard
-      </span>
-    </a>
-
-    <a
-      href="/admin/pages/bookings.html"
-      class="sidebar-link"
-      data-page="bookings"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="calendar"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Termine
-      </span>
-    </a>
-
-    <a
-      href="/admin/pages/availability.html"
-      class="sidebar-link"
-      data-page="availability"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="clock"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Verfügbarkeit
-      </span>
-    </a>
-
-    <a
-      href="/admin/pages/blocked-times.html"
-      class="sidebar-link"
-      data-page="blocked-times"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="calendar-off"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Sperrzeiten
-      </span>
-    </a>
-
-    <a
-      href="/admin/pages/services.html"
-      class="sidebar-link"
-      data-page="services"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="briefcase-business"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Beratungsangebote
-      </span>
-    </a>
-
-    <a
-      href="/admin/pages/settings.html"
-      class="sidebar-link"
-      data-page="settings"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="settings"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Einstellungen
-      </span>
-    </a>
-  </nav>
-
-  <div class="sidebar-bottom">
-    <a
-      href="/"
-      class="sidebar-link sidebar-public-link"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="external-link"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Zur Website
-      </span>
-    </a>
-
-    <button
-      type="button"
-      class="sidebar-link sidebar-logout"
-      id="logoutButton"
-    >
-      <span
-        class="sidebar-icon"
-        data-icon="log-out"
-        aria-hidden="true"
-      ></span>
-
-      <span class="sidebar-link-text">
-        Abmelden
-      </span>
-    </button>
-  </div>
-</aside>
-
-<div
-  class="sidebar-overlay"
-  id="sidebarOverlay"
-></div>
-
-
-============================================================
-DATEI: admin\js\admin-layout.js
-============================================================
-
-import { icons } from "../../js/icons.js";
-
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadSidebar();
-  initializeAdminLayout();
-});
-
 
 /* ========================================
-   SIDEBAR LADEN
+   ABOUT
    ======================================== */
 
-async function loadSidebar() {
-  const container =
-    document.getElementById("adminSidebarContainer");
+.about-section {
+  padding: 80px 20px;
+  background: var(--color-surface);
+}
 
-  if (!container) {
-    console.error(
-      "Sidebar-Container wurde nicht gefunden.",
-    );
+.about-container {
+  max-width: var(--container-width);
+  margin: 0 auto;
 
-    return;
+  display: flex;
+  flex-direction: column;
+
+  gap: 40px;
+}
+
+.about-content {
+  color: var(--color-dark);
+}
+
+.about-content h2 {
+  margin-bottom: 25px;
+
+  color: var(--color-dark);
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.about-content p {
+  margin-bottom: 20px;
+
+  color: var(--color-text);
+  line-height: 1.75;
+}
+
+.about-content .btn {
+  margin-top: 10px;
+}
+
+.about-image {
+  order: -1;
+}
+
+.about-image img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+
+  object-fit: cover;
+}
+
+
+@media (min-width: 1024px) {
+  .about-section {
+    padding: 100px 20px;
   }
 
-  try {
-    const response = await fetch(
-      "/admin/sidebar.html",
-      {
-        cache: "no-store",
-      },
-    );
+  .about-container {
+    flex-direction: row;
+    align-items: center;
 
-    if (!response.ok) {
-      throw new Error(
-        `Sidebar konnte nicht geladen werden (${response.status}).`,
-      );
-    }
+    gap: 70px;
+  }
 
-    const html = await response.text();
+  .about-content {
+    width: 60%;
+  }
 
-    container.innerHTML = html;
+  .about-image {
+    width: 40%;
+    order: 0;
+  }
 
-    initializeIcons();
-
-  } catch (error) {
-    console.error(
-      "Fehler beim Laden der Sidebar:",
-      error,
-    );
+  .about-content h2 {
+    font-size: 2.8rem;
   }
 }
 
 
+============================================================
+DATEI: css\faq.css
+============================================================
+
 /* ========================================
-   ICONS
+   FAQ
    ======================================== */
 
-function initializeIcons() {
-  const iconElements =
-    document.querySelectorAll(
-      "[data-icon]",
-    );
+.faq-section {
+  padding: 80px 20px;
+  background: var(--color-surface);
+}
 
-  iconElements.forEach((element) => {
-    const iconName =
-      element.dataset.icon;
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
 
-    const iconSvg =
-      icons[iconName];
+.faq-container h2 {
+  margin-bottom: 20px;
 
-    if (!iconSvg) {
-      console.warn(
-        `Icon "${iconName}" wurde nicht gefunden.`,
-      );
+  color: var(--color-dark);
+  font-size: 2rem;
+  line-height: 1.2;
+  text-align: center;
+}
 
-      return;
-    }
+.faq-intro {
+  max-width: 650px;
+  margin: 0 auto 50px;
 
-    element.innerHTML = iconSvg;
-  });
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  text-align: center;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--color-border);
+
+  transition:
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+.faq-item:first-child {
+  border-top: 1px solid var(--color-border);
+}
+
+.faq-item.is-open {
+  background: var(--color-primary-soft);
+  box-shadow: inset 4px 0 0 var(--color-primary);
+}
+
+.faq-question {
+  width: 100%;
+  padding: 22px 20px;
+
+  display: flex;
+  align-items: center;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: background var(--transition);
+}
+
+.faq-question:hover {
+  background: var(--color-primary-soft);
+}
+
+.faq-question::before {
+  content: "▸";
+
+  flex-shrink: 0;
+
+  margin-right: 18px;
+
+  color: var(--color-primary);
+
+  transition: transform 0.3s ease;
+}
+
+.faq-item.is-open .faq-question::before {
+  transform: rotate(90deg);
+}
+
+.faq-item.is-open .faq-question {
+  color: var(--color-primary);
+}
+
+.faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+
+  padding: 0 20px 0 58px;
+
+  opacity: 0;
+
+  transition:
+    grid-template-rows 0.35s ease,
+    opacity 0.35s ease,
+    padding 0.35s ease;
+}
+
+.faq-answer p {
+  overflow: hidden;
+  margin: 0;
+
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.faq-item.is-open .faq-answer {
+  grid-template-rows: 1fr;
+
+  padding-bottom: 25px;
+
+  opacity: 1;
+}
+
+.faq-cta {
+  margin-top: 70px;
+
+  text-align: center;
+}
+
+.faq-cta h3 {
+  margin-bottom: 15px;
+
+  color: var(--color-dark);
+}
+
+.faq-cta p {
+  margin-bottom: 30px;
+
+  color: var(--color-text);
+  line-height: 1.7;
 }
 
 
-/* ========================================
-   ADMIN LAYOUT
-   ======================================== */
-
-function initializeAdminLayout() {
-  const layout =
-    document.getElementById("adminLayout");
-
-  const sidebar =
-    document.getElementById("adminSidebar");
-
-  const sidebarToggle =
-    document.getElementById("sidebarToggle");
-
-  const mobileMenuButton =
-    document.getElementById("mobileMenuButton");
-
-  const overlay =
-    document.getElementById("sidebarOverlay");
-
-  if (!layout || !sidebar) {
-    console.error(
-      "Admin-Layout oder Sidebar wurde nicht gefunden.",
-    );
-
-    return;
+@media (min-width: 1024px) {
+  .faq-section {
+    padding: 100px 20px;
   }
 
-
-  /* ========================================
-     DESKTOP SIDEBAR
-     ======================================== */
-
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener(
-      "click",
-      () => {
-        layout.classList.toggle(
-          "sidebar-collapsed",
-        );
-
-        const collapsed =
-          layout.classList.contains(
-            "sidebar-collapsed",
-          );
-
-        sidebarToggle.setAttribute(
-          "aria-expanded",
-          String(!collapsed),
-        );
-
-        localStorage.setItem(
-          "admin-sidebar-collapsed",
-          String(collapsed),
-        );
-      },
-    );
+  .faq-container h2 {
+    font-size: 2.8rem;
   }
-
-
-  /* ========================================
-     GESPEICHERTEN ZUSTAND LADEN
-     ======================================== */
-
-  const savedState =
-    localStorage.getItem(
-      "admin-sidebar-collapsed",
-    );
-
-  if (
-    savedState === "true" &&
-    window.innerWidth > 800
-  ) {
-    layout.classList.add(
-      "sidebar-collapsed",
-    );
-
-    if (sidebarToggle) {
-      sidebarToggle.setAttribute(
-        "aria-expanded",
-        "false",
-      );
-    }
-  }
-
-
-  /* ========================================
-     MOBILE SIDEBAR
-     ======================================== */
-
-  function openMobileSidebar() {
-    sidebar.classList.add(
-      "mobile-open",
-    );
-
-    if (overlay) {
-      overlay.classList.add(
-        "is-visible",
-      );
-    }
-
-    if (mobileMenuButton) {
-      mobileMenuButton.setAttribute(
-        "aria-expanded",
-        "true",
-      );
-    }
-  }
-
-
-  function closeMobileSidebar() {
-    sidebar.classList.remove(
-      "mobile-open",
-    );
-
-    if (overlay) {
-      overlay.classList.remove(
-        "is-visible",
-      );
-    }
-
-    if (mobileMenuButton) {
-      mobileMenuButton.setAttribute(
-        "aria-expanded",
-        "false",
-      );
-    }
-  }
-
-
-  if (mobileMenuButton) {
-    mobileMenuButton.addEventListener(
-      "click",
-      () => {
-        const isOpen =
-          sidebar.classList.contains(
-            "mobile-open",
-          );
-
-        if (isOpen) {
-          closeMobileSidebar();
-        } else {
-          openMobileSidebar();
-        }
-      },
-    );
-  }
-
-
-  /* ========================================
-     OVERLAY
-     ======================================== */
-
-  if (overlay) {
-    overlay.addEventListener(
-      "click",
-      closeMobileSidebar,
-    );
-  }
-
-
-  /* ========================================
-     NAVIGATION
-     ======================================== */
-
-  const navigationLinks =
-    document.querySelectorAll(
-      ".sidebar-link[href]",
-    );
-
-  navigationLinks.forEach((link) => {
-    link.addEventListener(
-      "click",
-      () => {
-        if (window.innerWidth <= 800) {
-          closeMobileSidebar();
-        }
-      },
-    );
-  });
-
-
-  /* ========================================
-     AKTIVE SEITE
-     ======================================== */
-
-  const currentPath =
-    window.location.pathname
-      .replace(/\/+$/, "");
-
-  navigationLinks.forEach((link) => {
-    if (
-      link.classList.contains(
-        "sidebar-public-link",
-      )
-    ) {
-      return;
-    }
-
-    const linkPath =
-      new URL(link.href)
-        .pathname
-        .replace(/\/+$/, "");
-
-    if (linkPath === currentPath) {
-      link.classList.add("active");
-    } else {
-      link.classList.remove("active");
-    }
-  });
-
-
-  /* ========================================
-     ESC
-     ======================================== */
-
-  document.addEventListener(
-    "keydown",
-    (event) => {
-      if (event.key === "Escape") {
-        closeMobileSidebar();
-      }
-    },
-  );
-
-
-  /* ========================================
-     WINDOW RESIZE
-     ======================================== */
-
-  window.addEventListener(
-    "resize",
-    () => {
-      if (window.innerWidth > 800) {
-        closeMobileSidebar();
-      }
-    },
-  );
 }
 
 
 ============================================================
-DATEI: admin\pages\availability.html
+DATEI: css\global.css
 ============================================================
 
-<!DOCTYPE html>
+:root {
+  /* =====================================================
+     COLORS
+  ====================================================== */
+
+  --color-primary: #d4b295;
+  --color-primary-hover: #c7a486;
+  --color-primary-soft: rgba(212, 178, 149, 0.1);
+
+  --color-dark: #2a2421;
+
+  --color-background: #fdfbf9;
+  --color-surface: #ffffff;
+
+  --color-text: #333333;
+  --color-text-light: #ffffff;
+  --color-text-muted: #666666;
+
+  --color-border: #dddddd;
+  --color-border-strong: #cfcfcf;
+
+  --color-success: #2f7d4a;
+  --color-warning: #a66a00;
+  --color-danger: #b42318;
+
+  /* =====================================================
+     TYPOGRAPHY
+  ====================================================== */
+
+  --font-main: "Nunito Sans", Arial, sans-serif;
+
+  --font-size-xs: 0.8rem;
+  --font-size-sm: 0.9rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.35rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2.25rem;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* =====================================================
+     LAYOUT
+  ====================================================== */
+
+  --container-width: 1200px;
+
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
+
+  /* =====================================================
+     RADIUS
+  ====================================================== */
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* Bestehender Name bleibt erhalten,
+     damit bestehender Code nicht kaputtgeht. */
+  --radius: var(--radius-md);
+
+  /* =====================================================
+     SHADOWS
+  ====================================================== */
+
+  --shadow-sm: 0 2px 8px rgba(42, 36, 33, 0.06);
+  --shadow-md: 0 8px 20px rgba(42, 36, 33, 0.1);
+  --shadow-lg: 0 16px 36px rgba(42, 36, 33, 0.14);
+
+  --shadow: var(--shadow-md);
+
+  /* =====================================================
+     TRANSITIONS
+  ====================================================== */
+
+  --transition-fast: 0.2s ease;
+  --transition: 0.25s ease;
+  --transition-slow: 0.3s ease;
+}
+
+
+/* =====================================================
+   RESET
+====================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+  font-family: var(--font-main);
+  background: var(--color-background);
+  color: var(--color-text);
+
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+}
+
+
+/* =====================================================
+   TYPOGRAPHY BASICS
+====================================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-dark);
+  line-height: var(--line-height-tight);
+}
+
+
+p {
+  line-height: var(--line-height-relaxed);
+}
+
+
+small {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+
+a {
+  color: inherit;
+}
+
+
+/* =====================================================
+   IMAGES
+====================================================== */
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+
+/* =====================================================
+   BUTTONS – BASIS
+====================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 46px;
+  padding: 12px 24px;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+
+  text-decoration: none;
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   PRIMARY BUTTON
+====================================================== */
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-dark);
+
+  box-shadow: 0 3px 8px rgba(212, 178, 149, 0.16);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 4px 10px rgba(212, 178, 149, 0.22);
+}
+
+
+/* =====================================================
+   SECONDARY BUTTON
+====================================================== */
+
+.btn-secondary {
+  background: rgba(42, 36, 33, 0.04);
+  border-color: rgba(42, 36, 33, 0.18);
+  color: var(--color-dark);
+
+  box-shadow: 0 4px 10px rgba(42, 36, 33, 0.05);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+
+  background: rgba(42, 36, 33, 0.06);
+  border-color: rgba(42, 36, 33, 0.25);
+
+  box-shadow: 0 6px 14px rgba(42, 36, 33, 0.08);
+}
+
+
+/* =====================================================
+   BUTTON ROW
+====================================================== */
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  gap: var(--space-md);
+
+  margin-top: var(--space-lg);
+}
+
+
+.btn-row .btn {
+  margin: 0;
+}
+
+
+.btn-row.justify-between {
+  justify-content: space-between;
+}
+
+
+/* =====================================================
+   DISABLED BUTTON
+====================================================== */
+
+.btn:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+
+.btn:disabled:hover {
+  transform: none;
+}
+
+
+/* =====================================================
+   FORMS – GLOBAL BASIS
+====================================================== */
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: var(--font-size-base);
+}
+
+
+input,
+textarea,
+select {
+  width: 100%;
+
+  min-height: 46px;
+
+  padding: 11px 14px;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+
+textarea {
+  min-height: 120px;
+
+  resize: vertical;
+}
+
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: var(--color-border-strong);
+}
+
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary);
+
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px var(--color-primary-soft);
+}
+
+
+/* =====================================================
+   ACCESSIBILITY – FOCUS
+====================================================== */
+
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+
+/*
+   Absichtlich KEIN globales
+   element:focus { outline: none; }
+
+   Dadurch bleibt der sichtbare Tastatur-Fokus erhalten.
+*/
+
+
+/* =====================================================
+   STATUS COLORS
+====================================================== */
+
+.status-success {
+  color: var(--color-success);
+}
+
+
+.status-warning {
+  color: var(--color-warning);
+}
+
+
+.status-danger {
+  color: var(--color-danger);
+}
+
+
+/* =====================================================
+   ANIMATION
+====================================================== */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 600px) {
+
+  .btn {
+    min-height: 48px;
+
+    padding: 13px 20px;
+
+    font-size: var(--font-size-base);
+  }
+
+  input,
+  textarea,
+  select {
+    min-height: 46px;
+  }
+
+}
+
+
+============================================================
+DATEI: css\header.css
+============================================================
+
+/* ========================================
+   HEADER
+======================================== */
+
+.main-header {
+  position: sticky;
+  top: 0;
+
+  width: 100%;
+
+  background: var(--color-dark);
+
+  z-index: 1000;
+
+  padding: 14px 0;
+}
+
+
+.header-container {
+  max-width: var(--container-width);
+
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+}
+
+
+/* ========================================
+   LOGO
+======================================== */
+
+.logo {
+  flex-shrink: 0;
+}
+
+
+.logo h1 {
+  min-inline-size: 0;
+
+  color: var(--color-primary);
+
+  font-size: 22px;
+  font-weight: 600;
+
+  line-height: 1.2;
+}
+
+
+/* ========================================
+   MOBILE MENU BUTTON
+======================================== */
+
+.menu-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 30px;
+  height: 21px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+
+.menu-toggle span {
+  width: 100%;
+  height: 2px;
+
+  border-radius: 2px;
+
+  background: var(--color-primary);
+
+  transition:
+    transform var(--transition),
+    opacity var(--transition);
+}
+
+
+/* ========================================
+   NAVIGATION – MOBILE
+======================================== */
+
+.navigation {
+  position: absolute;
+
+  top: 100%;
+  left: 12px;
+  right: 12px;
+
+  background: var(--color-dark);
+
+  border-radius:
+    0 0
+    var(--radius-lg)
+    var(--radius-lg);
+
+  box-shadow: var(--shadow-md);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(-8px);
+
+  transition:
+    opacity var(--transition),
+    visibility var(--transition),
+    transform var(--transition);
+}
+
+
+.navigation.is-active {
+  opacity: 1;
+  visibility: visible;
+
+  transform: translateY(0);
+}
+
+
+.navigation ul {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  width: 100%;
+
+  padding: 14px;
+
+  list-style: none;
+}
+
+
+.navigation li {
+  width: 100%;
+}
+
+
+/* ========================================
+   NORMALE NAVIGATION LINKS
+======================================== */
+
+.navigation a {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 44px;
+
+  padding: 10px 14px;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  color: rgba(255, 255, 255, 0.82);
+
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  text-decoration: none;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+
+/* ========================================
+   NORMALE LINKS – HOVER
+======================================== */
+
+.navigation a:hover {
+  background: rgba(255, 255, 255, 0.06);
+
+  color: var(--color-text-light);
+}
+
+
+/* ========================================
+   AKTIVE SEITE
+======================================== */
+
+.navigation a.active {
+  color: var(--color-primary);
+}
+
+
+/* ========================================
+   TERMIN BUCHEN – HAUPT-CTA
+   5. Menüpunkt
+======================================== */
+
+.navigation li:last-child {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.navigation li:last-child a {
+  background: var(--color-primary);
+  color: var(--color-dark);
+  box-shadow: 0 3px 8px rgba(212, 178, 149, 0.16);
+}
+
+.navigation li:last-child a:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-dark);
+  box-shadow: 0 4px 10px rgba(212, 178, 149, 0.22);
+}
+
+.navigation a:not(.nav-cta):hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-primary);
+}
+
+.navigation a:not(.nav-cta).active {
+  color: var(--color-primary);
+}
+
+/* ========================================
+   DESKTOP
+======================================== */
+
+@media (min-width: 1024px) {
+
+  .menu-toggle {
+    display: none;
+  }
+
+
+  .navigation {
+    position: static;
+
+    width: auto;
+
+    background: transparent;
+
+    border-radius: 0;
+
+    box-shadow: none;
+
+    opacity: 1;
+    visibility: visible;
+
+    transform: none;
+  }
+
+
+  .navigation ul {
+    flex-direction: row;
+
+    align-items: center;
+
+    gap: 4px;
+
+    padding: 0;
+  }
+
+
+  .navigation li {
+    width: auto;
+  }
+
+
+  .navigation a {
+    width: auto;
+
+    min-height: 40px;
+
+    padding: 8px 12px;
+
+    font-size: 0.9rem;
+
+    text-align: center;
+  }
+
+
+  .navigation li:nth-child(5) a {
+    margin-top: 0;
+    margin-left: 8px;
+
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+  .header-container {
+    padding: 0 16px;
+  }
+
+
+  .logo h1 {
+    font-size: 21px;
+  }
+
+}
+
+
+============================================================
+DATEI: css\hero.css
+============================================================
+
+/* ========================================
+   HERO
+   ======================================== */
+
+.hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 70vh;
+  padding: 90px 20px;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      rgba(253, 251, 249, 0.78),
+      rgba(212, 178, 149, 0.48)
+    ),
+    url("../images/hero.jpg");
+
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-content {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+
+  opacity: 0;
+  transform: translateY(20px);
+
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.hero h1 {
+  max-width: 900px;
+  margin: 0 auto 30px;
+
+  color: var(--color-dark);
+
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.hero p {
+  max-width: 780px;
+  margin: 0 auto 35px;
+
+  color: var(--color-dark);
+
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.hero-buttons .btn {
+  width: 100%;
+}
+
+
+/* ========================================
+   DESKTOP
+   ======================================== */
+
+@media (min-width: 768px) {
+  .hero {
+    min-height: 75vh;
+    padding: 120px 20px;
+  }
+
+  .hero-buttons {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    max-width: none;
+  }
+
+  .hero-buttons .btn {
+    width: auto;
+  }
+}
+
+
+@media (min-width: 1024px) {
+  .hero {
+    min-height: 80vh;
+    padding: 140px 20px;
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+  }
+}
+
+
+============================================================
+DATEI: css\process.css
+============================================================
+
+/* ========================================
+   PROCESS
+   ======================================== */
+
+.process-section {
+  padding: 80px 20px;
+  background: var(--color-background);
+}
+
+.process-container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+.process-container h2 {
+  margin-bottom: 20px;
+
+  color: var(--color-dark);
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.process-intro {
+  max-width: 650px;
+  margin: 0 auto 60px;
+
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.process-grid {
+  display: grid;
+  gap: 45px;
+}
+
+.process-step {
+  position: relative;
+}
+
+.process-step:not(:last-child)::after {
+  content: "↓";
+
+  display: block;
+
+  margin-top: 35px;
+
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
+.step-number {
+  width: 60px;
+  height: 60px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-primary);
+  color: var(--color-dark);
+
+  font-size: 1.3rem;
+  font-weight: 700;
+
+  transition: transform var(--transition);
+}
+
+.process-step:hover .step-number {
+  transform: scale(1.08);
+}
+
+.process-step h3 {
+  margin-bottom: 15px;
+
+  color: var(--color-dark);
+}
+
+.process-step p {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.process-ending {
+  max-width: 600px;
+  margin: 70px auto 30px;
+
+  color: var(--color-dark);
+  line-height: 1.7;
+}
+
+
+@media (min-width: 768px) {
+  .process-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px 30px;
+  }
+
+  .process-step:not(:last-child)::after {
+    content: none;
+  }
+}
+
+
+@media (min-width: 1024px) {
+  .process-section {
+    padding: 100px 20px;
+  }
+
+  .process-container h2 {
+    font-size: 2.8rem;
+  }
+
+  .process-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
+
+  .process-step:not(:last-child)::after {
+    content: "→";
+
+    position: absolute;
+
+    top: 30px;
+    right: -18px;
+
+    margin: 0;
+
+    color: var(--color-primary);
+    font-size: 1.5rem;
+  }
+}
+
+
+============================================================
+DATEI: css\services.css
+============================================================
+
+/* ========================================
+   SERVICES
+   ======================================== */
+
+.services-section {
+  padding: 80px 20px;
+  background: var(--color-background);
+}
+
+.services-container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.services-container h2 {
+  max-width: 800px;
+  margin: 0 auto 20px;
+
+  color: var(--color-dark);
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.services-intro {
+  max-width: 700px;
+  margin: 0 auto 50px;
+
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+
+  text-align: left;
+}
+
+.service-card {
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px rgba(42, 36, 33, 0.12);
+}
+
+.service-card img {
+  display: block;
+
+  width: 100%;
+  height: 220px;
+
+  object-fit: cover;
+}
+
+.service-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  padding: 28px;
+}
+
+.service-content h3 {
+  margin-bottom: 15px;
+
+  color: var(--color-dark);
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+
+.service-content p {
+  margin-bottom: 25px;
+
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.service-content .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+
+@media (min-width: 768px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+@media (min-width: 1024px) {
+  .services-section {
+    padding: 100px 20px;
+  }
+
+  .services-container h2 {
+    font-size: 2.8rem;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+}
+
+
+============================================================
+DATEI: index.html
+============================================================
+
+<!doctype html>
 <html lang="de">
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Verfügbarkeit | Aufwind Beratung</title>
+    <title>Aufwind Beratung</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="../../css/global.css" />
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/availability.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="css/hero.css" />
+    <link rel="stylesheet" href="css/services.css" />
+    <link rel="stylesheet" href="css/about.css" />
+    <link rel="stylesheet" href="css/process.css" />
+    <link rel="stylesheet" href="css/faq.css" />
   </head>
 
-  <body>
-    <div class="admin-layout" id="adminLayout">
-
-
-      <!-- ========================================
-           MAIN
-           ======================================== -->
-
-      <main class="admin-main">
-
-        <!-- ========================================
-             TOPBAR
-             ======================================== -->
-
-        <header class="admin-topbar">
-
-          <div class="topbar-left">
-
-            <button
-              type="button"
-              class="mobile-menu-button"
-              id="mobileMenuButton"
-              aria-label="Menü öffnen"
-              aria-expanded="false"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-
-
-            <div class="topbar-title">
-
-              <h1>
-                Verfügbarkeit
-              </h1>
-
-              <p>
-                Reguläre Arbeitszeiten verwalten
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div class="topbar-right">
-
-            <div class="admin-user">
-
-              <div class="admin-user-avatar">
-                A
-              </div>
-
-
-              <div class="admin-user-info">
-
-                <span
-                  class="admin-user-name"
-                  id="adminUserName"
-                >
-                  Administrator
-                </span>
-
-                <span class="admin-user-role">
-                  Admin
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </header>
-
-
-        <!-- ========================================
-             CONTENT
-             ======================================== -->
-
-        <section class="availability-content">
-
-          <!-- ========================================
-               HEADER
-               ======================================== -->
-
-          <div class="availability-header">
-
-            <div>
-
-              <h2>
-                Reguläre Arbeitszeiten
-              </h2>
-
-              <p>
-                Lege fest, wann Termine regulär
-                gebucht werden können.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- ========================================
-               WOCHENTAGE
-               ======================================== -->
-
-          <div
-            id="availability-days"
-            class="availability-days"
-          >
-
-            <!-- Wird per JavaScript eingefügt -->
-
-          </div>
-
-
-          <!-- ========================================
-               SPEICHERN
-               ======================================== -->
-
-          <div class="availability-actions">
-
-            <div
-              id="availability-message"
-              class="availability-message"
-              hidden
-              role="status"
-              aria-live="polite"
-            ></div>
-
-            <button
-              type="button"
-              class="availability-save"
-              id="save-availability"
-            >
-              Änderungen speichern
-            </button>
-
-          </div>
-
-        </section>
-
-      </main>
-
-    </div>
-
-
-    <!-- ========================================
-         JAVASCRIPT
-         ======================================== -->
-
-    <script
-      type="module"
-      src="../js/auth.js"
-    ></script>
-
-    <script type="module" src="../js/admin-layout.js"></script>
-
-    <script
-      type="module"
-      src="../js/availability.js"
-    ></script>
-
-  </body>
-</html>
-
-
-============================================================
-DATEI: admin\pages\blocked-times.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-
-    <title>Sperrzeiten | Aufwind Beratung</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="../../css/global.css" />
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/blocked-times.css" />
-  </head>
-
-  <body>
-    <div class="admin-layout" id="adminLayout">
-
-
-      <!-- MAIN -->
-
-      <main class="admin-main">
-
-        <!-- TOPBAR -->
-
-        <!-- TOPBAR -->
-
-        <header class="admin-topbar">
-
-          <div class="topbar-left">
-
-            <button
-              type="button"
-              class="mobile-menu-button"
-              id="mobileMenuButton"
-              aria-label="Menü öffnen"
-              aria-expanded="false"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-
-            <div class="topbar-title">
-              <h1>Sperrzeiten</h1>
-              <p>Zeiten und Tage für Buchungen sperren</p>
-            </div>
-
-          </div>
-
-          <div class="topbar-right">
-
-            <div class="admin-user">
-
-              <div class="admin-user-avatar">
-                A
-              </div>
-
-              <div class="admin-user-info">
-                <span
-                  class="admin-user-name"
-                  id="adminUserName"
-                >
-                  Administrator
-                </span>
-
-                <span class="admin-user-role">
-                  Admin
-                </span>
-              </div>
-
-            </div>
-
-          </div>
-
-        </header>
-
-
-        <!-- CONTENT -->
-
-        <section class="blocked-times-content">
-
-          <div class="blocked-times-header">
-
-            <div>
-              <h2>Sperrzeiten</h2>
-
-              <p>
-                Verwalte ganze Tage und einzelne Zeiten,
-                an denen keine Buchungen möglich sein sollen.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              class="blocked-times-add-button"
-              id="add-blocked-time-button"
-            >
-              + Sperrzeit hinzufügen
-            </button>
-
-          </div>
-
-
-          <!-- MESSAGE -->
-
-          <div
-            id="blocked-times-message"
-            class="blocked-times-message"
-            hidden
-            role="status"
-            aria-live="polite"
-          ></div>
-
-
-          <!-- LOADING -->
-
-          <div
-            id="blocked-times-loading"
-            class="blocked-times-state"
-          >
-            <p>Sperrzeiten werden geladen...</p>
-          </div>
-
-
-          <!-- EMPTY -->
-
-          <div
-            id="blocked-times-empty"
-            class="blocked-times-state"
-            hidden
-          >
-            <p>Keine Sperrzeiten vorhanden.</p>
-
-            <button
-              type="button"
-              class="blocked-times-empty-button"
-              id="empty-add-blocked-time"
-            >
-              + Sperrzeit hinzufügen
-            </button>
-          </div>
-
-
-          <!-- ERROR -->
-
-          <div
-            id="blocked-times-error"
-            class="blocked-times-state blocked-times-state-error"
-            hidden
-          >
-            <p>
-              Die Sperrzeiten konnten nicht geladen werden.
-            </p>
-
-            <button
-              type="button"
-              class="blocked-times-empty-button"
-              id="retry-blocked-times"
-            >
-              Erneut versuchen
-            </button>
-          </div>
-
-
-          <!-- LIST -->
-
-          <div
-            id="blocked-times-list"
-            class="blocked-times-list"
-          ></div>
-
-        </section>
-
-      </main>
-
-    </div>
-
-
-    <!-- ==================================================
-         MODAL
-         ================================================== -->
-
-    <div
-      class="blocked-time-modal"
-      id="blocked-time-modal"
-      hidden
-    >
-
-      <div
-        class="blocked-time-modal-backdrop"
-        data-modal-close
-      ></div>
-
-      <div
-        class="blocked-time-modal-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="blocked-time-modal-title"
-      >
-
-        <div class="blocked-time-modal-header">
-
-          <div>
-            <h2 id="blocked-time-modal-title">
-              Neue Sperrzeit hinzufügen
-            </h2>
-
-            <p>
-              Lege fest, wann keine Termine gebucht werden können.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            class="blocked-time-modal-close"
-            id="blocked-time-modal-close"
-            aria-label="Modal schließen"
-          >
-            ×
-          </button>
-
+  <body data-page="index">
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <h1 data-text="index_Hero_title">Systemisch. Auf Augenhöhe. Damit Orientierung, Handlungsspielräume und Sicherheit wachsen können.</h1>
+
+        <p data-text="index_Hero_text">Willkommen bei Aufwind Beratung. Ich begleite Frauen und Familien bei persönlichen und familiären Herausforderungen, an beruflichen und persönlichen Wendepunkten sowie rund um die Themen Elternschaft und Schule. Gemeinsam schaffen wir Raum, um neue Perspektiven zu gewinnen, Veränderungen zu gestalten und den eigenen Weg zu finden – persönlich in Wiesbaden oder online.</p>
+
+        <div class="hero-buttons">
+          <a
+            href="booking.html"
+            class="btn btn-primary"
+            data-text="index_Hero_button1"
+          >Termin vereinbaren</a>
+
+          <a
+            href="services.html"
+            class="btn btn-secondary"
+            data-text="index_Hero_button2"
+          >Mehr erfahren</a>
         </div>
-
-
-        <form
-          id="blocked-time-form"
-          class="blocked-time-form"
-        >
-
-          <input
-            type="hidden"
-            id="blocked-time-edit-id"
-          />
-
-          <input
-            type="hidden"
-            id="blocked-time-edit-type"
-          />
-
-          <!-- ART -->
-
-          <fieldset class="blocked-time-fieldset">
-
-            <legend>Art der Sperrzeit</legend>
-
-            <div class="blocked-time-type-options">
-
-              <label class="blocked-time-radio">
-
-                <input
-                  type="radio"
-                  name="blocked-time-type"
-                  value="day"
-                  checked
-                />
-
-                <span>
-                  Ganzer Tag / Zeitraum
-                </span>
-
-              </label>
-
-              <label class="blocked-time-radio">
-
-                <input
-                  type="radio"
-                  name="blocked-time-type"
-                  value="time"
-                />
-
-                <span>
-                  Bestimmte Uhrzeit
-                </span>
-
-              </label>
-
-            </div>
-
-          </fieldset>
-
-
-          <!-- GANZER TAG -->
-
-          <div
-            id="blocked-day-fields"
-            class="blocked-time-fields"
-          >
-
-            <div class="blocked-time-field-row">
-
-              <div class="blocked-time-field">
-
-                <label for="blocked-day-from">
-                  Von
-                </label>
-
-                <input
-                  type="date"
-                  id="blocked-day-from"
-                  class="blocked-date-input"
-                  required
-                />
-
-              </div>
-
-
-              <div class="blocked-time-field">
-
-                <label for="blocked-day-to">
-                  Bis
-                </label>
-
-                <input
-                  type="date"
-                  id="blocked-day-to"
-                  class="blocked-date-input"
-                  required
-                />
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- BESTIMMTE UHRZEIT -->
-
-          <div
-            id="blocked-time-fields"
-            class="blocked-time-fields"
-            hidden
-          >
-
-            <div class="blocked-time-field">
-
-              <label for="blocked-time-date">
-                Datum
-              </label>
-
-              <input
-                type="date"
-                id="blocked-time-date"
-                class="blocked-date-input"
-              />
-
-            </div>
-
-
-            <div class="blocked-time-field-row">
-
-              <div class="blocked-time-field">
-
-                <label for="blocked-time-start">
-                  Von
-                </label>
-
-                <input
-                  type="time"
-                  id="blocked-time-start"
-                  class="blocked-time-input"
-                />
-
-              </div>
-
-
-              <div class="blocked-time-field">
-
-                <label for="blocked-time-end">
-                  Bis
-                </label>
-
-                <input
-                  type="time"
-                  id="blocked-time-end"
-                  class="blocked-time-input"
-                />
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- GRUND -->
-
-          <div class="blocked-time-field">
-
-            <label for="blocked-time-reason">
-              Grund
-            </label>
-
-            <input
-              type="text"
-              id="blocked-time-reason"
-              maxlength="200"
-              placeholder="z. B. Urlaub"
-            />
-
-          </div>
-
-
-          <!-- VALIDATION -->
-
-          <p
-            id="blocked-time-form-error"
-            class="blocked-time-form-error"
-            role="alert"
-            aria-live="assertive"
-            hidden
-          ></p>
-
-
-          <!-- ACTIONS -->
-
-          <div class="blocked-time-modal-actions">
-
-            <button
-              type="button"
-              class="blocked-time-secondary-button"
-              id="blocked-time-cancel"
-            >
-              Abbrechen
-            </button>
-
-            <button
-              type="submit"
-              class="blocked-time-primary-button"
-              id="blocked-time-save"
-            >
-              Speichern
-            </button>
-
-          </div>
-
-        </form>
-
       </div>
+    </section>
 
-    </div>
+    <section class="services-section">
+      <div class="services-container">
+        <h2 data-text="index_Leistungen_title">Gemeinsam neue Wege entdecken</h2>
 
+        <p class="services-intro" data-text="index_Leistungen_intro">Jeder Mensch steht vor individuellen Herausforderungen. Gemeinsam entwickeln wir neue Perspektiven und finden Wege, die zu Ihrer persönlichen Situation passen.</p>
 
-    <!-- JAVASCRIPT -->
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-content">
+              <h3 data-text="index_Leistung_1_title">Familien- &amp; Elternberatung</h3>
 
-    <script
-      type="module"
-      src="../js/auth.js"
-    ></script>
+              <p data-text="index_Leistung_1_text">Wenn Beziehungen schwierig werden und sich vertraute Dynamiken verändern. Unterstützung bei familiären Konflikten, Elternschaft, Kommunikation und Situationen, in denen Schule, Familie und persönliche Belastungen miteinander verbunden sind.</p>
 
-    <script type="module" src="../js/admin-layout.js"></script>
-
-    <script
-      type="module"
-      src="../js/blocked-times.js"
-    ></script>
-
-  </body>
-</html>
-
-
-============================================================
-DATEI: admin\pages\bookings.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Buchungen | Aufwind Beratung</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="../../css/global.css" />
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/bookings.css" />
-  </head>
-
-  <body>
-    <div class="admin-layout" id="adminLayout">
-
-
-      <!-- MAIN -->
-
-      <main class="admin-main">
-
-        <!-- TOPBAR -->
-
-        <header class="admin-topbar">
-
-          <div class="topbar-left">
-
-            <button
-              type="button"
-              class="mobile-menu-button"
-              id="mobileMenuButton"
-              aria-label="Menü öffnen"
-              aria-expanded="false"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-
-            <div class="topbar-title">
-              <h1>Termine</h1>
-              <p>Alle Buchungen verwalten</p>
+              <a
+                href="services.html"
+                class="btn btn-primary"
+                data-text="index_Leistung_1_button"
+              >Mehr erfahren</a>
             </div>
+          </article>
 
-          </div>
+          <article class="service-card">
+            <div class="service-content">
+              <h3 data-text="index_Leistung_2_title">Beratung für Frauen</h3>
 
-          <div class="topbar-right">
+              <p data-text="index_Leistung_2_text">Wenn Sie sich neu orientieren, in einer Veränderung stecken oder wieder mehr bei sich selbst ankommen möchten. Begleitung bei persönlichen und beruflichen Wendepunkten, Selbstzweifeln, Entscheidungsfragen, Grenzen, Rollenveränderungen und neuen Lebensperspektiven.</p>
 
-            <div class="admin-user">
-
-              <div class="admin-user-avatar">
-                A
-              </div>
-
-              <div class="admin-user-info">
-                <span
-                  class="admin-user-name"
-                  id="adminUserName"
-                >
-                  Administrator
-                </span>
-
-                <span class="admin-user-role">
-                  Admin
-                </span>
-              </div>
-
+              <a
+                href="services.html"
+                class="btn btn-primary"
+                data-text="index_Leistung_2_button"
+              >Mehr erfahren</a>
             </div>
+          </article>
 
-          </div>
+          <article class="service-card">
+            <div class="service-content">
+              <h3 data-text="index_Leistung_3_title">Schule &amp; Übergänge</h3>
 
-        </header>
+              <p data-text="index_Leistung_3_text">Wenn Schule zur Herausforderung für Ihr Kind oder die ganze Familie wird. Beratung bei schulischen Übergängen, Konflikten, Überforderung, Motivation, Leistungsdruck und schwierigen Situationen zwischen Eltern, Kindern und Schule.</p>
 
-
-        <!-- CONTENT -->
-
-        <section class="bookings-content">
-
-          <!-- HEADER -->
-
-          <div class="bookings-header">
-
-            <div>
-              <h2>Buchungen</h2>
-
-              <p>
-                Hier kannst du alle eingegangenen Termine verwalten.
-              </p>
+              <a
+                href="services.html"
+                class="btn btn-primary"
+                data-text="index_Leistung_3_button"
+              >Mehr erfahren</a>
             </div>
-
-          </div>
-
-
-          <!-- FILTER -->
-
-          <div class="bookings-toolbar">
-
-            <!-- SUCHE -->
-
-            <div class="booking-search">
-
-              <label for="booking-search">
-                Suche
-              </label>
-
-              <input
-                type="search"
-                id="booking-search"
-                placeholder="Name oder E-Mail suchen..."
-                autocomplete="off"
-              />
-
-            </div>
-
-
-            <!-- STATUS -->
-
-            <div class="booking-filter">
-
-              <label for="status-filter">
-                Status
-              </label>
-
-              <select id="status-filter">
-
-                <option value="all">
-                  Alle
-                </option>
-
-                <option value="pending">
-                  Ausstehend
-                </option>
-
-                <option value="confirmed">
-                  Bestätigt
-                </option>
-
-                <option value="completed">
-                  Abgeschlossen
-                </option>
-
-                <option value="cancelled">
-                  Storniert
-                </option>
-
-                <option value="no_show">
-                  Nicht erschienen
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <!-- BERATUNGSART -->
-
-            <div class="booking-filter">
-
-              <label for="service-filter">
-                Beratungsart
-              </label>
-
-              <select id="service-filter">
-
-                <option value="all">
-                  Alle
-                </option>
-
-                <!-- Wird später dynamisch aus Supabase geladen -->
-
-              </select>
-
-            </div>
-
-
-            <!-- ZEITRAUM -->
-
-            <div class="booking-filter">
-
-              <label for="date-filter">
-                Zeitraum
-              </label>
-
-              <select id="date-filter">
-
-                <option value="all">
-                  Alle
-                </option>
-
-                <option value="today">
-                  Heute
-                </option>
-
-                <option value="tomorrow">
-                  Morgen
-                </option>
-
-                <option value="this_week">
-                  Diese Woche
-                </option>
-
-                <option value="next_week">
-                  Nächste Woche
-                </option>
-
-                <option value="this_month">
-                  Dieser Monat
-                </option>
-
-                <option value="custom">
-                  Benutzerdefiniert
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <!-- BENUTZERDEFINIERTER ZEITRAUM -->
-
-            <div
-              class="booking-custom-date-filter"
-              id="custom-date-filter"
-              hidden
-            >
-
-              <div class="booking-filter">
-
-                <label for="date-from">
-                  Von
-                </label>
-
-                <input
-                  type="date"
-                  id="date-from"
-                />
-
-              </div>
-
-              <div class="booking-filter">
-
-                <label for="date-to">
-                  Bis
-                </label>
-
-                <input
-                  type="date"
-                  id="date-to"
-                />
-
-              </div>
-
-            </div>
-
-
-            <!-- AKTUALISIEREN -->
-
-            <button
-              type="button"
-              class="bookings-refresh"
-              id="refresh-bookings"
-            >
-              Aktualisieren
-            </button>
-
-          </div>
-
-
-          <!-- AKTIVE FILTER + TREFFERZAHL -->
-
-          <div class="bookings-meta">
-
-            <div
-              class="active-booking-filters"
-              id="active-booking-filters"
-            >
-            </div>
-
-            <p class="booking-count">
-
-              <span id="booking-count">
-                0
-              </span>
-
-              <span id="booking-count-label">
-                Buchungen
-              </span>
-
-            </p>
-
-          </div>
-
-
-          <!-- LISTE -->
-
-          <div
-            id="bookings-list"
-            class="bookings-list"
-          >
-
-            <div class="empty-state">
-              <p>
-                Buchungen werden geladen...
-              </p>
-            </div>
-
-          </div>
-
-        </section>
-
-      </main>
-
-    </div>
-
-
-    <!-- JAVASCRIPT -->
-
-    <script type="module" src="../js/auth.js"></script>
-    <script type="module" src="../js/admin-layout.js"></script>
-    <script type="module" src="../js/bookings.js"></script>
-
-  </body>
-
-  <!-- BUCHUNGS-MODAL -->
-
-  <div
-    class="booking-modal"
-    id="booking-modal"
-    hidden
-    aria-hidden="true"
-  >
-    <div
-      class="booking-modal-backdrop"
-      data-modal-close
-    ></div>
-
-    <div
-      class="booking-modal-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="booking-modal-title"
-    >
-
-      <header class="booking-modal-header">
-
-        <div>
-          <h2 id="booking-modal-title">
-            Buchung
-          </h2>
-
-          <p id="booking-modal-subtitle">
-            Buchungsdetails
-          </p>
+          </article>
         </div>
-
-        <button
-          type="button"
-          class="booking-modal-close"
-          id="booking-modal-close"
-          aria-label="Modal schließen"
-        >
-          ×
-        </button>
-
-      </header>
-
-      <div class="booking-modal-content">
-
-        <div class="booking-details-grid">
-
-          <div class="booking-details-column">
-
-            <section class="booking-details-section">
-              <span class="booking-details-label">
-                Kunde
-              </span>
-
-              <strong
-                class="booking-details-value"
-                id="booking-modal-customer"
-              >
-                –
-              </strong>
-
-              <span
-                class="booking-details-secondary"
-                id="booking-modal-email"
-              >
-                –
-              </span>
-
-              <span
-                class="booking-details-secondary"
-                id="booking-modal-phone"
-              >
-                –
-              </span>
-            </section>
-
-
-            <section class="booking-details-section">
-
-              <span class="booking-details-label">
-                Termin
-              </span>
-
-              <strong
-                class="booking-details-value"
-                id="booking-modal-date"
-              >
-                –
-              </strong>
-
-              <span
-                class="booking-details-secondary"
-                id="booking-modal-time"
-              >
-                –
-              </span>
-
-            </section>
-
-
-            <section class="booking-details-section">
-
-              <span class="booking-details-label">
-                Beratungsangebot
-              </span>
-
-              <strong
-                class="booking-details-value"
-                id="booking-modal-service"
-              >
-                –
-              </strong>
-
-              <span
-                class="booking-details-secondary"
-                id="booking-modal-duration"
-              >
-                –
-              </span>
-
-            </section>
-
-          </div>
-
-
-          <div class="booking-details-column">
-
-            <section class="booking-details-section">
-
-              <span class="booking-details-label">
-                Status
-              </span>
-
-              <span
-                class="booking-card-status"
-                id="booking-modal-status"
-              >
-                –
-              </span>
-
-            </section>
-
-
-            <section class="booking-details-section">
-
-              <span class="booking-details-label">
-                Notizen
-              </span>
-
-              <div
-                class="booking-details-notes"
-                id="booking-modal-notes"
-              >
-                Keine Notizen vorhanden.
-              </div>
-
-            </section>
-
-          </div>
-
-        </div>
-
-
-        <div class="booking-details-actions">
-
-          <button
-            type="button"
-            class="booking-modal-action booking-modal-confirm"
-            id="booking-modal-confirm"
-            data-action="confirm"
-          >
-            Buchung bestätigen
-          </button>
-
-          <button
-            type="button"
-            class="booking-modal-action booking-modal-cancel"
-            id="booking-modal-cancel"
-            data-action="cancel"
-          >
-            Buchung stornieren
-          </button>
-
-        </div>
-
-
-        <p class="booking-modal-info">
-          Die Buchung wurde über die Website eingereicht.
-        </p>
-
       </div>
+    </section>
 
-    </div>
-  </div>
-</html>
+    <section class="about-section">
+      <div class="about-container">
+        <div class="about-content">
+          <h2 data-text="index_Ueber_mich_title">Über Aufwind Beratung</h2>
 
+          <p data-text="index_Ueber_mich_text1">Mit meiner 30-jährigen Erfahrung in den Bereichen Nachhilfe, Begabtenförderung, Schule, Praktikantenbetreuung, Lehrerausbildung und Beratung verbinde ich umfassende pädagogische und psychologische Kompetenzen mit einem tiefen Verständnis für die vielfältigen Herausforderungen des erzieherischen, pädagogischen und schulischen Alltags. Über viele Jahre hinweg habe ich Menschen zu unterschiedlichen persönlichen, familiären, pädagogischen und beruflichen Fragestellungen beraten und begleitet. Auch als Mutter von zwei Kindern im Alter von 8 und 14 Jahren erlebe ich den Familienalltag aus einer ganz persönlichen Perspektive – mit seinen schönen Momenten, aber auch mit seinen Herausforderungen und Veränderungen. Diese Verbindung aus langjähriger beruflicher Beratungserfahrung und persönlichem Erleben ermöglicht es mir, Eltern und Familien einfühlsam und auf Augenhöhe zu begegnen. In meiner Beratung möchte ich einen geschützten Raum schaffen, in dem Sorgen, Fragen und Unsicherheiten Platz haben und in dem gemeinsam neue Perspektiven und passende Wege gefunden werden können.</p>
 
-============================================================
-DATEI: admin\pages\dashboard.html
-============================================================
+          <p data-text="index_Ueber_mich_text2">Gemeinsam entdecken wir Ressourcen, lösen Blockaden und entwickeln neue Möglichkeiten für nachhaltige Veränderungen.</p>
 
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Dashboard | Aufwind Beratung</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Gemeinsame Website-Styles -->
-    <link rel="stylesheet" href="../../css/global.css" />
-
-    <!-- Admin-Styles -->
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/dashboard.css" />
-  </head>
-
-  <body>
-    <div class="admin-layout" id="adminLayout">
-
-      
-      <!-- ========================================
-           MAIN
-           ======================================== -->
-
-      <main class="admin-main">
-
-        <!-- ========================================
-             TOPBAR
-             ======================================== -->
-
-        <header class="admin-topbar">
-
-          <div class="topbar-left">
-
-            <button
-              type="button"
-              class="mobile-menu-button"
-              id="mobileMenuButton"
-              aria-label="Menü öffnen"
-              aria-expanded="false"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-
-            <div class="topbar-title">
-              <h1>Dashboard</h1>
-              <p>
-                Willkommen im Admin-Bereich
-              </p>
-            </div>
-
-          </div>
-
-
-          <div class="topbar-right">
-
-            <div class="admin-user">
-
-              <div class="admin-user-avatar">
-                A
-              </div>
-
-              <div class="admin-user-info">
-
-                <span
-                  class="admin-user-name"
-                  id="adminUserName"
-                >
-                  Administrator
-                </span>
-
-                <span class="admin-user-role">
-                  Admin
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </header>
-
-
-        <!-- ========================================
-        DASHBOARD
-        ======================================== -->
-
-        <section class="dashboard-content">
-
-          <!-- BEGRÜSSUNG -->
-
-          <div class="dashboard-header">
-
-            <h2>Guten Tag!</h2>
-
-            <p>
-              Aktueller Überblick:
-            </p>
-
-          </div>
-
-
-          <!-- KPI-KARTEN -->
-
-          <div class="dashboard-stats">
-
-            <article class="dashboard-stat">
-
-              <div class="dashboard-stat-content">
-
-                <span class="stat-label">
-                  Termine heute
-                </span>
-
-                <strong id="today-bookings">
-                  –
-                </strong>
-
-              </div>
-
-              <a
-                href="bookings.html"
-                class="stat-action"
-              >
-                Termine ansehen
-              </a>
-
-            </article>
-
-
-            <article class="dashboard-stat">
-
-              <div class="dashboard-stat-content">
-
-                <span class="stat-label">
-                  Diese Woche
-                </span>
-
-                <strong id="week-bookings">
-                  –
-                </strong>
-
-              </div>
-
-              <a
-                href="bookings.html"
-                class="stat-action"
-              >
-                Termine ansehen
-              </a>
-
-            </article>
-
-
-            <article class="dashboard-stat">
-
-              <div class="dashboard-stat-content">
-
-                <span class="stat-label">
-                  Offene Buchungen
-                </span>
-
-                <strong id="pending-bookings">
-                  –
-                </strong>
-
-              </div>
-
-              <a
-                href="bookings.html?status=pending"
-                class="stat-action"
-              >
-                Buchungen
-              </a>
-
-            </article>
-
-          </div>
-
-
-          <!-- NÄCHSTER TERMIN -->
-
-          <section class="dashboard-section next-booking-section">
-
-            <div class="section-header">
-
-              <div>
-                <h2>Nächster Termin</h2>
-              </div>
-
-            </div>
-
-
-            <div
-              id="next-booking"
-              class="next-booking"
-            >
-
-              <div class="empty-state">
-                <p>
-                  Termine werden geladen...
-                </p>
-              </div>
-
-            </div>
-
-          </section>
-
-
-          <!-- HEUTIGE TERMINE -->
-
-          <section class="dashboard-section">
-
-            <div class="section-header">
-
-              <div>
-                <h2>Heute</h2>
-
-                <p>
-                  Die nächsten Termine des heutigen Tages.
-                </p>
-              </div>
-
-              <a
-                href="bookings.html"
-                class="dashboard-link"
-              >
-                Alle Termine heute
-              </a>
-
-            </div>
-
-
-            <div
-              id="today-bookings-list"
-              class="booking-list"
-            >
-
-              <div class="empty-state">
-                <p>
-                  Termine werden geladen...
-                </p>
-              </div>
-
-            </div>
-
-          </section>
-
-        </section>
-
-      </main>
-
-    </div>
-
-
-    <!-- ========================================
-         JAVASCRIPT
-         ======================================== -->
-
-    <script type="module" src="../js/auth.js"></script>
-    <script type="module" src="../js/admin-layout.js"></script>
-    <script type="module" src="../js/dashboard.js"></script>
-
-  </body>
-</html>
-
-
-============================================================
-DATEI: admin\pages\services.html
-============================================================
-
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-
-    <title>Beratungsangebote | Aufwind Beratung</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="../../css/global.css" />
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/services.css" />
-  </head>
-
-  <body>
-    <div class="admin-layout" id="adminLayout">
-
-      
-      <!-- MAIN -->
-
-      <main class="admin-main">
-
-        <!-- TOPBAR -->
-
-        <header class="admin-topbar">
-
-          <div class="topbar-left">
-
-            <button
-              type="button"
-              class="mobile-menu-button"
-              id="mobileMenuButton"
-              aria-label="Menü öffnen"
-              aria-expanded="false"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-
-            <div class="topbar-title">
-              <h1>Beratungsangebote</h1>
-              <p>Beratungsangebote verwalten</p>
-            </div>
-
-          </div>
-
-          <div class="topbar-right">
-
-            <div class="admin-user">
-
-              <div class="admin-user-avatar">
-                A
-              </div>
-
-              <div class="admin-user-info">
-                <span
-                  class="admin-user-name"
-                  id="adminUserName"
-                >
-                  Administrator
-                </span>
-
-                <span class="admin-user-role">
-                  Admin
-                </span>
-              </div>
-
-            </div>
-
-          </div>
-
-        </header>
-
-        <!-- CONTENT -->
-
-        <section class="services-content">
-
-          <div class="services-header">
-
-            <div>
-              <h2>Beratungsangebote</h2>
-
-              <p>
-                Verwalte die Angebote, die auf der Website
-                zur Buchung angeboten werden.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              class="services-add-button"
-              id="add-service-button"
-            >
-              + Neues Angebot
-            </button>
-
-          </div>
-
-          <!-- MESSAGE -->
-
-          <div
-            id="services-message"
-            class="services-message"
-            hidden
-            role="status"
-            aria-live="polite"
-          ></div>
-
-          <!-- LOADING -->
-
-          <div
-            id="services-loading"
-            class="services-state"
-          >
-            <p>Beratungsangebote werden geladen...</p>
-          </div>
-
-          <!-- EMPTY -->
-
-          <div
-            id="services-empty"
-            class="services-state"
-            hidden
-          >
-            <p>Noch keine Beratungsangebote vorhanden.</p>
-
-            <button
-              type="button"
-              class="services-empty-button"
-              id="empty-add-service"
-            >
-              + Neues Angebot
-            </button>
-          </div>
-
-          <!-- ERROR -->
-
-          <div
-            id="services-error"
-            class="services-state services-state-error"
-            hidden
-          >
-            <p>
-              Die Beratungsangebote konnten nicht geladen werden.
-            </p>
-
-            <button
-              type="button"
-              class="services-empty-button"
-              id="retry-services"
-            >
-              Erneut versuchen
-            </button>
-          </div>
-
-          <!-- LIST -->
-
-          <div
-            id="services-list"
-            class="services-list"
-          ></div>
-
-        </section>
-
-      </main>
-    </div>
-
-    <!-- SERVICE MODAL -->
-
-    <div
-      class="service-modal"
-      id="service-modal"
-      hidden
-    >
-
-      <div
-        class="service-modal-backdrop"
-        data-modal-close
-      ></div>
-
-      <div
-        class="service-modal-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="service-modal-title"
-      >
-
-        <div class="service-modal-header">
-
-          <div>
-            <h2 id="service-modal-title">
-              Neues Beratungsangebot
-            </h2>
-
-            <p>
-              Bearbeite die Angaben des Beratungsangebots.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            class="service-modal-close"
-            id="service-modal-close"
-            aria-label="Modal schließen"
-          >
-            ×
-          </button>
-
+          <a
+            href="about.html"
+            class="btn btn-primary"
+            data-text="index_Ueber_mich_button"
+          >Mehr über mich</a>
         </div>
 
-        <form
-          id="service-form"
-          class="service-form"
-        >
-
-          <input
-            type="hidden"
-            id="service-edit-id"
+        <div class="about-image">
+          <img
+            src="https://placehold.co/800x600?text=Aufwind+Beratung"
+            alt="Aufwind Beratung"
           />
-
-          <!-- TITEL -->
-
-          <div class="service-field">
-            <label for="service-title">
-              Titel *
-            </label>
-
-            <input
-              type="text"
-              id="service-title"
-              maxlength="150"
-              required
-            />
-          </div>
-
-          <!-- BESCHREIBUNG -->
-
-          <div class="service-field">
-            <label for="service-description">
-              Beschreibung *
-            </label>
-
-            <textarea
-              id="service-description"
-              rows="5"
-              maxlength="2000"
-              required
-            ></textarea>
-          </div>
-
-          <!-- DAUER -->
-
-          <div class="service-field-row">
-
-            <div class="service-field">
-              <label for="service-duration">
-                Dauer *
-              </label>
-
-              <div class="service-input-with-unit">
-                <input
-                  type="number"
-                  id="service-duration"
-                  min="1"
-                  step="1"
-                  required
-                />
-
-                <span>Minuten</span>
-              </div>
-            </div>
-
-            <!-- PREIS -->
-
-            <div class="service-field">
-              <label for="service-price">
-                Preis *
-              </label>
-
-              <div class="service-input-with-unit">
-                <input
-                  type="number"
-                  id="service-price"
-                  min="0"
-                  step="0.01"
-                  required
-                />
-
-                <span>€</span>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- STATUS -->
-
-          <div class="service-field">
-            <label for="service-active">
-              Status
-            </label>
-
-            <select id="service-active">
-              <option value="true">Aktiv</option>
-              <option value="false">Inaktiv</option>
-            </select>
-          </div>
-
-          <!-- ERROR -->
-
-          <p
-            id="service-form-error"
-            class="service-form-error"
-            role="alert"
-            aria-live="assertive"
-            hidden
-          ></p>
-
-          <!-- ACTIONS -->
-
-          <div class="service-modal-actions">
-
-            <button
-              type="button"
-              class="service-secondary-button"
-              id="service-cancel"
-            >
-              Abbrechen
-            </button>
-
-            <button
-              type="submit"
-              class="service-primary-button"
-              id="service-save"
-            >
-              Änderungen speichern
-            </button>
-
-          </div>
-
-        </form>
-
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- JAVASCRIPT -->
+    <section class="process-section">
+      <div class="process-container">
+        <h2 data-text="index_Ablauf_title">So läuft eine Beratung ab</h2>
 
-    <script
-      type="module"
-      src="../js/auth.js"
-    ></script>
+        <p class="process-intro" data-text="index_Ablauf_intro">Der erste Schritt ist oft der schwerste. Ich begleite Sie Schritt für Schritt – vom ersten Kennenlernen bis zur Entwicklung neuer Perspektiven.</p>
 
-    <script type="module" src="../js/admin-layout.js"></script>
+        <div class="process-grid">
+          <article class="process-step">
+            <div class="step-number">1</div>
 
-    <script
-      type="module"
-      src="../js/services.js"
-    ></script>
+            <h3 data-text="index_Schritt_1_title">Erstkontakt</h3>
 
-  </body>
-</html>
+            <p data-text="index_Schritt_1_text">Kurzes Kennenlernen und Terminvereinbarung.</p>
+          </article>
 
+          <article class="process-step">
+            <div class="step-number">2</div>
 
-============================================================
-DATEI: admin\pages\settings.html
-============================================================
+            <h3 data-text="index_Schritt_2_title">Persönliches Gespräch</h3>
 
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+            <p data-text="index_Schritt_2_text">Gemeinsam besprechen wir Ihre Situation, Wünsche und Ziele.</p>
+          </article>
 
-    <title>Einstellungen | Aufwind Beratung</title>
+          <article class="process-step">
+            <div class="step-number">3</div>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+            <h3 data-text="index_Schritt_3_title">Gemeinsame Lösungen</h3>
 
-    <link rel="stylesheet" href="../../css/global.css" />
-    <link rel="stylesheet" href="../css/admin.css" />
-    <link rel="stylesheet" href="../css/settings.css" />
-  </head>
+            <p data-text="index_Schritt_3_text">Gemeinsam entwickeln wir neue Perspektiven und individuelle Handlungsmöglichkeiten.</p>
+          </article>
 
-  <body>
-    <div class="admin-layout" id="adminLayout">
+          <article class="process-step">
+            <div class="step-number">4</div>
 
-      
-      <!-- MAIN -->
+            <h3 data-text="index_Schritt_4_title">Nachhaltige Begleitung</h3>
 
-      <main class="admin-main">
+            <p data-text="index_Schritt_4_text">Ich begleite Sie dabei, neue Wege Schritt für Schritt in Ihren Alltag zu integrieren.</p>
+          </article>
+        </div>
 
-        <!-- TOPBAR -->
+        <p class="process-ending" data-text="index_Ablauf_ending">Ich freue mich darauf, Sie auf Ihrem Weg zu begleiten.</p>
 
-        <header class="admin-topbar">
-          <div class="topbar-left">
+        <a
+          href="contact.html"
+          class="btn btn-primary"
+          data-text="index_Ablauf_button"
+        >Jetzt Termin vereinbaren</a>
+      </div>
+    </section>
 
+    <section class="faq-section">
+      <div class="faq-container">
+        <h2 data-text="index_FAQ_title">Häufige Fragen</h2>
+
+        <p class="faq-intro" data-text="index_FAQ_intro">Hier finden Sie Antworten auf Fragen, die mir häufig gestellt werden.</p>
+
+        <div class="faq">
+          <div class="faq-item">
             <button
-              type="button"
-              class="mobile-menu-button"
-              id="mobileMenuButton"
-              aria-label="Menü öffnen"
+              class="faq-question"
               aria-expanded="false"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
+              data-text="index_FAQ_1_question"
+            >Wie läuft eine Beratung ab?</button>
 
-            <div class="topbar-title">
-              <h1>Einstellungen</h1>
-              <p>Buchungssystem und allgemeine Informationen</p>
+            <div class="faq-answer">
+              <p data-text="index_FAQ_1_answer">Nach einem ersten Kennenlernen besprechen wir Ihre Anliegen und Ziele. Gemeinsam entwickeln wir passende Lösungsansätze und arbeiten Schritt für Schritt an den Themen, die Ihnen wichtig sind.</p>
             </div>
-
           </div>
 
-          <div class="topbar-right">
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+              data-text="index_FAQ_2_question"
+            >Wie lange dauert eine Sitzung?</button>
 
-            <div class="admin-user">
-              <div class="admin-user-avatar">
-                A
-              </div>
-
-              <div class="admin-user-info">
-                <span
-                  class="admin-user-name"
-                  id="adminUserName"
-                >
-                  Administrator
-                </span>
-
-                <span class="admin-user-role">
-                  Admin
-                </span>
-              </div>
+            <div class="faq-answer">
+              <p data-text="index_FAQ_2_answer">Eine Beratung dauert in der Regel etwa 60 Minuten. Die genaue Dauer kann je nach Anliegen individuell vereinbart werden.</p>
             </div>
-
-          </div>
-        </header>
-
-        <!-- CONTENT -->
-
-        <section class="settings-content">
-
-          <!-- MESSAGE -->
-
-          <div
-            id="settings-message"
-            class="settings-message"
-            hidden
-            role="status"
-            aria-live="polite"
-          ></div>
-
-          <!-- LOADING -->
-
-          <div
-            id="settings-loading"
-            class="settings-state"
-          >
-            <p>Einstellungen werden geladen...</p>
           </div>
 
-          <!-- FORM -->
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+              data-text="index_FAQ_3_question"
+            >Wo findet die Beratung statt?</button>
 
-          <form
-            id="settings-form"
-            class="settings-form"
-            hidden
-          >
-
-            <!-- BUCHUNGSEINSTELLUNGEN -->
-
-            <section class="settings-section">
-
-              <div class="settings-section-header">
-                <div>
-                  <h2>Buchungseinstellungen</h2>
-                  <p>
-                    Regeln für mögliche Buchungstermine.
-                  </p>
-                </div>
-              </div>
-
-              <div class="settings-grid">
-
-                <div class="settings-field">
-                  <label for="booking-interval">
-                    Zeitraster
-                  </label>
-
-                  <select id="booking-interval">
-                    <option value="30">30 Minuten</option>
-                    <option value="60">60 Minuten</option>
-                  </select>
-
-                  <p class="settings-help">
-                    Bestimmt, in welchen Abständen mögliche
-                    Startzeiten angeboten werden.
-                  </p>
-                </div>
-
-                <div class="settings-field">
-                  <label for="minimum-notice-hours">
-                    Mindestvorlauf
-                  </label>
-
-                  <div class="settings-input-with-suffix">
-                    <input
-                      type="number"
-                      id="minimum-notice-hours"
-                      min="0"
-                      step="1"
-                      required
-                    />
-                    <span>Stunden</span>
-                  </div>
-
-                  <p class="settings-help">
-                    Wie viel Zeit mindestens zwischen Buchung
-                    und Termin liegen muss.
-                  </p>
-                </div>
-
-                <div class="settings-field">
-                  <label for="booking-advance-days">
-                    Maximale Vorausbuchung
-                  </label>
-
-                  <div class="settings-input-with-suffix">
-                    <input
-                      type="number"
-                      id="booking-advance-days"
-                      min="1"
-                      step="1"
-                      required
-                    />
-                    <span>Tage</span>
-                  </div>
-
-                  <p class="settings-help">
-                    Wie weit im Voraus Termine gebucht werden
-                    können.
-                  </p>
-                </div>
-
-              </div>
-
-            </section>
-
-            <!-- BENACHRICHTIGUNGEN -->
-
-            <section class="settings-section">
-
-              <div class="settings-section-header">
-                <div>
-                  <h2>Benachrichtigungen</h2>
-                  <p>
-                    Lege fest, welche E-Mail-Benachrichtigungen
-                    später versendet werden sollen.
-                  </p>
-                </div>
-              </div>
-
-              <div class="settings-notification-groups">
-
-                <div class="settings-notification-group">
-
-                  <h3>E-Mails an Beratungsstelle</h3>
-
-                  <label class="settings-toggle-row">
-                    <span>
-                      <strong>Neue Buchung</strong>
-                      <small>
-                        Benachrichtigung bei einer neuen Buchung
-                      </small>
-                    </span>
-
-                    <input
-                      type="checkbox"
-                      id="notify-provider-new-booking"
-                    />
-                  </label>
-
-                  <label class="settings-toggle-row">
-                    <span>
-                      <strong>Stornierung</strong>
-                      <small>
-                        Benachrichtigung bei einer Stornierung
-                      </small>
-                    </span>
-
-                    <input
-                      type="checkbox"
-                      id="notify-provider-cancellation"
-                    />
-                  </label>
-
-                  <label class="settings-toggle-row">
-                    <span>
-                      <strong>Terminänderung</strong>
-                      <small>
-                        Benachrichtigung bei einer Änderung
-                      </small>
-                    </span>
-
-                    <input
-                      type="checkbox"
-                      id="notify-provider-reschedule"
-                    />
-                  </label>
-
-                </div>
-
-                <div class="settings-notification-group">
-
-                  <h3>E-Mails an Kunden</h3>
-
-                  <label class="settings-toggle-row">
-                    <span>
-                      <strong>Buchungsbestätigung</strong>
-                      <small>
-                        Bestätigung nach erfolgreicher Buchung
-                      </small>
-                    </span>
-
-                    <input
-                      type="checkbox"
-                      id="notify-customer-confirmation"
-                    />
-                  </label>
-
-                  <label class="settings-toggle-row">
-                    <span>
-                      <strong>Stornierungsbestätigung</strong>
-                      <small>
-                        Nachricht nach einer Stornierung
-                      </small>
-                    </span>
-
-                    <input
-                      type="checkbox"
-                      id="notify-customer-cancellation"
-                    />
-                  </label>
-
-                  <label class="settings-toggle-row">
-                    <span>
-                      <strong>Terminänderung</strong>
-                      <small>
-                        Nachricht bei einer Terminänderung
-                      </small>
-                    </span>
-
-                    <input
-                      type="checkbox"
-                      id="notify-customer-reschedule"
-                    />
-                  </label>
-
-                  <label class="settings-toggle-row">
-                    <span>
-                      <strong>Erinnerung vor Termin</strong>
-                      <small>
-                        Automatische Erinnerung vor dem Termin
-                      </small>
-                    </span>
-
-                    <input
-                      type="checkbox"
-                      id="notify-customer-reminder"
-                    />
-                  </label>
-
-                  <div class="settings-field settings-reminder-field">
-                    <label for="reminder-hours">
-                      Erinnerung
-                    </label>
-
-                    <div class="settings-input-with-suffix">
-                      <input
-                        type="number"
-                        id="reminder-hours"
-                        min="1"
-                        step="1"
-                        required
-                      />
-                      <span>Stunden vorher</span>
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-
-            </section>
-
-            <!-- ALLGEMEINE INFORMATIONEN -->
-
-            <section class="settings-section">
-
-              <div class="settings-section-header">
-                <div>
-                  <h2>Allgemeine Informationen</h2>
-                  <p>
-                    Diese Informationen werden vom System
-                    verwendet.
-                  </p>
-                </div>
-              </div>
-
-              <div class="settings-grid">
-
-                <div class="settings-field">
-                  <label for="organization-name">
-                    Name der Beratungsstelle
-                  </label>
-
-                  <input
-                    type="text"
-                    id="organization-name"
-                    maxlength="200"
-                    required
-                  />
-                </div>
-
-                <div class="settings-field">
-                  <label for="contact-email">
-                    Kontakt-E-Mail
-                  </label>
-
-                  <input
-                    type="email"
-                    id="contact-email"
-                    maxlength="320"
-                    placeholder="name@beispiel.de"
-                  />
-                </div>
-
-                <div class="settings-field">
-                  <label for="timezone">
-                    Zeitzone
-                  </label>
-
-                  <input
-                    type="text"
-                    id="timezone"
-                    value="Europe/Berlin"
-                    required
-                  />
-
-                  <p class="settings-help">
-                    Die Zeitzone muss eindeutig sein.
-                  </p>
-                </div>
-
-              </div>
-
-            </section>
-
-            <!-- SPEICHERN -->
-
-            <div class="settings-actions">
-
-              <button
-                type="submit"
-                class="settings-save-button"
-                id="settings-save"
-              >
-                Änderungen speichern
-              </button>
-
+            <div class="faq-answer">
+              <p data-text="index_FAQ_3_answer">Die Beratung findet persönlich in Wiesbaden oder bequem online statt – ganz so, wie es am besten zu Ihrer Situation passt.		</p>
             </div>
+          </div>
 
-          </form>
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+              data-text="index_FAQ_4_question"
+            >Was kostet eine Beratung?</button>
 
-          <!-- ADMIN-KONTO -->
-
-          <section
-            class="settings-section settings-account-section"
-            id="admin-account-section"
-            hidden
-          >
-
-            <div class="settings-section-header">
-              <div>
-                <h2>Admin-Konto</h2>
-                <p>
-                  Verwalte dein angemeldetes Supabase-Konto.
-                </p>
-              </div>
+            <div class="faq-answer">
+              <p data-text="index_FAQ_4_answer">Alle Informationen zu den Kosten finden Sie auf der Seite „Kosten &amp; Terminbuchung“. Gerne beantworte ich Ihre Fragen auch persönlich.</p>
             </div>
+          </div>
 
-            <div class="settings-account">
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+              data-text="index_FAQ_5_question"
+            >Werden meine Gespräche vertraulich behandelt?</button>
 
-              <div class="settings-account-info">
-                <span class="settings-account-label">
-                  Angemeldet als
-                </span>
-
-                <strong id="admin-email">
-                  –
-                </strong>
-              </div>
-
-              <div class="settings-account-password">
-
-                <label for="new-password">
-                  Neues Passwort
-                </label>
-
-                <div class="settings-password-row">
-
-                  <input
-                    type="password"
-                    id="new-password"
-                    minlength="8"
-                    placeholder="Mindestens 8 Zeichen"
-                    autocomplete="new-password"
-                  />
-
-                  <button
-                    type="button"
-                    class="settings-secondary-button"
-                    id="change-password"
-                  >
-                    Passwort ändern
-                  </button>
-
-                </div>
-
-                <p
-                  id="password-message"
-                  class="settings-help"
-                  hidden
-                ></p>
-
-              </div>
-
+            <div class="faq-answer">
+              <p data-text="index_FAQ_5_answer">Ja. Vertraulichkeit ist eine wichtige Grundlage meiner Arbeit. Alle Gespräche werden selbstverständlich vertraulich behandelt.</p>
             </div>
+          </div>
 
-          </section>
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+              data-text="index_FAQ_6_question"
+            >Wie kann ich einen Termin vereinbaren?</button>
 
-        </section>
+            <div class="faq-answer">
+              <p data-text="index_FAQ_6_answer">Sie können mich ganz einfach per E-Mail oder telefonisch kontaktieren oder über die Terminseite eine Anfrage stellen.</p>
+            </div>
+          </div>
+        </div>
 
-      </main>
-    </div>
+        <div class="faq-cta">
+          <h3 data-text="index_FAQ_CTA_title">Ich freue mich darauf, Sie kennenzulernen.</h3>
 
-    <script
-      type="module"
-      src="../js/auth.js"
-    ></script>
+          <p data-text="index_FAQ_CTA_text">Haben Sie noch Fragen oder möchten einen Termin vereinbaren? Ich freue mich auf Ihre Nachricht.</p>
 
-    <script type="module" src="../js/admin-layout.js"></script>
+          <a
+            href="contact.html"
+            class="btn btn-primary"
+            data-text="index_FAQ_CTA_button"
+          >Termin vereinbaren</a>
+        </div>
+      </div>
+    </section>
 
-    <script
-      type="module"
-      src="../js/settings.js"
-    ></script>
+  </main>
   </body>
+
+  <script src="js/load-components.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/faq.js"></script>
+  <script src="js/content-loader.js"></script>
+
 </html>
+
 

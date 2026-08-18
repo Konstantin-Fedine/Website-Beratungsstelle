@@ -1,21 +1,37 @@
 <header class="main-header">
   <div class="header-container">
-    <div class="logo">
-      <h1 data-text="global_Header_logo">Aufwind Beratung</h1>
-    </div>
+
+    <a
+      href="index.html"
+      class="logo"
+      aria-label="Aufwind Beratung – Startseite"
+    >
+      <h1 data-text="global_Header_logo">
+        Aufwind Beratung
+      </h1>
+    </a>
+
 
     <button
       class="menu-toggle"
+      type="button"
       aria-label="Menü öffnen"
       aria-expanded="false"
+      aria-controls="main-navigation"
     >
       <span></span>
       <span></span>
       <span></span>
     </button>
 
-    <nav class="navigation">
+
+    <nav
+      class="navigation"
+      id="main-navigation"
+      aria-label="Hauptnavigation"
+    >
       <ul>
+
         <li>
           <a href="index.html" data-text="global_Header_nav_start">
             Start
@@ -23,12 +39,7 @@
         </li>
 
         <li>
-          <a
-            href="services.html"
-            data-text="global_Header_nav_services"
-          >
-            Angebote
-          </a>
+          <a href="services.html" data-text="global_Header_nav_services">Angebote</a>
         </li>
 
         <li>
@@ -47,23 +58,19 @@
         </li>
 
         <li>
-          <a
-            href="contact.html"
-            data-text="global_Header_nav_contact"
-          >
-            Kontakt
+          <a href="booking.html" data-text="global_Header_nav_booking">
+            Termin buchen
           </a>
         </li>
 
         <li>
-          <a
-            href="booking.html"
-            data-text="global_Header_nav_booking"
-          >
-            Termin buchen
+          <a href="contact.html" data-text="global_Header_nav_contact">
+            Kontakt
           </a>
         </li>
+
       </ul>
     </nav>
+
   </div>
 </header>

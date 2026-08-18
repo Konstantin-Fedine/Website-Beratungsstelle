@@ -75,31 +75,56 @@
     color var(--transition);
 }
 
-.faq-question::before {
-  content: none;
+.faq-question {
+  width: 100%;
+  padding: 22px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--color-dark);
+
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition),
+    color var(--transition);
 }
 
-.faq-question::after {
-  content: "";
 
-  width: 9px;
-  height: 9px;
+.faq-question::before {
+  content: "▸";
 
   flex-shrink: 0;
 
-  border-right: 2px solid var(--color-primary);
-  border-bottom: 2px solid var(--color-primary);
+  margin-right: 18px;
 
-  transform: rotate(45deg);
+  color: var(--color-primary);
 
   transition:
     transform 0.25s ease,
     border-color 0.25s ease;
 }
 
+
+/* Geöffnet */
+
 .faq-item.is-open .faq-question::after {
   transform: rotate(-135deg);
 }
+
 
 .faq-item.is-open .faq-question {
   color: var(--color-primary);
