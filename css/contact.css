@@ -60,14 +60,13 @@
   margin: 0 auto;
 }
 
-.contact-cost,
-.contact-options,
+.contact-main,
 .contact-process,
 .contact-form-section {
   padding: 80px 20px;
 }
 
-.contact-options h2,
+.contact-main h2,
 .contact-process h2,
 .contact-form-section h2 {
   max-width: 850px;
@@ -83,96 +82,47 @@
 
 
 /* ========================================
-   KOSTEN
-   ======================================== */
-
-.contact-cost {
-  background: var(--color-surface);
-}
-
-.contact-cost-card {
-  max-width: 750px;
-  margin: 0 auto;
-  padding: 35px;
-
-  background: var(--color-background);
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-
-  box-shadow: var(--shadow);
-}
-
-.contact-cost-card h2 {
-  margin-bottom: 30px;
-
-  color: var(--color-dark);
-
-  font-size: 2rem;
-  text-align: center;
-}
-
-.contact-price-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  padding: 18px 0;
-
-  border-bottom: 1px solid rgba(42, 36, 33, 0.1);
-
-  color: var(--color-text);
-
-  font-size: 1.05rem;
-}
-
-.contact-price-row:last-of-type {
-  border-bottom: none;
-}
-
-.contact-price-row strong {
-  flex-shrink: 0;
-
-  color: var(--color-dark);
-
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.contact-cost-card > p {
-  margin: 30px 0 0;
-
-  color: var(--color-text-muted);
-
-  line-height: 1.75;
-}
-
-
-/* ========================================
    KONTAKTMÖGLICHKEITEN
    ======================================== */
 
-.contact-options {
+.contact-main {
   background: var(--color-background);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.contact-details h2,
+.contact-form-column h2 {
+  margin: 0 0 28px;
+  text-align: left;
+}
+
+.contact-details h2 {
+  font-size: 2rem;
 }
 
 .contact-cards {
   display: grid;
   grid-template-columns: 1fr;
 
-  gap: 25px;
+  gap: 16px;
 }
 
 .contact-card {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  gap: 18px;
 
   min-height: 100%;
 
-  padding: 35px 25px;
+  padding: 22px;
 
   background: var(--color-surface);
 
@@ -181,7 +131,7 @@
 
   box-shadow: var(--shadow);
 
-  text-align: center;
+  text-align: left;
 
   transition:
     transform var(--transition),
@@ -196,7 +146,18 @@
 }
 
 .contact-icon {
-  margin-bottom: 18px;
+  flex: 0 0 42px;
+
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  margin: 0;
+
+  background: var(--color-primary-soft);
+  border-radius: 50%;
 
   color: var(--color-primary);
 
@@ -222,6 +183,26 @@
 
 .contact-card .btn {
   margin-top: 22px;
+}
+
+.contact-form-column {
+  padding: 30px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(42, 36, 33, 0.06);
+}
+
+.contact-form-column h2 {
+  max-width: none;
+  margin-bottom: 14px;
+  font-size: 1.45rem;
+  line-height: 1.35;
+}
+
+.contact-form-column .contact-intro {
+  margin-bottom: 25px;
+  text-align: left;
 }
 
 .contact-small {
@@ -330,14 +311,11 @@
 
   gap: 12px;
 
-  padding: 35px;
+  padding: 0;
 
-  background: var(--color-surface);
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-
-  box-shadow: var(--shadow);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .contact-form label {
@@ -388,7 +366,7 @@
 }
 
 .contact-submit {
-  align-self: center;
+  align-self: flex-end;
 
   margin-top: 8px;
 }
@@ -473,10 +451,6 @@
    ======================================== */
 
 @media (min-width: 700px) {
-  .contact-cards {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
   .contact-steps {
     grid-template-columns: repeat(3, 1fr);
 
@@ -502,21 +476,16 @@
     font-size: 1.15rem;
   }
 
-  .contact-cost,
-  .contact-options,
+  .contact-main,
   .contact-process,
   .contact-form-section {
     padding: 100px 20px;
   }
 
-  .contact-options h2,
+  .contact-main h2,
   .contact-process h2,
   .contact-form-section h2 {
     font-size: 2.8rem;
-  }
-
-  .contact-cost-card h2 {
-    font-size: 2.3rem;
   }
 
   .contact-process .contact-step:not(:last-child)::after {
@@ -532,9 +501,6 @@
     font-size: 1.5rem;
   }
 
-  .contact-form {
-    padding: 40px;
-  }
 }
 
 
@@ -547,24 +513,22 @@
     font-size: 2.2rem;
   }
 
-  .contact-options h2,
+  .contact-main h2,
   .contact-process h2,
   .contact-form-section h2 {
     font-size: 2rem;
   }
 
-  .contact-cost-card,
-  .contact-form {
-    padding: 25px;
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
-  .contact-price-row {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
+  .contact-form-column {
+    padding: 24px;
   }
 
   .contact-card {
-    padding: 30px 22px;
+    padding: 20px;
   }
 }

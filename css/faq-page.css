@@ -55,19 +55,19 @@
    ======================================== */
 
 .faq-section {
-  padding: 80px 20px;
+  padding: 56px 20px 72px;
 
   background: var(--color-surface);
 }
 
 .faq-container {
   width: 100%;
-  max-width: 900px;
+  max-width: 850px;
   margin: 0 auto;
 }
 
 .faq-container > h2 {
-  margin: 0 auto 45px;
+  margin: 0 auto 28px;
 
   color: var(--color-dark);
 
@@ -85,23 +85,26 @@
 .faq-list {
   display: flex;
   flex-direction: column;
-
-  border-top: 1px solid var(--color-border);
+  gap: 16px;
 }
 
 .faq-item {
-  border-bottom: 1px solid var(--color-border);
+  padding: 1.2rem 1.5rem;
+
+  background: #fcfbf9;
+  border: 1px solid #e2ded9;
+  border-radius: 10px;
 
   transition:
     background var(--transition),
+    border-color var(--transition),
     box-shadow var(--transition);
 }
 
 .faq-item.is-open {
-  background: var(--color-primary-soft);
-
-  box-shadow:
-    inset 4px 0 0 var(--color-primary);
+  background: var(--color-surface);
+  border-color: rgba(212, 178, 149, 0.7);
+  box-shadow: 0 5px 16px rgba(42, 36, 33, 0.06);
 }
 
 
@@ -112,10 +115,12 @@
 .faq-question {
   width: 100%;
 
-  padding: 22px 20px;
+  padding: 0;
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 
   border: 0;
 
@@ -124,7 +129,7 @@
   color: var(--color-dark);
 
   font-family: inherit;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 600;
   line-height: 1.4;
 
@@ -138,29 +143,24 @@
 }
 
 .faq-question:hover {
-  background: rgba(212, 178, 149, 0.08);
+  color: var(--color-primary);
 }
 
-.faq-question::before {
-  content: "▸";
+.faq-question::after {
+  content: "+";
 
   flex-shrink: 0;
 
-  margin-right: 18px;
-
   color: var(--color-primary);
-
-  font-size: 1.1rem;
-
-  transition: transform 0.3s ease;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1;
+  transition: transform 0.25s ease;
 }
 
-.faq-item.is-open .faq-question {
-  color: var(--color-dark);
-}
-
-.faq-item.is-open .faq-question::before {
-  transform: rotate(90deg);
+.faq-item.is-open .faq-question::after {
+  content: "−";
+  transform: rotate(180deg);
 }
 
 
@@ -172,14 +172,14 @@
   display: grid;
   grid-template-rows: 0fr;
 
-  padding: 0 20px 0 58px;
+  padding: 0;
 
   opacity: 0;
 
   transition:
-    grid-template-rows 0.35s ease,
-    opacity 0.35s ease,
-    padding 0.35s ease;
+    grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.25s ease,
+    padding 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .faq-answer p {
@@ -194,8 +194,7 @@
 
 .faq-item.is-open .faq-answer {
   grid-template-rows: 1fr;
-
-  padding-bottom: 25px;
+  padding-top: 18px;
 
   opacity: 1;
 }
@@ -206,18 +205,27 @@
    ======================================== */
 
 .faq-cta {
-  padding: 80px 20px;
+  padding: 0 20px 80px;
 
-  background: var(--color-dark);
+  background: var(--color-surface);
 
   text-align: center;
+}
+
+.faq-cta-box {
+  padding: 42px 32px;
+
+  background: var(--color-primary-soft);
+  border: 1px solid rgba(212, 178, 149, 0.42);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(42, 36, 33, 0.05);
 }
 
 .faq-cta h2 {
   max-width: 750px;
   margin: 0 auto 25px;
 
-  color: var(--color-text-light);
+  color: var(--color-dark);
 
   font-size: 2rem;
   line-height: 1.3;
@@ -227,7 +235,7 @@
   max-width: 700px;
   margin: 0 auto 35px;
 
-  color: var(--color-text-light);
+  color: var(--color-text-muted);
 
   line-height: 1.75;
 }
@@ -255,13 +263,6 @@
    ======================================== */
 
 @media (min-width: 700px) {
-  .faq-question {
-    padding: 24px;
-  }
-
-  .faq-answer {
-    padding-left: 62px;
-  }
 }
 
 
@@ -283,7 +284,7 @@
   }
 
   .faq-section {
-    padding: 100px 20px;
+    padding: 64px 20px 84px;
   }
 
   .faq-container > h2 {
@@ -291,7 +292,7 @@
   }
 
   .faq-cta {
-    padding: 100px 20px;
+    padding: 0 20px 100px;
   }
 
   .faq-cta h2 {
@@ -314,13 +315,12 @@
   }
 
   .faq-question {
-    padding: 20px 16px;
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .faq-answer {
-    padding-left: 50px;
-    padding-right: 16px;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .faq-cta h2 {
