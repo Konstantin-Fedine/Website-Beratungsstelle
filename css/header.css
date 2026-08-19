@@ -4,16 +4,16 @@
 .main-header {
   position: sticky;
   top: 0;
-
   width: 100%;
 
   background: var(--color-dark);
 
   z-index: 1100;
 
-  padding: 14px 0;
-}
+  isolation: isolate;
 
+  padding: 15px 0;
+}
 
 .header-container {
   max-width: var(--container-width);
@@ -152,14 +152,15 @@
 .navigation a {
   display: flex;
   align-items: center;
+  justify-content: center;
 
   width: 100%;
   min-height: 44px;
 
-  padding: 10px 14px;
+  padding: 10px 20px;
 
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
 
   color: var(--color-text-light);
   background: transparent;
@@ -167,13 +168,13 @@
   color: rgba(255, 255, 255, 0.82);
 
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
 
   line-height: 1.2;
 
   text-decoration: none;
-  text-align: left;
+  text-align: center;
 
   cursor: pointer;
 
@@ -187,18 +188,32 @@
 
 
 /* ========================================
-   HOVER + AKTIVE SEITE
-   Alle Navigation-Buttons gleich
+   NORMALE LINKS
+   Nur der Text reagiert, ohne Button-Fläche.
    ======================================== */
 
+.navigation a:hover,
 .navigation a.active {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+
+/* ========================================
+   TERMIN BUCHEN – DAUERHAFT HERVORGEHOBEN
+   ======================================== */
+
+.navigation li:last-child a,
+.navigation li:last-child a:hover,
+.navigation li:last-child a.active {
   background: var(--color-primary);
-
   color: var(--color-dark);
-
-  transform: translateY(-2px);
-
-  box-shadow: 0 10px 24px rgba(212, 178, 149, 0.35);
+  border-color: transparent;
+  box-shadow: 0 2px 5px rgba(212, 178, 149, 0.12);
+  transform: none;
 }
 
 
@@ -257,11 +272,28 @@
   }
 
 
-  .navigation li:nth-child(5) a {
-    margin-top: 0;
+  .navigation li:last-child {
     margin-left: 8px;
+
+    padding-left: 12px;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .navigation li:last-child a {
+    margin-top: 0;
 
     padding-left: 16px;
     padding-right: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-container {
+    padding: 0 16px;
+  }
+
+  .logo h1 {
+    font-size: 21px;
   }
 }

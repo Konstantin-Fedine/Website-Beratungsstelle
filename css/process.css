@@ -33,6 +33,8 @@
 .process-grid {
   display: grid;
   gap: 45px;
+
+  align-items: center;
 }
 
 .process-step {
@@ -105,6 +107,8 @@
   .process-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 50px 30px;
+
+    align-items: center;
   }
 
   .process-step:not(:last-child)::after {
@@ -125,6 +129,8 @@
   .process-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 30px;
+
+    align-items: center;
   }
 
   .process-step:not(:last-child)::after {
@@ -139,5 +145,8 @@
 
     color: var(--color-primary);
     font-size: 1.5rem;
+    line-height: 1;
+
+    transform: translateY(-50%);
   }
 }

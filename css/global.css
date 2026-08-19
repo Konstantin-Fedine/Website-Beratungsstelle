@@ -208,14 +208,14 @@ img {
   background: var(--color-primary);
   color: var(--color-dark);
 
-  box-shadow: 0 2px 6px rgba(212, 178, 149, 0.12);
+  box-shadow: 0 1px 3px rgba(212, 178, 149, 0.08);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
   filter: brightness(0.95);
 
-  box-shadow: 0 3px 8px rgba(212, 178, 149, 0.18);
+  box-shadow: 0 2px 5px rgba(212, 178, 149, 0.12);
 }
 
 
@@ -228,7 +228,7 @@ img {
   border-color: rgba(42, 36, 33, 0.18);
   color: var(--color-dark);
 
-  box-shadow: 0 3px 8px rgba(42, 36, 33, 0.04);
+  box-shadow: 0 1px 3px rgba(42, 36, 33, 0.03);
 }
 
 .btn-secondary:hover {
@@ -237,7 +237,7 @@ img {
   background: rgba(42, 36, 33, 0.06);
   border-color: rgba(42, 36, 33, 0.28);
 
-  box-shadow: 0 4px 10px rgba(42, 36, 33, 0.07);
+  box-shadow: 0 2px 5px rgba(42, 36, 33, 0.05);
 }
 
 
