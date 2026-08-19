@@ -52,14 +52,13 @@
 
 .services-container {
   width: 100%;
-  max-width: var(--container-width);
+  max-width: 1100px;
   margin: 0 auto;
 }
 
 .services-overview,
 .services-approach,
 .services-form,
-.services-cost,
 .services-process,
 .services-cta {
   padding: 80px 20px;
@@ -77,6 +76,30 @@
   line-height: 1.25;
 }
 
+.services-section-heading {
+  max-width: 760px;
+  margin: 0 auto 45px;
+  text-align: center;
+}
+
+.services-section-heading h2 {
+  margin-bottom: 14px;
+}
+
+.services-section-heading p,
+.services-section-intro {
+  max-width: 700px;
+  margin: 0 auto;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  text-align: center;
+}
+
+.services-section-intro {
+  margin-top: -25px;
+  margin-bottom: 45px;
+}
+
 
 /* ========================================
    ANGEBOTS-KARTEN
@@ -85,18 +108,22 @@
 .services-cards {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 25px;
+  gap: 2rem;
 }
 
 .service-card {
+  height: 100%;
   overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
 
   background: var(--color-surface);
 
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: 12px;
 
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 24px rgba(42, 36, 33, 0.08);
 
   transition:
     transform var(--transition),
@@ -120,6 +147,9 @@
 }
 
 .service-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: 30px;
 }
 
@@ -140,6 +170,49 @@
   line-height: 1.7;
 }
 
+.service-description {
+  margin-bottom: 22px !important;
+}
+
+.services-checklist {
+  display: grid;
+  gap: 10px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.services-checklist li {
+  position: relative;
+  padding-left: 24px;
+
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.services-checklist li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.service-price {
+  margin-top: 24px !important;
+  color: var(--color-dark) !important;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.service-content .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
 
 /* ========================================
    ANGEBOTSÜBERSICHT
@@ -150,6 +223,8 @@
 }
 
 .services-overview .services-cards {
+  max-width: 1100px;
+  margin: 0 auto;
   grid-template-columns: 1fr;
 }
 
@@ -165,6 +240,10 @@
 .services-approach .services-cards {
   max-width: 900px;
   margin: 0 auto;
+}
+
+.services-approach-grid {
+  grid-template-columns: 1fr;
 }
 
 
@@ -189,30 +268,6 @@
 .services-form .services-cards {
   max-width: 1000px;
   margin: 0 auto;
-}
-
-
-/* ========================================
-   KOSTEN
-   ======================================== */
-
-.services-cost {
-  background: var(--color-primary-soft);
-
-  text-align: center;
-}
-
-.services-cost h2 {
-  margin-bottom: 20px;
-}
-
-.services-cost p {
-  max-width: 750px;
-  margin: 0 auto;
-
-  color: var(--color-text-muted);
-
-  line-height: 1.7;
 }
 
 
@@ -381,7 +436,6 @@
   .services-overview,
   .services-approach,
   .services-form,
-  .services-cost,
   .services-process,
   .services-cta {
     padding: 100px 20px;
@@ -393,6 +447,10 @@
 
   .services-overview .services-cards {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .services-approach-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .services-approach .services-cards {
