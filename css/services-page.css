@@ -422,6 +422,14 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .services-overview .services-cards.services-count-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .services-overview .services-cards.services-count-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .services-approach .services-cards {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -468,6 +476,18 @@
 
   .services-overview .services-cards {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .services-overview .services-cards.services-count-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .services-overview .services-cards.services-count-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .services-overview .services-cards.services-count-3-plus {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .services-approach-grid {

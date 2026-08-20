@@ -25,6 +25,11 @@ async function loadServices() {
   const container = document.querySelector("#services-container");
 
   container.innerHTML = "";
+  container.classList.remove(
+    "services-count-1",
+    "services-count-2",
+    "services-count-3-plus"
+  );
 
   if (data.length === 0) {
     container.innerHTML = `
@@ -35,6 +40,15 @@ async function loadServices() {
 
     return;
   }
+
+  const countClass =
+    data.length === 1
+      ? "services-count-1"
+      : data.length === 2
+        ? "services-count-2"
+        : "services-count-3-plus";
+
+  container.classList.add(countClass);
 
   data.forEach((service) => {
     const card = document.createElement("article");
