@@ -1,20 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-const { google } = require("googleapis");
-
-const sheets = {
-  index: "1sPaDWJYZ6_7JlKYdlbT7SOMAk-0v9VXGdYz_GXch3eM",
-  about: "1Cq4gFvYquYbyCl-4k1w57_kcdlU1brnu2VH0ycig-p4",
-  contact: "1sR_GcKTrGrD35taUbTsC1y4kX84v9n7Sb0GdvB4ch68",
-  faq: "1T4w2k_bK5prNJadxsWkR8cbnA2aNNwMLvDA2n9WeU14",
-  services: "1Gkkq7kKnleeYDUPWWSmZwZ21KNCEIFMziOCdJFRCUvI",
-  booking: "1d7xHLj_mBdo2gNKTIO8usA4TfW8JGSzhhmXE7XBgN9s",
-  success: "1MZlEgrHoFcXlth5IdI9zCfQDA1vl0I--sy36vM4lLQw",
-  global: "1pAkXKo_ILhaqjQ_z1Qjtw0ZyO7CDTpuqzQiVA7WfstA",
-};
 
 const rootDir = __dirname;
-const pages = Object.keys(sheets).filter((page) => page !== "global");
+const outputDir = path.join(rootDir, "google-sheets");
+const pages = ["index", "about", "booking", "contact", "faq", "services", "success"];
 
 const entities = {
   "&amp;": "&",
@@ -26,6 +15,10 @@ const entities = {
 
 function decodeHtml(text) {
   return text.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, (entity) => entities[entity]);
+}
+
+function csvValue(value) {
+  return `"${value.replace(/"/g, '""')}"`;
 }
 
 function extractRows(page, html) {
@@ -76,45 +69,17 @@ function extractGlobalRows() {
   return rows;
 }
 
-async function uploadSheet(sheetsApi, page, rows) {
-  const spreadsheetId = sheets[page];
-  const spreadsheet = await sheetsApi.spreadsheets.get({ spreadsheetId });
-  const sheetTitle = spreadsheet.data.sheets[0].properties.title;
-  const range = `'${sheetTitle.replace(/'/g, "''")}'!A:D`;
-
-  await sheetsApi.spreadsheets.values.clear({ spreadsheetId, range });
-  await sheetsApi.spreadsheets.values.update({
-    spreadsheetId,
-    range,
-    valueInputOption: "RAW",
-    requestBody: { values: rows },
-  });
-
-  console.log(`${page}: ${rows.length - 1} Felder hochgeladen`);
+function writeTable(name, rows) {
+  const csv = rows.map((row) => row.map(csvValue).join(",")).join("\n") + "\n";
+  fs.writeFileSync(path.join(outputDir, `${name}.csv`), csv, "utf8");
+  console.log(`${name}.csv: ${rows.length - 1} Felder exportiert`);
 }
 
-async function main() {
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    throw new Error(
-      "GOOGLE_APPLICATION_CREDENTIALS ist nicht gesetzt. " +
-      "Bitte zuerst den Pfad zur Google-Service-Account-Datei setzen.",
-    );
-  }
+fs.mkdirSync(outputDir, { recursive: true });
 
-  const auth = new google.auth.GoogleAuth({
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-  });
-  const sheetsApi = google.sheets({ version: "v4", auth });
-
-  for (const page of pages) {
-    const html = fs.readFileSync(path.join(rootDir, `${page}.html`), "utf8");
-    await uploadSheet(sheetsApi, page, extractRows(page, html));
-  }
-
-  await uploadSheet(sheetsApi, "global", extractGlobalRows());
+for (const page of pages) {
+  const html = fs.readFileSync(path.join(rootDir, `${page}.html`), "utf8");
+  writeTable(page, extractRows(page, html));
 }
 
-main().catch((error) => {
-  console.error(`Upload fehlgeschlagen: ${error.message}`);
-  process.exitCode = 1;
-});
+writeTable("global", extractGlobalRows());
