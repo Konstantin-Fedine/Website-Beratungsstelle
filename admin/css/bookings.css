@@ -816,6 +816,15 @@
   background: rgba(180, 80, 80, 0.08);
 }
 
+.booking-modal-no-show {
+  border-color: rgba(100, 100, 100, 0.25);
+  color: #555;
+}
+
+.booking-modal-no-show:hover {
+  background: rgba(100, 100, 100, 0.08);
+}
+
 .booking-modal-info {
   margin: 0;
 

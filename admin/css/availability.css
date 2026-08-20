@@ -151,6 +151,10 @@
 
 .availability-time-start,
 .availability-time-end {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
   min-height: 40px;
 
   padding: 8px 11px;
@@ -444,13 +448,12 @@
       minmax(0, 1fr)
       36px;
 
-    gap: 7px;
+    gap: 8px;
   }
 
   .availability-time-start,
   .availability-time-end {
-    width: 100%;
-    min-width: 0;
+    width: auto;
   }
 
   .availability-time-separator {
@@ -501,7 +504,7 @@
       auto
       minmax(0, 1fr);
 
-    gap: 6px;
+    gap: 8px;
   }
 
   .availability-delete {

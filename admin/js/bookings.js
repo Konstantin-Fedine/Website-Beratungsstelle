@@ -1086,6 +1086,15 @@ function renderModalActions(booking) {
         >
           Stornieren
         </button>
+
+        <button
+          type="button"
+          class="booking-modal-action booking-modal-no-show"
+          data-action="no-show"
+          data-id="${escapeHtml(booking.id)}"
+        >
+          Nicht erschienen
+        </button>
       `;
 
     case "confirmed":
@@ -1106,6 +1115,15 @@ function renderModalActions(booking) {
           data-id="${escapeHtml(booking.id)}"
         >
           Stornieren
+        </button>
+
+        <button
+          type="button"
+          class="booking-modal-action booking-modal-no-show"
+          data-action="no-show"
+          data-id="${escapeHtml(booking.id)}"
+        >
+          Nicht erschienen
         </button>
       `;
 
@@ -1186,6 +1204,15 @@ async function handleBookingAction(
         booking,
         "cancelled",
         "Möchtest du diese Buchung wirklich stornieren?"
+      );
+      break;
+
+
+    case "no-show":
+      await changeStatus(
+        booking,
+        "no_show",
+        "Möchtest du diese Buchung als nicht erschienen markieren?"
       );
       break;
 
