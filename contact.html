@@ -25,114 +25,93 @@
 
       <section class="contact-main">
         <div class="contact-container">
-          <div class="contact-grid">
-            <div class="contact-details">
+          <div class="contact-stack">
+            
+            <!-- BEREICH 1: Kontaktmöglichkeiten mit Bild -->
+            <div class="contact-section">
               <h2 data-text="contact_Kontaktmöglichkeiten_title">Kontaktmöglichkeiten</h2>
+              <p class="contact-intro" data-text="contact_Willkommen_text">Haben Sie Fragen oder möchten Sie sich vorab informieren? Schreiben Sie mir gerne ganz unkompliziert.</p>
 
-              <div class="contact-cards">
-                <article class="contact-card">
-                  <div class="contact-icon" aria-hidden="true">✉</div>
-                  <div>
-                    <h3 data-text="contact_Kontakt_1_title">E-Mail</h3>
-                    <p data-text="contact_Kontakt_1_text">beratung.aufwind@gmail.com</p>
-                  </div>
-                </article>
+              <div class="contact-info-grid">
+                <div class="contact-cards">
+                  <article class="contact-card">
+                    <div class="contact-icon" aria-hidden="true">✉</div>
+                    <div>
+                      <h3 data-text="contact_Kontakt_1_title">E-Mail</h3>
+                      <p data-text="contact_Kontakt_1_text">beratung.aufwind@gmail.com</p>
+                    </div>
+                  </article>
 
-                <article class="contact-card">
-                  <div class="contact-icon" aria-hidden="true">☎</div>
-                  <div>
-                    <h3 data-text="contact_Kontakt_2_title">Telefon</h3>
-                    <p data-text="contact_Kontakt_2_text">0176 31027082</p>
-                    <p class="contact-small" data-text="contact_Kontakt_2_zeit">Mo - Fr 9:00 - 14:00 Uhr oder nach Vereinbarung</p>
-                  </div>
-                </article>
+                  <article class="contact-card">
+                    <div class="contact-icon" aria-hidden="true">☎</div>
+                    <div>
+                      <h3 data-text="contact_Kontakt_2_title">Telefon</h3>
+                      <p data-text="contact_Kontakt_2_text">0176 31027082</p>
+                      <p class="contact-small" data-text="contact_Kontakt_2_zeit">Mo - Fr 9:00 - 14:00 Uhr oder nach Vereinbarung</p>
+                    </div>
+                  </article>
 
-                <article class="contact-card">
-                  <div class="contact-icon" aria-hidden="true">📍</div>
-                  <div>
-                    <h3 data-text="contact_Kontakt_3_title">Ort &amp; Erreichbarkeit</h3>
-                    <p data-text="contact_Kontakt_3_text">Wiesbaden</p>
-                    <p class="contact-small" data-text="contact_Kontakt_3_untertitel">Persönliche Beratung vor Ort oder flexibel online möglich.</p>
-                  </div>
-                </article>
+                  <article class="contact-card">
+                    <div class="contact-icon" aria-hidden="true">📍</div>
+                    <div>
+                      <h3 data-text="contact_Kontakt_3_title">Ort &amp; Erreichbarkeit</h3>
+                      <p data-text="contact_Kontakt_3_text">Wiesbaden</p>
+                      <p class="contact-small" data-text="contact_Kontakt_3_untertitel">Persönliche Beratung vor Ort oder flexibel online möglich.</p>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="contact-image-wrapper">
+                  <img src="images/Eingang.jpg" alt="Beratung Praxis Atmosphäre" class="contact-image" />
+                </div>
               </div>
             </div>
 
-            <div class="contact-form-column">
-              <h2 data-text="contact_Formular_title">Lassen Sie uns gemeinsam klären, ob mein Angebot für Ihr Anliegen passend ist.</h2>
+            <!-- BEREICH 2: Nachricht senden -->
+            <div class="contact-section">
+              <h2 data-text="contact_Formular_title">Nachricht senden</h2>
               <p class="contact-intro" data-text="contact_Formular_intro">Rufen Sie mich einfach an oder senden Sie mir eine Nachricht über das nachfolgende Kontaktformular.</p>
 
-              <form
-                class="contact-form"
-                name="kontakt"
-                method="POST"
-                data-netlify="true"
-                netlify-honeypot="bot-field"
-                action="/success.html"
-              >
-                <p hidden>
-                  <label>Nicht ausfüllen: <input name="bot-field" /></label>
-                </p>
+              <div class="contact-form-card">
+                <form
+                  class="contact-form"
+                  name="kontakt"
+                  method="POST"
+                  data-netlify="true"
+                  netlify-honeypot="bot-field"
+                  action="/success.html"
+                >
+                  <p hidden>
+                    <label>Nicht ausfüllen: <input name="bot-field" /></label>
+                  </p>
 
-                <label for="name" data-text="contact_Formular_label_name">Name</label>
-                <input type="text" id="name" name="name" required />
+                  <label for="name" data-text="contact_Formular_label_name">Name</label>
+                  <input type="text" id="name" name="name" required />
 
-                <label for="email" data-text="contact_Formular_label_email">E-Mail</label>
-                <input type="email" id="email" name="email" required />
+                  <label for="email" data-text="contact_Formular_label_email">E-Mail</label>
+                  <input type="email" id="email" name="email" required />
 
-                <label for="topic" data-text="contact_Formular_label_topic">Thema der Anfrage</label>
-                <select id="topic" name="topic">
-                  <option data-text="contact_Formular_option_1">Familienberatung</option>
-                  <option data-text="contact_Formular_option_2">Beratung für Frauen</option>
-                  <option data-text="contact_Formular_option_3">Online-Beratung</option>
-                  <option data-text="contact_Formular_option_4">Allgemeine Frage</option>
-                </select>
+                  <label for="phone" data-text="contact_Formular_label_phone">Telefonnummer (optional)</label>
+                  <input type="tel" id="phone" name="phone" autocomplete="tel" />
 
-                <label for="contact-type" data-text="contact_Formular_label_contact_type">Bevorzugte Kontaktart</label>
-                <select id="contact-type" name="contact-type">
-                  <option data-text="contact_Formular_option_email">E-Mail</option>
-                  <option data-text="contact_Formular_option_phone">Telefon</option>
-                </select>
+                  <label for="message" data-text="contact_Formular_label_message">Nachricht</label>
+                  <textarea id="message" name="message" rows="5" required></textarea>
 
-                <label for="message" data-text="contact_Formular_label_message">Nachricht</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
+                  <p class="privacy-note" data-text="contact_Formular_privacy">🔒 Ihre Anfrage wird selbstverständlich vertraulich behandelt.</p>
 
-                <p class="privacy-note" data-text="contact_Formular_privacy">🔒 Ihre Anfrage wird selbstverständlich vertraulich behandelt.</p>
+                  <button type="submit" class="btn btn-primary contact-submit">Nachricht senden</button>
+                </form>
 
-                <button type="submit" class="btn btn-primary contact-submit" data-text="contact_Formular_button">Anfrage senden</button>
-              </form>
-
-              <div class="faq-link">
-                <p data-text="contact_FAQ_Link_text">Noch Fragen?</p>
-                <a href="faq.html" data-text="contact_FAQ_Link_link">Zu den häufig gestellten Fragen</a>
+                <div class="booking-link">
+                  <p>Sie möchten direkt einen festen Termin vereinbaren?</p>
+                  <a href="booking.html">Hier Termin buchen →</a>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
-
-      <section class="contact-process">
-        <div class="contact-container">
-          <h2 data-text="contact_Ablauf_title">So einfach funktioniert die Kontaktaufnahme</h2>
-          <div class="contact-steps">
-            <div class="contact-step">
-              <span>1</span>
-              <p data-text="contact_Schritt_1_title">Anfrage senden</p>
-            </div>
-
-            <div class="contact-step">
-              <span>2</span>
-              <p data-text="contact_Schritt_2_title">Erstgespräch vereinbaren</p>
-            </div>
-
-            <div class="contact-step">
-              <span>3</span>
-              <p data-text="contact_Schritt_3_title">Gemeinsam starten</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
     </main>
 
     <script src="js/load-components.js"></script>

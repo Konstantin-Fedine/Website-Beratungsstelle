@@ -48,17 +48,15 @@ async function loadServices() {
 
           <p class="service-description">${service.description ?? ""}</p>
 
-          <ul class="services-checklist">
-            <li>${service.duration} Minuten</li>
-            <li>Individuell abgestimmter Ablauf</li>
-            <li>Persönliche Begleitung</li>
-          </ul>
+          <div class="service-info">
+            <span>⏱ ${service.duration} Minuten</span>
+            <span>💶 ${service.price} €</span>
+          </div>
 
-          <p class="service-price">${Number(service.price).toFixed(2)} €</p>
-
-                <a href="booking.html?service=${service.id}" class="btn btn-primary">
-                    Termin buchen
-                </a>
+          <a
+            href="booking.html?service=${service.id}"
+            class="btn btn-primary select-service-button"
+          >Termin buchen</a>
 
             </div>
         `;
