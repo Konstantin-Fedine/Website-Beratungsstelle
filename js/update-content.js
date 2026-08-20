@@ -153,6 +153,7 @@ async function main() {
     "services.html",
     "booking.html",
     "success.html",
+    "contact-success.html",
     "components/header.html",
     "components/footer.html",
   ];

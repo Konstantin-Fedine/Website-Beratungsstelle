@@ -2,7 +2,6 @@
 "success","Hero","icon","✅"
 "success","Hero","title","Termin erfolgreich gebucht"
 "success","Hero","intro","Vielen Dank — Ihre Buchung wurde gespeichert."
-"success","Buchungsdetails_booking_id","label","Buchungsnummer:"
 "success","Buchungsdetails_service","label","Leistung:"
 "success","Buchungsdetails_datetime","label","Datum & Uhrzeit:"
 "success","Bestätigung","note","Sie erhalten in Kürze eine Bestätigung per E-Mail."

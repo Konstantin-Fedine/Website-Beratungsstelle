@@ -79,7 +79,17 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(rootDir, `${page}.html`), "utf8");
-  writeTable(page, extractRows(page, html));
+  const rows = extractRows(page, html);
+
+  if (page === "contact") {
+    const contactSuccessHtml = fs.readFileSync(
+      path.join(rootDir, "contact-success.html"),
+      "utf8",
+    );
+    rows.push(...extractRows(page, contactSuccessHtml).slice(1));
+  }
+
+  writeTable(page, rows);
 }
 
 writeTable("global", extractGlobalRows());

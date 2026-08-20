@@ -18,3 +18,8 @@
 "contact","Formular_label","phone","Telefonnummer (optional)"
 "contact","Formular_label","message","Nachricht"
 "contact","Formular","privacy","🔒 Ihre Anfrage wird selbstverständlich vertraulich behandelt."
+"contact","success","title","Nachricht gesendet | Aufwind Beratung"
+"contact","success","title","Nachricht erfolgreich gesendet"
+"contact","success","intro","Vielen Dank für Ihre Nachricht. Ich melde mich so bald wie möglich bei Ihnen."
+"contact","success","note","Ihre Anfrage wird vertraulich behandelt."
+"contact","success","button","Zur Startseite"

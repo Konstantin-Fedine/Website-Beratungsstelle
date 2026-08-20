@@ -8,6 +8,7 @@
 }
 
 .success-card {
+  width: min(100%, 700px);
   max-width: 700px;
   padding: 50px 40px;
   background: #fff;
@@ -30,6 +31,50 @@
   margin-bottom: 18px;
   line-height: 1.7;
   color: var(--color-text-muted);
+}
+
+.booking-details {
+  display: grid;
+  gap: 14px;
+  margin: 30px 0;
+  padding: 22px;
+  background: var(--color-primary-soft);
+  border: 1px solid rgba(212, 178, 149, 0.55);
+  border-radius: var(--radius);
+  text-align: left;
+}
+
+.booking-details p {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.booking-details strong {
+  color: var(--color-dark);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.booking-details span {
+  color: var(--color-dark);
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.success-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.success-note-icon {
+  color: var(--color-primary);
+  font-size: 1.1rem;
 }
 
 .btn {

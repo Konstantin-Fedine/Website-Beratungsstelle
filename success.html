@@ -37,14 +37,6 @@
 
           <div class="booking-details">
             <p>
-              <strong data-text="success_Buchungsdetails_booking_id_label">
-                Buchungsnummer:
-              </strong>
-
-              <span id="booking-id">—</span>
-            </p>
-
-            <p>
               <strong data-text="success_Buchungsdetails_service_label">
                 Leistung:
               </strong>
@@ -61,11 +53,9 @@
             </p>
           </div>
 
-          <p
-            id="success-note"
-            data-text="success_Bestätigung_note"
-          >
-            Sie erhalten in Kürze eine Bestätigung per E-Mail.
+          <p class="success-note" id="success-note">
+            <span class="success-note-icon" aria-hidden="true">✉</span>
+            <span data-text="success_Bestätigung_note">Sie erhalten in Kürze eine Bestätigung per E-Mail.</span>
           </p>
 
           <a
@@ -88,15 +78,9 @@
       (function () {
         const params = new URLSearchParams(window.location.search);
 
-        const id = params.get("id");
         const service = params.get("service");
         const date = params.get("date");
         const time = params.get("time");
-        const createdAt = params.get("created_at");
-
-        if (id) {
-          document.getElementById("booking-id").textContent = id;
-        }
 
         if (service) {
           document.getElementById("booking-service").textContent =
@@ -104,48 +88,22 @@
         }
 
         if (date || time) {
-          const parts = [];
+          const formattedDate = date
+            ? new Date(`${date}T${time || "00:00"}`).toLocaleDateString("de-DE", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : "";
+          const formattedTime = time ? `${time} Uhr` : "";
+          const dateTime = [formattedDate, formattedTime].filter(Boolean).join(" um ");
 
-          if (date) parts.push(date);
-          if (time) parts.push(time);
-
-          document.getElementById("booking-datetime").textContent =
-            parts.join(" um ");
-        }
-
-        if (createdAt) {
-          try {
-            const d = new Date(createdAt);
-
-            const formatted = d.toLocaleString(undefined, {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-
-            const p = document.createElement("p");
-
-            const strong = document.createElement("strong");
-
-            // Der Text kommt später ebenfalls aus Google Sheets
-            strong.dataset.text = "success_Buchungsdetails_created_at_label";
-            strong.textContent = "Erfasst am:";
-
-            p.appendChild(strong);
-            p.appendChild(document.createTextNode(` ${formatted}`));
-
-            document
-              .querySelector(".booking-details")
-              .appendChild(p);
-          } catch (e) {
-            // ignore parse errors
-          }
+          document.getElementById("booking-datetime").textContent = dateTime;
         }
 
         // If no params, show a generic message
-        if (!id && !service && !date && !time) {
+        if (!service && !date && !time) {
           document.getElementById("success-intro").textContent =
             "Ihre Buchung wurde verarbeitet. Weitere Details finden Sie in Ihrem Posteingang.";
         }
