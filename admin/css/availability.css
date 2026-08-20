@@ -462,6 +462,9 @@
   .availability-actions {
     flex-direction: column;
     align-items: stretch;
+
+    width: 100%;
+    margin-left: 0;
   }
 
   .availability-message {

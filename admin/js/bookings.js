@@ -237,6 +237,8 @@ async function loadBookings() {
 
   allBookings = data ?? [];
 
+  await completePastBookings(allBookings);
+
   applyFilters();
 }
 
@@ -251,6 +253,59 @@ function getLocalDateString(date = new Date()) {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+
+function getBookingDateTime(booking) {
+  if (!booking.booking_date || !booking.booking_time) {
+    return null;
+  }
+
+  const dateTime = new Date(
+    `${booking.booking_date}T${booking.booking_time.slice(0, 8)}`
+  );
+
+  return Number.isNaN(dateTime.getTime()) ? null : dateTime;
+}
+
+
+async function completePastBookings(bookings) {
+  const pastBookings = bookings.filter((booking) => {
+    const dateTime = getBookingDateTime(booking);
+
+    return (
+      dateTime &&
+      dateTime < new Date() &&
+      (booking.status === "pending" || booking.status === "confirmed")
+    );
+  });
+
+  if (pastBookings.length === 0) {
+    return;
+  }
+
+  const results = await Promise.all(
+    pastBookings.map((booking) =>
+      supabase
+        .from("bookings")
+        .update({ status: "completed" })
+        .eq("id", booking.id)
+    )
+  );
+
+  results.forEach(({ error }, index) => {
+    const booking = pastBookings[index];
+
+    if (error) {
+      console.error(
+        `Status der Buchung ${booking.id} konnte nicht automatisch aktualisiert werden:`,
+        error
+      );
+      return;
+    }
+
+    booking.status = "completed";
+  });
 }
 
 

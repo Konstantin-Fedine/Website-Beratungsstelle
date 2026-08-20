@@ -507,6 +507,15 @@
     padding: 20px;
   }
 
+  .settings-toggle-row {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .settings-toggle-row span {
+    overflow-wrap: anywhere;
+  }
+
   .settings-section-header h2 {
     font-size: 1.05rem;
   }
