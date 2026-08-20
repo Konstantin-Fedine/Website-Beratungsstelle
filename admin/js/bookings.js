@@ -1132,6 +1132,15 @@ function renderModalActions(booking) {
         <p class="booking-modal-info">
           Dieser Termin wurde abgeschlossen.
         </p>
+
+        <button
+          type="button"
+          class="booking-modal-action booking-modal-no-show"
+          data-action="no-show"
+          data-id="${escapeHtml(booking.id)}"
+        >
+          Als nicht erschienen markieren
+        </button>
       `;
 
     case "cancelled":
