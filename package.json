@@ -1,14 +1,16 @@
 {
   "dependencies": {
     "@supabase/supabase-js": "^2.112.1",
-    "csv-parse": "^7.0.2"
+    "csv-parse": "^7.0.2",
+    "googleapis": "^176.0.0"
   },
   "name": "website-beratungsstelle",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sync-content": "node generate-content-tables.js"
   },
   "repository": {
     "type": "git",
